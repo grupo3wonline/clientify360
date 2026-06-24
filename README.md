@@ -16,12 +16,12 @@ Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Larave
 
 ## Arquitetura
 
-- **Service Layer** — Lógica de negócio isolada
-- **Repository Pattern** — Operações de banco isoladas com interfaces
-- **DTO** — Transferência segura de dados entre camadas
-- **Action Pattern** — Ações isoladas e reutilizáveis
-- **Entity** — Classes com getters/setters e métodos mágicos
-- **Injeção de Dependência** — Controllers → Services → Repositories
+- **Service Layer** — Lógica de negócio isolada.
+- **Repository Pattern** — Operações de banco isoladas com interfaces.
+- **DTO** — Transferência segura de dados entre camadas.
+- **Action Pattern** — Ações isoladas e reutilizáveis.
+- **Entity** — Classes com getters/setters e métodos mágicos.
+- **Injeção de Dependência** — Controllers → Services → Repositories.
 
 ## Requisitos
 
