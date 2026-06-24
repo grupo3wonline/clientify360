@@ -1,58 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Clientify360
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Laravel 13.
 
-## About Laravel
+## Stack Tecnológica
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Camada | Tecnologia |
+|--------|-----------|
+| Backend | Laravel 13 (PHP 8.3+) |
+| Banco de Dados | MySQL 8 |
+| Frontend | Alpine.js + Tailwind CSS + HTML5 + CSS3 |
+| Autenticação | Laravel Breeze |
+| Alertas | SweetAlert2 |
+| Ícones | Font Awesome 6 |
+| Padrão CSS | Mobile First |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Arquitetura
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Service Layer** — Lógica de negócio isolada
+- **Repository Pattern** — Operações de banco isoladas com interfaces
+- **DTO** — Transferência segura de dados entre camadas
+- **Action Pattern** — Ações isoladas e reutilizáveis
+- **Entity** — Classes com getters/setters e métodos mágicos
+- **Injeção de Dependência** — Controllers → Services → Repositories
 
-## Learning Laravel
+## Requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP 8.3+
+- Composer 2.x
+- MySQL 8.x
+- Node.js 20+ (para build de assets, opcional com CDN)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalação
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone o repositório
+git clone <repo-url> Clientify360
+cd Clientify360
 
-php artisan boost:install
+# 2. Instale dependências PHP
+composer install
+
+# 3. Configure o ambiente
+cp .env.example .env
+php artisan key:generate
+
+# 4. Configure o banco de dados no .env
+# DB_CONNECTION=mysql
+# DB_DATABASE=clientify360
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 5. Execute as migrations e seeders
+php artisan migrate --seed
+
+# 6. Crie o link de storage
+php artisan storage:link
+
+# 7. Inicie o servidor
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Credenciais de Teste
 
-## Contributing
+| Campo | Valor |
+|-------|-------|
+| E-mail | admin@clientify360.test |
+| Senha | password |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Funcionalidades
 
-## Code of Conduct
+- ✅ Autenticação completa (cadastro, login, recuperação de senha, verificação de e-mail)
+- ✅ Cadastro com username + email + senha
+- ✅ LGPD — Consentimento explícito no cadastro
+- ✅ Isolamento de dados por usuário (cada usuário vê apenas seus dados)
+- ✅ CRUD completo de clientes
+- ✅ Tema claro/escuro com persistência
+- ✅ Interface responsiva (Mobile First)
+- ✅ Páginas públicas (Home, Sobre, Serviços, Ferramentas, Contato, Privacidade)
+- ✅ Páginas de erro personalizadas (404, 403, 500, 419, 429)
+- ✅ SweetAlert2 para feedback ao usuário
+- ✅ Breadcrumbs em todas as páginas internas
+- ✅ UUID como chave primária
+- ✅ SoftDeletes em todos os models
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Estrutura de Diretórios
 
-## Security Vulnerabilities
+```
+app/
+├── Actions/          # Ações isoladas
+├── DTOs/             # Data Transfer Objects
+├── Entities/         # Entidades com getters/setters
+├── Http/
+│   ├── Controllers/  # Controllers (HTTP only)
+│   └── Requests/     # Form Requests (validação)
+├── Interfaces/       # Contratos (interfaces)
+├── Models/           # Eloquent Models
+├── Repositories/     # Repositórios (DB operations)
+├── Services/         # Serviços (business logic)
+├── Traits/           # Traits compartilhados
+└── Providers/        # Service Providers
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Desenvolvedor
 
-## License
+**HOTWYL | WILLFROMBRASIL**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Desenvolvido pelo **Grupo 3W Online** — [www.3wonline.com.br](https://www.3wonline.com.br)
