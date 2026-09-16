@@ -23,8 +23,36 @@ final class SecurityHeaders
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy());
+
+        // HSTS apenas sob HTTPS, para não bloquear ambientes locais em HTTP.
+        if ($request->secure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
 
         return $response;
+    }
+
+    /**
+     * Build the Content-Security-Policy allowing only the CDNs used by the app.
+     */
+    private function contentSecurityPolicy(): string
+    {
+        $directives = [
+            "default-src 'self'",
+            // Tailwind/Alpine/SweetAlert exigem 'unsafe-eval'/'unsafe-inline' via CDN.
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:",
+            "img-src 'self' data: https:",
+            "connect-src 'self' https://api.stripe.com",
+            "frame-src 'self' https://js.stripe.com https://www.3wonline.com.br",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "frame-ancestors 'self'",
+            'upgrade-insecure-requests',
+        ];
+
+        return implode('; ', $directives);
     }
 }

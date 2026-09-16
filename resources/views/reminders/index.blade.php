@@ -163,7 +163,7 @@
 
                         <div>
                             <label for="remind_at" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Data e Hora <span class="text-red-500">*</span></label>
-                            <input type="datetime-local" name="remind_at" id="remind_at" value="{{ old('remind_at') }}" required
+                            <input type="datetime-local" name="remind_at" id="remind_at" value="{{ old('remind_at') }}" required autocomplete="off"
                                    class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                             @error('remind_at')
                                 <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>

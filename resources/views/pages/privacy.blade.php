@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Política de Privacidade')
-@section('meta_description', 'Política de Privacidade do Clientify360. Saiba como coletamos, usamos e protegemos seus dados pessoais em conformidade com a LGPD.')
+@section('meta_description', 'Política de Privacidade do Clientify360. Saiba como coletamos, usamos e protegemos seus dados pessoais em conformidade com a LGPD, GDPR, CCPA e POPIA.')
 
 @section('content')
     <!-- Hero Section -->
@@ -181,6 +181,46 @@
                             <p class="text-sm text-gray-600 dark:text-gray-300">Ser informado sobre com quem seus dados são compartilhados.</p>
                         </div>
                     </div>
+                </div>
+
+                <!-- International Privacy Laws -->
+                <div class="mb-10">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                        <i class="fa-solid fa-globe text-primary-600 dark:text-primary-400 mr-2"></i>
+                        Conformidade com Leis Internacionais de Privacidade
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                        Além da LGPD, o Clientify360 respeita os princípios das principais legislações internacionais de proteção de dados. Caso você resida em uma dessas jurisdições, garantimos os direitos correspondentes:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white mb-2">
+                                <i class="fa-solid fa-flag text-primary-500 mr-2"></i>GDPR — União Europeia
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Regulamento Geral sobre a Proteção de Dados (UE 2016/679). Você tem direito de acesso, retificação, exclusão ("direito ao esquecimento"), portabilidade, restrição e oposição ao tratamento, além de base legal explícita para cada finalidade.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white mb-2">
+                                <i class="fa-solid fa-flag text-primary-500 mr-2"></i>CCPA — Califórnia (EUA)
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">California Consumer Privacy Act. Você pode saber quais dados coletamos, solicitar sua exclusão e optar por não ter seus dados vendidos. O Clientify360 <strong>não vende</strong> dados pessoais.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white mb-2">
+                                <i class="fa-solid fa-flag text-primary-500 mr-2"></i>POPIA — África do Sul
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Protection of Personal Information Act. Tratamos os dados de forma lícita, mínima e para finalidade específica, garantindo acesso, correção e exclusão mediante solicitação.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white mb-2">
+                                <i class="fa-solid fa-flag text-primary-500 mr-2"></i>LGPD — Brasil
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Lei Geral de Proteção de Dados (Lei nº 13.709/2018), base principal desta política, com todos os direitos descritos na seção anterior.</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mt-4">
+                        Para exercer qualquer um desses direitos, independentemente da sua localização, utilize os canais de contato indicados no final desta política.
+                    </p>
                 </div>
 
                 <!-- Cookies -->

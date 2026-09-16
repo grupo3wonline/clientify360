@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="@yield('meta_description', 'Clientify360 - Sistema de gestão de clientes inteligente para o seu negócio.')">
-    <meta name="keywords" content="gestão de clientes, CRM, micro saas, sistema de clientes">
-    <meta name="author" content="HOTWYL | WILLFROMBRASIL">
-    <meta name="robots" content="index, follow">
-    <title>@yield('title', 'Clientify360') - Gestão Inteligente de Clientes</title>
+    <meta name="theme-color" content="#4f46e5">
+
+    {{-- SEO / SEM / GEO / AEO --}}
+    @hasSection('seo')
+        @yield('seo')
+    @else
+        <x-seo
+            :title="trim($__env->yieldContent('title')) ?: null"
+            :description="trim($__env->yieldContent('meta_description')) ?: 'Clientify360 - Sistema de gestão de clientes inteligente para o seu negócio.'"
+        />
+    @endif
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -39,7 +45,18 @@
                             400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
                             800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
                         },
+                        // Aliases legados (mantidos para compatibilidade de views antigas)
+                        primary: {
+                            50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                            800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
+                        },
                         accent: {
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
+                            400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
+                            800: '#065f46', 900: '#064e3b',
+                        },
+                        secondary: {
                             50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
                             400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
                             800: '#065f46', 900: '#064e3b',
@@ -62,6 +79,8 @@
         [x-cloak] { display: none !important; }
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
         .dark .glass-nav { background: rgba(15, 23, 42, 0.9); }
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     </style>
 
     @stack('styles')
@@ -80,13 +99,30 @@
                     <span class="text-lg font-bold bg-gradient-to-r from-brand-600 to-brand-800 dark:from-brand-400 dark:to-brand-600 bg-clip-text text-transparent">Clientify360</span>
                 </a>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="{{ route('home') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('home') ? 'text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800' }}">Home</a>
-                    <a href="{{ route('about') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('about') ? 'text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800' }}">Sobre</a>
-                    <a href="{{ route('services') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('services') ? 'text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800' }}">Serviços</a>
-                    <a href="{{ route('tools') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('tools') ? 'text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800' }}">Ferramentas</a>
-                    <a href="{{ route('contact') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('contact') ? 'text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800' }}">Contato</a>
+                <!-- Desktop Navigation (âncoras da página única de vendas) -->
+                @php
+                    $navLinks = [
+                        'inicio' => 'Início',
+                        'sobre' => 'Sobre',
+                        'servicos' => 'Serviços',
+                        'ferramentas' => 'Ferramentas',
+                        'planos' => 'Planos',
+                        'contato' => 'Contato',
+                    ];
+                    $navBase = "px-4 py-2 rounded-lg text-sm font-medium transition text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800";
+                    $navActive = "text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50";
+                    // Na home usamos âncoras relativas (#secao) para rolagem suave sem recarregar.
+                    // Em outras páginas usamos a URL absoluta da home + âncora.
+                    $onHome = request()->routeIs('home');
+                    $anchorHref = fn (string $anchor): string => $onHome ? '#'.$anchor : route('home').'#'.$anchor;
+                @endphp
+                <div class="hidden md:flex items-center space-x-1" x-data="{ active: 'inicio' }" x-on:section-change.window="active = $event.detail">
+                    @foreach($navLinks as $anchor => $label)
+                        <a href="{{ $anchorHref($anchor) }}"
+                           @click="active = '{{ $anchor }}'"
+                           :class="active === '{{ $anchor }}' ? '{{ $navActive }}' : ''"
+                           class="{{ $navBase }}">{{ $label }}</a>
+                    @endforeach
                 </div>
 
                 <!-- Right side actions -->
@@ -119,11 +155,9 @@
             <!-- Mobile Navigation -->
             <div x-show="mobileMenu" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden pb-4 border-t border-surface-200 dark:border-surface-800 mt-2" x-cloak>
                 <div class="flex flex-col space-y-1 pt-4">
-                    <a href="{{ route('home') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('home') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800' }} transition">Home</a>
-                    <a href="{{ route('about') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('about') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800' }} transition">Sobre</a>
-                    <a href="{{ route('services') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('services') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800' }} transition">Serviços</a>
-                    <a href="{{ route('tools') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('tools') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800' }} transition">Ferramentas</a>
-                    <a href="{{ route('contact') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('contact') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800' }} transition">Contato</a>
+                    @foreach($navLinks as $anchor => $label)
+                        <a href="{{ $anchorHref($anchor) }}" @click="mobileMenu = false" class="px-4 py-2.5 rounded-xl text-sm font-medium text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 transition">{{ $label }}</a>
+                    @endforeach
                     <hr class="my-2 border-surface-200 dark:border-surface-800">
                     <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="px-4 py-2.5 text-left rounded-xl text-sm font-medium text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 transition">
                         <i class="fa-solid fa-circle-half-stroke mr-2"></i> Alternar Tema
@@ -165,11 +199,12 @@
                 <div>
                     <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Navegação</h3>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="{{ route('home') }}" class="text-surface-400 hover:text-brand-400 transition">Home</a></li>
-                        <li><a href="{{ route('about') }}" class="text-surface-400 hover:text-brand-400 transition">Sobre</a></li>
-                        <li><a href="{{ route('services') }}" class="text-surface-400 hover:text-brand-400 transition">Serviços</a></li>
-                        <li><a href="{{ route('tools') }}" class="text-surface-400 hover:text-brand-400 transition">Ferramentas</a></li>
-                        <li><a href="{{ route('contact') }}" class="text-surface-400 hover:text-brand-400 transition">Contato</a></li>
+                        <li><a href="{{ $anchorHref('inicio') }}" class="text-surface-400 hover:text-brand-400 transition">Início</a></li>
+                        <li><a href="{{ $anchorHref('sobre') }}" class="text-surface-400 hover:text-brand-400 transition">Sobre</a></li>
+                        <li><a href="{{ $anchorHref('servicos') }}" class="text-surface-400 hover:text-brand-400 transition">Serviços</a></li>
+                        <li><a href="{{ $anchorHref('ferramentas') }}" class="text-surface-400 hover:text-brand-400 transition">Ferramentas</a></li>
+                        <li><a href="{{ $anchorHref('planos') }}" class="text-surface-400 hover:text-brand-400 transition">Planos</a></li>
+                        <li><a href="{{ $anchorHref('contato') }}" class="text-surface-400 hover:text-brand-400 transition">Contato</a></li>
                     </ul>
                 </div>
 
@@ -244,6 +279,29 @@
                 }
             }
         }
+    </script>
+
+    <x-cookie-consent />
+
+    {{-- Scroll-spy: destaca o item do menu conforme a seção visível --}}
+    <script>
+        (function () {
+            var ids = ['inicio', 'sobre', 'servicos', 'ferramentas', 'planos', 'contato'];
+            var sections = ids
+                .map(function (id) { return document.getElementById(id); })
+                .filter(Boolean);
+            if (!sections.length || !('IntersectionObserver' in window)) return;
+
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        window.dispatchEvent(new CustomEvent('section-change', { detail: entry.target.id }));
+                    }
+                });
+            }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+            sections.forEach(function (section) { observer.observe(section); });
+        })();
     </script>
 
     @stack('scripts')

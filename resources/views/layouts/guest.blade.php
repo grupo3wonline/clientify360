@@ -5,7 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Clientify360') }} - Autenticação</title>
+        {{-- Páginas de autenticação não devem ser indexadas por buscadores. --}}
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="description" content="Área de autenticação do Clientify360. Acesse sua conta ou crie um cadastro para gerenciar seus clientes.">
+
+        <title>{{ config('app.name', 'Clientify360') }} - @yield('title', 'Autenticação')</title>
 
         <!-- Google Fonts: Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +18,9 @@
 
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Tailwind CSS via CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +38,17 @@
                                 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
                                 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
                             },
+                            primary: {
+                                50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                                400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                                800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
+                            },
                             accent: {
+                                50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
+                                400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
+                                800: '#065f46', 900: '#064e3b',
+                            },
+                            secondary: {
                                 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
                                 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
                                 800: '#065f46', 900: '#064e3b',
@@ -189,5 +206,9 @@
                 }
             }
         </script>
+
+        <x-cookie-consent />
+
+        @stack('scripts')
     </body>
 </html>

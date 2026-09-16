@@ -8,14 +8,19 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TermsController;
 use Illuminate\Support\Facades\Route;
 
-// Public pages (Landing / Hotsite)
+// Public page (Landing / Hotsite — página única de vendas)
 Route::middleware('throttle:60,1')->group(function (): void {
     Route::get('/', [PageController::class, 'home'])->name('home');
-    Route::get('/sobre', [PageController::class, 'about'])->name('about');
-    Route::get('/servicos', [PageController::class, 'services'])->name('services');
-    Route::get('/ferramentas', [PageController::class, 'tools'])->name('tools');
-    Route::get('/contato', [PageController::class, 'contact'])->name('contact');
+
     Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('privacy');
+    Route::get('/sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
+    Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
+
+    // Rotas antigas → redirecionam para as âncoras da página única (preserva SEO/links).
+    Route::permanentRedirect('/sobre', '/#sobre')->name('about');
+    Route::permanentRedirect('/servicos', '/#servicos')->name('services');
+    Route::permanentRedirect('/ferramentas', '/#ferramentas')->name('tools');
+    Route::get('/contato', fn () => redirect('/#contato', 301))->name('contact');
 });
 
 // Dashboard (authenticated)
@@ -27,10 +32,10 @@ Route::get('/dashboard', function () {
     $clientLimit = $subscriptionService->getClientLimit($user);
 
     return view('dashboard', compact('clientCount', 'currentPlan', 'clientLimit'));
-})->middleware(['auth', 'verified', 'terms.accepted'])->name('dashboard');
+})->middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->name('dashboard');
 
 // Authenticated routes
-Route::middleware(['auth', 'verified', 'terms.accepted'])->group(function (): void {
+Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->group(function (): void {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -1,0 +1,29 @@
+# =============================================================================
+# Clientify360 - .htaccess raiz para hospedagem compartilhada (HostGator)
+# Redireciona todas as requisições para a pasta public/ sem expô-la na URL.
+# Use este arquivo quando não for possível apontar o Document Root para /public.
+# =============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Força HTTPS (recomendado em produção)
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # Redireciona a requisição para dentro de public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Bloqueia acesso a arquivos e diretórios sensíveis
+<FilesMatch "^\.(env|env\.example|gitignore|gitattributes|htaccess)$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^(composer\.(json|lock)|package\.json|package-lock\.json|artisan|phpunit\.xml|vite\.config\.js)$">
+    Require all denied
+</FilesMatch>
+
+# Impede listagem de diretórios
+Options -Indexes
