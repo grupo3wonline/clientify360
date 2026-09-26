@@ -35,6 +35,7 @@
     <!-- Search Bar -->
     <div class="mb-6">
         <form action="{{ route('clients.index') }}" method="GET">
+            @if($tagId ?? false)<input type="hidden" name="tag" value="{{ $tagId }}">@endif
             <div class="relative max-w-lg">
                 <input type="text"
                        name="search"
@@ -53,6 +54,21 @@
                 @endif
             </div>
         </form>
+
+        @if(isset($tags) && $tags->isNotEmpty())
+            <div class="flex flex-wrap items-center gap-1.5 mt-3" aria-label="Filtrar por tag">
+                <span class="text-xs text-surface-500 mr-1"><i class="fa-solid fa-tags mr-1"></i>Tags:</span>
+                @foreach($tags as $tag)
+                    @php $isOn = ($tagId ?? null) === $tag->id; @endphp
+                    <a href="{{ route('clients.index', array_filter(['search' => $search, 'tag' => $isOn ? null : $tag->id])) }}"
+                       class="c-badge border transition {{ $isOn ? 'text-white border-transparent' : 'border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:border-surface-400' }}"
+                       @if($isOn) style="background: {{ $tag->color }}" aria-current="true" @endif>
+                        @unless($isOn)<span class="w-1.5 h-1.5 rounded-full mr-1" style="background: {{ $tag->color }}"></span>@endunless{{ $tag->name }}
+                        @if($isOn)<i class="fa-solid fa-xmark ml-1"></i>@endif
+                    </a>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     @if($search ?? false)
@@ -89,6 +105,11 @@
                                         <div>
                                             <p class="text-sm font-medium text-surface-900 dark:text-white">{{ $client->name }}</p>
                                             <p class="text-xs text-surface-500 dark:text-surface-400 md:hidden">{{ $client->email ?? '—' }}</p>
+                                            @if($client->tags->isNotEmpty())
+                                                <div class="flex flex-wrap gap-1 mt-1">
+                                                    @foreach($client->tags as $tag)<span class="c-badge text-white text-[10px]" style="background: {{ $tag->color }}">{{ $tag->name }}</span>@endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

@@ -171,6 +171,10 @@
                                 @enderror
                             </div>
 
+                            <div class="md:col-span-2 space-y-6 pt-2">
+                                @include('clients._crm-fields', ['client' => $client])
+                            </div>
+
                             <!-- Notes -->
                             <div class="md:col-span-2">
                                 <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

@@ -116,6 +116,27 @@
             .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.5); }
         </style>
 
+        {{-- Componentes reutilizáveis das telas de CRM/Vendas/Financeiro (Tailwind @apply via CDN) --}}
+        <style type="text/tailwindcss">
+            @layer components {
+                .c-card { @apply bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800; }
+                .c-label { @apply block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5; }
+                .c-input { @apply w-full px-3.5 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition; }
+                .c-hint { @apply mt-1 text-xs text-surface-500 dark:text-surface-400; }
+                .c-error { @apply mt-1.5 text-xs text-red-600 dark:text-red-400; }
+                .c-btn { @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-xl transition disabled:opacity-50; }
+                .c-btn-primary { @apply c-btn bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/25; }
+                .c-btn-success { @apply c-btn bg-accent-600 hover:bg-accent-700 text-white shadow-sm shadow-accent-600/25; }
+                .c-btn-danger { @apply c-btn bg-red-600 hover:bg-red-700 text-white; }
+                .c-btn-ghost { @apply c-btn bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300; }
+                .c-badge { @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold; }
+                .c-th { @apply px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider; }
+                .c-td { @apply px-4 py-3 text-sm text-surface-700 dark:text-surface-300; }
+                .c-tab { @apply flex items-center px-3.5 py-2 rounded-lg text-sm font-medium transition text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 whitespace-nowrap; }
+                .c-tab-active { @apply bg-white dark:bg-surface-700 text-brand-700 dark:text-brand-300 shadow-sm; }
+            }
+        </style>
+
         @stack('styles')
     </head>
     <body class="font-sans antialiased bg-surface-50 dark:bg-surface-950 text-surface-800 dark:text-surface-200">
@@ -148,67 +169,7 @@
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-thin">
-                    <p class="px-3 mb-3 text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">Menu Principal</p>
-
-                    <a href="{{ route('dashboard') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-gauge-high w-5 mr-3 {{ request()->routeIs('dashboard') ? 'text-brand-500' : '' }}"></i>
-                        Dashboard
-                    </a>
-
-                    <a href="{{ route('clients.index') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('clients.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-users w-5 mr-3 {{ request()->routeIs('clients.*') ? 'text-brand-500' : '' }}"></i>
-                        Clientes
-                    </a>
-
-                    <a href="{{ route('billing.index') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('billing.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-credit-card w-5 mr-3 {{ request()->routeIs('billing.*') ? 'text-brand-500' : '' }}"></i>
-                        Financeiro
-                    </a>
-
-                    <a href="{{ route('reminders.index') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('reminders.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-calendar-check w-5 mr-3 {{ request()->routeIs('reminders.*') ? 'text-brand-500' : '' }}"></i>
-                        Agenda
-                    </a>
-
-                    <a href="{{ route('interactions.index') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('interactions.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-headset w-5 mr-3 {{ request()->routeIs('interactions.*') ? 'text-brand-500' : '' }}"></i>
-                        Atendimentos
-                    </a>
-
-                    <a href="{{ route('reports.index') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-chart-bar w-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-brand-500' : '' }}"></i>
-                        Relatórios
-                    </a>
-
-                    <a href="{{ route('notifications.index') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('notifications.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-bell w-5 mr-3 {{ request()->routeIs('notifications.*') ? 'text-brand-500' : '' }}"></i>
-                        Notificações
-                    </a>
-
-                    <a href="{{ route('ai.settings') }}"
-                       class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('ai.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid fa-wand-magic-sparkles w-5 mr-3 {{ request()->routeIs('ai.*') ? 'text-brand-500' : '' }}"></i>
-                        IA / Análise
-                    </a>
-
-                    <div class="pt-6">
-                        <p class="px-3 mb-3 text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">Conta</p>
-
-                        <a href="{{ route('profile.edit') }}"
-                           class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('profile.*') ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                            <i class="fa-solid fa-user-gear w-5 mr-3 {{ request()->routeIs('profile.*') ? 'text-brand-500' : '' }}"></i>
-                            Meu Perfil
-                        </a>
-                    </div>
-                </nav>
+                @include('layouts.partials.sidebar-nav')
 
                 <!-- Sidebar Footer -->
                 <div class="p-4 border-t border-surface-200 dark:border-surface-800">
@@ -277,7 +238,7 @@
                                         <i class="fa-solid fa-user-gear w-5 mr-3 text-surface-400"></i> Meu Perfil
                                     </a>
                                     <a href="{{ route('billing.index') }}" class="flex items-center px-4 py-2.5 text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition">
-                                        <i class="fa-solid fa-credit-card w-5 mr-3 text-surface-400"></i> Financeiro
+                                        <i class="fa-solid fa-credit-card w-5 mr-3 text-surface-400"></i> Assinatura
                                     </a>
                                     <hr class="my-2 border-surface-200 dark:border-surface-700">
                                     <form method="POST" action="{{ route('logout') }}">

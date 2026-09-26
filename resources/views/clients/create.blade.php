@@ -175,6 +175,8 @@
                     <!-- Divider -->
                     <hr class="border-surface-200 dark:border-surface-800">
 
+                    @include('clients._crm-fields', ['client' => null])
+
                     <!-- Notes Section -->
                     <div>
                         <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-4 flex items-center">

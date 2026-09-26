@@ -13,6 +13,18 @@ final class UpdateClientRequest extends FormRequest
         return true;
     }
 
+    /**
+     * Checkboxes desmarcados não são enviados pelo navegador. O formulário manda
+     * `_tags=1` para indicar que o seletor de tags estava na tela: sem nenhuma
+     * marcada, tratamos como "remover todas" em vez de "não alterar".
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('_tags') && !$this->has('tag_ids')) {
+            $this->merge(['tag_ids' => []]);
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -25,6 +37,9 @@ final class UpdateClientRequest extends FormRequest
             'state' => ['nullable', 'string', 'max:2'],
             'zip_code' => ['nullable', 'string', 'max:10'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'source' => ['nullable', 'string', \Illuminate\Validation\Rule::in(array_keys(\App\Models\Client::SOURCES))],
+            'tag_ids' => ['nullable', 'array'],
+            'tag_ids.*' => ['string', \Illuminate\Validation\Rule::exists('tags', 'id')->where('user_id', $this->user()?->id)],
             'score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'score_label' => ['nullable', 'string', 'max:20'],
             'strengths' => ['nullable', 'string', 'max:2000'],

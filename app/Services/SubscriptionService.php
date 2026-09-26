@@ -49,6 +49,46 @@ final class SubscriptionService
         return $currentCount < $limit;
     }
 
+    /** Rótulos usados nas mensagens de limite atingido. */
+    public const RESOURCE_LABELS = [
+        'clients' => 'clientes',
+        'products' => 'produtos/serviços',
+        'quotes_per_month' => 'orçamentos por mês',
+        'lead_forms' => 'formulários de captação',
+    ];
+
+    /** Limite do plano para um recurso (-1 = ilimitado; recurso não configurado = ilimitado). */
+    public function getLimit(User $user, string $resource): int
+    {
+        return (int) ($this->getCurrentPlan($user)['limits'][$resource] ?? -1);
+    }
+
+    /**
+     * Uso atual do recurso. Os models têm escopo global por usuário, mas aqui
+     * filtramos explicitamente por user_id para funcionar também fora de uma
+     * requisição autenticada (ex.: formulário público de captação).
+     */
+    public function getUsage(User $user, string $resource): int
+    {
+        return match ($resource) {
+            'clients' => \App\Models\Client::withoutGlobalScope('owned')->where('user_id', $user->id)->count(),
+            'products' => \App\Models\Product::withoutGlobalScope('owned')->where('user_id', $user->id)->count(),
+            'lead_forms' => \App\Models\LeadForm::withoutGlobalScope('owned')->where('user_id', $user->id)->count(),
+            'quotes_per_month' => \App\Models\Quote::withoutGlobalScope('owned')->withTrashed()
+                ->where('user_id', $user->id)
+                ->where('created_at', '>=', now()->startOfMonth())
+                ->count(),
+            default => 0,
+        };
+    }
+
+    public function canCreate(User $user, string $resource): bool
+    {
+        $limit = $this->getLimit($user, $resource);
+
+        return $limit === -1 || $this->getUsage($user, $resource) < $limit;
+    }
+
     public function getClientLimit(User $user): int
     {
         $plan = $this->getCurrentPlan($user);

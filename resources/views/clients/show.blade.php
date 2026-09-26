@@ -29,6 +29,16 @@
                                     <i class="fa-solid fa-briefcase mr-1"></i> {{ $client->business_segment }}
                                 @endif
                             </p>
+                            @if($client->sourceLabel() || $client->tags->isNotEmpty())
+                                <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                    @if($client->sourceLabel())
+                                        <span class="c-badge bg-white/15 text-white border border-white/20"><i class="fa-solid fa-bullseye mr-1"></i>{{ $client->sourceLabel() }}</span>
+                                    @endif
+                                    @foreach($client->tags as $tag)
+                                        <a href="{{ route('clients.index', ['tag' => $tag->id]) }}" class="c-badge text-white" style="background: {{ $tag->color }}">{{ $tag->name }}</a>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -237,6 +247,8 @@
                 @endif
             </div>
         </div>
+
+        @include('clients._commercial')
 
         <!-- Back Button -->
         <div class="mt-6">

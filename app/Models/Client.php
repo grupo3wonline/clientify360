@@ -31,6 +31,7 @@ class Client extends Model
         'state',
         'zip_code',
         'notes',
+        'source',
         'score',
         'score_label',
         'strengths',
@@ -44,6 +45,20 @@ class Client extends Model
         'needs_social_media',
         'business_segment',
         'company_size',
+    ];
+
+    /** Origens de lead (crm-master: "Como chegou até nós"). */
+    public const SOURCES = [
+        'indicacao' => 'Indicação',
+        'site' => 'Site / Formulário',
+        'google' => 'Google',
+        'instagram' => 'Instagram',
+        'facebook' => 'Facebook',
+        'whatsapp' => 'WhatsApp',
+        'linkedin' => 'LinkedIn',
+        'evento' => 'Evento',
+        'prospeccao' => 'Prospecção ativa',
+        'outro' => 'Outro',
     ];
 
     protected function casts(): array
@@ -64,5 +79,35 @@ class Client extends Model
     public function interactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\Interaction::class);
+    }
+
+    public function tags(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    public function deals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Deal::class);
+    }
+
+    public function activities(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Activity::class)->latest('happened_at');
+    }
+
+    public function quotes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Quote::class)->latest();
+    }
+
+    public function financialEntries(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(FinancialEntry::class);
+    }
+
+    public function sourceLabel(): ?string
+    {
+        return $this->source ? (self::SOURCES[$this->source] ?? $this->source) : null;
     }
 }

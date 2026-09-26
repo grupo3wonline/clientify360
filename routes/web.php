@@ -2,9 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DealController;
+use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\LeadFormController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PipelineStageController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicLeadFormController;
+use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TermsController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,15 +34,8 @@ Route::middleware('throttle:60,1')->group(function (): void {
 });
 
 // Dashboard (authenticated)
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-    $subscriptionService = app(\App\Services\SubscriptionService::class);
-    $clientCount = app(\App\Services\ClientService::class)->countAll();
-    $currentPlan = $subscriptionService->getCurrentPlan($user);
-    $clientLimit = $subscriptionService->getClientLimit($user);
-
-    return view('dashboard', compact('clientCount', 'currentPlan', 'clientLimit'));
-})->middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->name('dashboard');
 
 // Authenticated routes
 Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->group(function (): void {
@@ -49,9 +52,10 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     Route::get('/billing/portal', [\App\Http\Controllers\BillingController::class, 'portal'])->name('billing.portal');
 
     // Clients CRUD
-    Route::resource('clients', ClientController::class)->except(['create', 'store']);
+    // create/store ANTES do resource: senão "clients/{client}" captura "clients/create" (404)
     Route::get('clients/create', [ClientController::class, 'create'])->middleware('plan.limit')->name('clients.create');
     Route::post('clients', [ClientController::class, 'store'])->middleware('plan.limit')->name('clients.store');
+    Route::resource('clients', ClientController::class)->except(['create', 'store']);
 
     // Reminders / Agenda
     Route::get('reminders', [\App\Http\Controllers\ReminderController::class, 'index'])->name('reminders.index');
@@ -80,7 +84,72 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
 
     // Export (Professional plan only)
     Route::get('/export/clients', [\App\Http\Controllers\ExportController::class, 'clients'])->name('export.clients');
+
+    // ===== CRM comercial (CrmPlus + crm-master) =====
+    Route::get('pipeline', [DealController::class, 'index'])->name('deals.index');
+    Route::get('deals', [DealController::class, 'list'])->name('deals.list');
+    Route::post('deals', [DealController::class, 'store'])->name('deals.store');
+    Route::get('deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+    Route::put('deals/{deal}', [DealController::class, 'update'])->name('deals.update');
+    Route::delete('deals/{deal}', [DealController::class, 'destroy'])->name('deals.destroy');
+    Route::patch('deals/{deal}/move', [DealController::class, 'move'])->name('deals.move');
+    Route::post('deals/{deal}/win', [DealController::class, 'win'])->name('deals.win');
+    Route::post('deals/{deal}/lose', [DealController::class, 'lose'])->name('deals.lose');
+    Route::post('deals/{deal}/reopen', [DealController::class, 'reopen'])->name('deals.reopen');
+
+    Route::get('pipeline/stages', [PipelineStageController::class, 'index'])->name('stages.index');
+    Route::post('pipeline/stages', [PipelineStageController::class, 'store'])->name('stages.store');
+    Route::put('pipeline/stages/{stage}', [PipelineStageController::class, 'update'])->name('stages.update');
+    Route::delete('pipeline/stages/{stage}', [PipelineStageController::class, 'destroy'])->name('stages.destroy');
+
+    Route::get('activities', [ActivityController::class, 'index'])->name('activities.index');
+    Route::post('activities', [ActivityController::class, 'store'])->name('activities.store');
+    Route::delete('activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
+
+    Route::get('tags', [TagController::class, 'index'])->name('tags.index');
+    Route::post('tags', [TagController::class, 'store'])->name('tags.store');
+    Route::put('tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+    Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
+
+    // ===== Vendas: produtos/estoque + orçamentos (sistema-vendas, OSPOS, CrmPlus) =====
+    Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
+    Route::get('products/create', [ProductController::class, 'create'])->middleware('plan.limit:products')->name('products.create');
+    Route::post('products', [ProductController::class, 'store'])->middleware('plan.limit:products')->name('products.store');
+    Route::resource('products', ProductController::class)->except(['create', 'store']);
+    Route::post('products/{product}/movement', [ProductController::class, 'movement'])->name('products.movement');
+
+    Route::get('quotes/create', [QuoteController::class, 'create'])->middleware('plan.limit:quotes_per_month')->name('quotes.create');
+    Route::post('quotes', [QuoteController::class, 'store'])->middleware('plan.limit:quotes_per_month')->name('quotes.store');
+    Route::post('quotes/{quote}/duplicate', [QuoteController::class, 'duplicate'])->middleware('plan.limit:quotes_per_month')->name('quotes.duplicate');
+    Route::resource('quotes', QuoteController::class)->except(['create', 'store']);
+    Route::get('quotes/{quote}/print', [QuoteController::class, 'print'])->name('quotes.print');
+    Route::post('quotes/{quote}/send', [QuoteController::class, 'send'])->name('quotes.send');
+    Route::post('quotes/{quote}/approve', [QuoteController::class, 'approve'])->name('quotes.approve');
+    Route::post('quotes/{quote}/reject', [QuoteController::class, 'reject'])->name('quotes.reject');
+
+    // ===== Financeiro: contas a pagar/receber e fluxo de caixa =====
+    Route::get('finance', [FinanceController::class, 'index'])->name('finance.index');
+    Route::get('finance/entries', [FinanceController::class, 'entries'])->name('finance.entries');
+    Route::post('finance/entries', [FinanceController::class, 'store'])->name('finance.store');
+    Route::put('finance/entries/{entry}', [FinanceController::class, 'update'])->name('finance.update');
+    Route::post('finance/entries/{entry}/settle', [FinanceController::class, 'settle'])->name('finance.settle');
+    Route::post('finance/entries/{entry}/reopen', [FinanceController::class, 'reopen'])->name('finance.reopen');
+    Route::post('finance/entries/{entry}/cancel', [FinanceController::class, 'cancel'])->name('finance.cancel');
+    Route::delete('finance/entries/{entry}', [FinanceController::class, 'destroy'])->name('finance.destroy');
+    Route::get('finance/categories', [FinanceController::class, 'categories'])->name('finance.categories');
+    Route::post('finance/categories', [FinanceController::class, 'storeCategory'])->name('finance.categories.store');
+    Route::delete('finance/categories/{category}', [FinanceController::class, 'destroyCategory'])->name('finance.categories.destroy');
+
+    // ===== Captação de leads =====
+    Route::get('lead-forms/create', [LeadFormController::class, 'create'])->middleware('plan.limit:lead_forms')->name('lead-forms.create');
+    Route::post('lead-forms', [LeadFormController::class, 'store'])->middleware('plan.limit:lead_forms')->name('lead-forms.store');
+    Route::resource('lead-forms', LeadFormController::class)->except(['create', 'store']);
+    Route::post('lead-forms/{lead_form}/toggle', [LeadFormController::class, 'toggle'])->name('lead-forms.toggle');
 });
+
+// Formulário público de captação (sem login). Rate limit mais restrito no envio contra spam.
+Route::get('/f/{slug}', [PublicLeadFormController::class, 'show'])->middleware('throttle:60,1')->name('lead-forms.public');
+Route::post('/f/{slug}', [PublicLeadFormController::class, 'submit'])->middleware('throttle:6,1')->name('lead-forms.submit');
 
 // Terms of Service (requires auth but not terms acceptance)
 Route::middleware(['auth'])->group(function (): void {

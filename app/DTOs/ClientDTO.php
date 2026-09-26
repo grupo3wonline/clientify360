@@ -17,6 +17,9 @@ final readonly class ClientDTO
         public ?string $state,
         public ?string $zipCode,
         public ?string $notes,
+        public ?string $source = null,
+        /** @var array<int, string>|null null = não mexer nas tags */
+        public ?array $tagIds = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -32,6 +35,8 @@ final readonly class ClientDTO
             state: $data['state'] ?? null,
             zipCode: $data['zip_code'] ?? null,
             notes: $data['notes'] ?? null,
+            source: $data['source'] ?? null,
+            tagIds: array_key_exists('tag_ids', $data) ? array_values((array) $data['tag_ids']) : null,
         );
     }
 
@@ -47,6 +52,7 @@ final readonly class ClientDTO
             'state' => $this->state,
             'zip_code' => $this->zipCode,
             'notes' => $this->notes,
+            'source' => $this->source,
         ];
     }
 }

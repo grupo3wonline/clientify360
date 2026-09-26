@@ -28,6 +28,8 @@ final class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'lgpd_consent' => true,
             'lgpd_consent_at' => now(),
+            'terms_accepted_at' => now(),
+            'terms_version' => '1.0',
             'remember_token' => Str::random(10),
         ];
     }
