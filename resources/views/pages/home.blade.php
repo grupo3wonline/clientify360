@@ -598,8 +598,7 @@
 @endsection
 
 @push('scripts')
-    {{-- Alpine Collapse plugin para o FAQ --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    {{-- O plugin Alpine Collapse para o FAQ agora é carregado via app.js (Vite) --}}
 
     {{-- FAQ structured data (AEO/GEO) --}}
     <script type="application/ld+json">

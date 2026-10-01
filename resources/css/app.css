@@ -1,3 +1,69 @@
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import 'sweetalert2/dist/sweetalert2.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer components {
+    /* .c-btn declarado ANTES dos .c-btn-* que o utilizam via @apply */
+    .c-btn { @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-xl transition disabled:opacity-50; }
+    .c-card { @apply bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800; }
+    .c-label { @apply block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5; }
+    .c-input { @apply w-full px-3.5 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition; }
+    .c-hint { @apply mt-1 text-xs text-surface-500 dark:text-surface-400; }
+    .c-error { @apply mt-1.5 text-xs text-red-600 dark:text-red-400; }
+    .c-btn-primary { @apply c-btn bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/25; }
+    .c-btn-success { @apply c-btn bg-accent-600 hover:bg-accent-700 text-white shadow-sm shadow-accent-600/25; }
+    .c-btn-danger { @apply c-btn bg-red-600 hover:bg-red-700 text-white; }
+    .c-btn-ghost { @apply c-btn bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300; }
+    .c-badge { @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold; }
+    .c-th { @apply px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider; }
+    .c-td { @apply px-4 py-3 text-sm text-surface-700 dark:text-surface-300; }
+    .c-tab { @apply flex items-center px-3.5 py-2 rounded-lg text-sm font-medium transition text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 whitespace-nowrap; }
+    .c-tab-active { @apply bg-white dark:bg-surface-700 text-brand-700 dark:text-brand-300 shadow-sm; }
+}
+
+/* Helpers reutilizáveis migrados dos layouts (CDN -> Vite) */
+.glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+    background: rgba(30, 41, 59, 0.85);
+}
+
+.glass-nav {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.dark .glass-nav {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.3);
+    border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.5);
+}
