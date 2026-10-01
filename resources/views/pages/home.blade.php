@@ -21,10 +21,10 @@
                     </div>
 
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                        CRM com <span class="bg-gradient-to-r from-accent-300 to-accent-400 bg-clip-text text-transparent">IA Integrada</span> para Gestão de Clientes
+                        Organize seus clientes e <span class="bg-gradient-to-r from-accent-300 to-accent-400 bg-clip-text text-transparent">feche mais vendas</span>
                     </h1>
                     <p class="text-lg md:text-xl text-brand-200 mb-6 leading-relaxed max-w-xl">
-                        Score de clientes, análises com inteligência artificial, gestão de atendimentos, agenda e relatórios. Tudo em uma plataforma segura e intuitiva.
+                        O CRM que ajuda o pequeno negócio a não perder follow-ups, acompanhar cada atendimento e saber onde focar — com apoio de inteligência artificial.
                     </p>
 
                     <div class="flex items-center space-x-3 mb-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-5 py-3 w-fit">
@@ -98,6 +98,36 @@
                 <strong>OFERTA LIMITADA:</strong> Plano Profissional de <span class="line-through">R$ 79,90</span> por apenas <strong>R$ 39,90/mês</strong> — Economize R$ 480/ano!
                 <a href="{{ route('register') }}" class="ml-3 underline font-bold hover:no-underline">Aproveitar →</a>
             </p>
+        </div>
+    </section>
+
+    {{-- ============================================================= --}}
+    {{-- PROVA SOCIAL / DESTAQUES (enquadramento honesto, sem métricas falsas) --}}
+    {{-- ============================================================= --}}
+    <section class="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-user-shield text-2xl text-brand-500 mb-2" aria-hidden="true"></i>
+                    <p class="font-bold text-surface-900 dark:text-white text-sm">Seus dados isolados</p>
+                    <p class="text-xs text-surface-500 dark:text-surface-400">Cada conta vê só o que é seu</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-mobile-screen-button text-2xl text-accent-500 mb-2" aria-hidden="true"></i>
+                    <p class="font-bold text-surface-900 dark:text-white text-sm">No celular ou no PC</p>
+                    <p class="text-xs text-surface-500 dark:text-surface-400">Interface responsiva</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-credit-card text-2xl text-purple-500 mb-2" aria-hidden="true"></i>
+                    <p class="font-bold text-surface-900 dark:text-white text-sm">Comece sem cartão</p>
+                    <p class="text-xs text-surface-500 dark:text-surface-400">Plano grátis para sempre</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-ban text-2xl text-amber-500 mb-2" aria-hidden="true"></i>
+                    <p class="font-bold text-surface-900 dark:text-white text-sm">Sem fidelidade</p>
+                    <p class="text-xs text-surface-500 dark:text-surface-400">Cancele quando quiser</p>
+                </div>
+            </div>
         </div>
     </section>
 

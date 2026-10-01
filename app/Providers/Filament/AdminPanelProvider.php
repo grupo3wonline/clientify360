@@ -32,6 +32,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('app')
             ->path('app')
             ->brandName('Clientify360')
+            // No brand logo asset exists under public/images yet; keep the text brand.
+            // The existing favicon.ico is reused for the panel tab icon.
+            ->favicon(asset('favicon.ico'))
             ->login()
             ->colors([
                 'primary' => Color::Indigo,
