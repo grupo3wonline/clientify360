@@ -1,19 +1,21 @@
 @php
     // [rota, padrão "ativo", ícone, rótulo, (opcional) permissão ACL, (opcional) descrição/tooltip]
     $groups = [
+        // Itens apontados para "/app/..." usam a URL direta do painel Filament
+        // (CRUD migrado p/ Filament). Os demais usam o nome da rota Blade.
         'Principal' => [
             ['dashboard', 'dashboard', 'fa-gauge-high', 'Dashboard'],
-            ['clients.index', 'clients.*', 'fa-users', 'Clientes'],
-            ['reminders.index', 'reminders.*', 'fa-calendar-check', 'Agenda'],
-            ['interactions.index', 'interactions.*', 'fa-headset', 'Atendimentos'],
+            ['/app/clients', null, 'fa-users', 'Clientes'],
+            ['/app/reminders', null, 'fa-calendar-check', 'Agenda'],
+            ['/app/interactions', null, 'fa-headset', 'Atendimentos'],
         ],
         'Comercial' => [
             ['deals.index', ['deals.*', 'stages.*'], 'fa-filter-circle-dollar', 'Funil de vendas'],
             ['activities.index', 'activities.*', 'fa-timeline', 'Histórico'],
             ['quotes.index', 'quotes.*', 'fa-file-invoice-dollar', 'Orçamentos'],
-            ['products.index', 'products.*', 'fa-boxes-stacked', 'Produtos e estoque'],
+            ['/app/products', null, 'fa-boxes-stacked', 'Produtos e estoque'],
             ['lead-forms.index', 'lead-forms.*', 'fa-magnet', 'Captação de leads'],
-            ['tags.index', 'tags.*', 'fa-tags', 'Tags'],
+            ['/app/tags', null, 'fa-tags', 'Tags'],
         ],
         'Financeiro' => [
             ['finance.index', 'finance.index', 'fa-chart-pie', 'Visão geral'],
@@ -42,8 +44,11 @@
                     @php($permission = $item[4] ?? null)
                     @php($description = $item[5] ?? null)
                     @continue($permission !== null && ! auth()->user()?->can($permission))
-                    @php($active = request()->routeIs(...(array) $pattern))
-                    <a href="{{ route($route) }}" @if($active) aria-current="page" @endif @if($description) title="{{ $description }}" @endif
+                    {{-- URLs do painel Filament começam com "/"; rotas Blade usam route(). --}}
+                    @php($isUrl = is_string($route) && str_starts_with($route, '/'))
+                    @php($href = $isUrl ? url($route) : route($route))
+                    @php($active = ! $isUrl && $pattern !== null && request()->routeIs(...(array) $pattern))
+                    <a href="{{ $href }}" @if($active) aria-current="page" @endif @if($description) title="{{ $description }}" @endif
                        class="flex items-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ $active ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
                         <i class="fa-solid {{ $icon }} w-5 mr-3 text-center {{ $active ? 'text-brand-500' : '' }}"></i>
                         <span class="flex-1">{{ $label }}</span>

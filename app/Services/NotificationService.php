@@ -75,7 +75,7 @@ final class NotificationService
                 'title' => 'Lembrete atrasado',
                 'message' => $reminder->title.($reminder->client ? ' — '.$reminder->client->name : ''),
                 'time' => $reminder->remind_at,
-                'url' => route('reminders.index', ['filter' => 'overdue']),
+                'url' => url('/app/reminders'),
             ]);
         }
 
@@ -93,7 +93,7 @@ final class NotificationService
                 'title' => 'Lembrete em breve',
                 'message' => $reminder->title.' — '.$reminder->remind_at->format('H:i'),
                 'time' => $reminder->remind_at,
-                'url' => route('reminders.index'),
+                'url' => url('/app/reminders'),
             ]);
         }
     }
@@ -113,7 +113,7 @@ final class NotificationService
                 'title' => 'Atendimento pendente',
                 'message' => $interaction->subject.' — '.($interaction->client->name ?? 'Cliente'),
                 'time' => $interaction->created_at,
-                'url' => route('interactions.index', ['status' => 'open']),
+                'url' => url('/app/interactions'),
             ]);
         }
     }
@@ -146,7 +146,7 @@ final class NotificationService
                 'title' => 'Estoque baixo',
                 'message' => $product->name.' — saldo '.Format::qty($product->stock).' '.$product->unit.' (mínimo '.Format::qty($product->min_stock).')',
                 'time' => $product->updated_at,
-                'url' => route('products.show', $product),
+                'url' => url('/app/products/'.$product->id.'/edit'),
             ]);
         }
     }
@@ -167,7 +167,7 @@ final class NotificationService
                 'title' => 'Novo lead captado',
                 'message' => ($submission->client?->name ?? $submission->data['name'] ?? 'Lead').' via '.($submission->form?->name ?? 'formulário'),
                 'time' => $submission->created_at,
-                'url' => $submission->client_id ? route('clients.show', $submission->client_id) : route('lead-forms.index'),
+                'url' => $submission->client_id ? url('/app/clients/'.$submission->client_id.'/edit') : route('lead-forms.index'),
             ]);
         }
     }

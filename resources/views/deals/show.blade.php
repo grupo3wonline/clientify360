@@ -24,7 +24,7 @@
                 <div class="flex justify-between"><span class="text-surface-500">Status</span>@include('deals._status')</div>
                 <div class="flex justify-between"><span class="text-surface-500">Valor</span><strong class="text-accent-700 dark:text-accent-400">@money($deal->value)</strong></div>
                 <div class="flex justify-between"><span class="text-surface-500">Probabilidade</span><span>{{ $deal->probability }}%</span></div>
-                <div class="flex justify-between"><span class="text-surface-500">Cliente</span><a href="{{ route('clients.show', $deal->client_id) }}" class="text-brand-600 dark:text-brand-400 hover:underline">{{ $deal->client?->name }}</a></div>
+                <div class="flex justify-between"><span class="text-surface-500">Cliente</span><a href="{{ url('/app/clients/'.$deal->client_id.'/edit') }}" class="text-brand-600 dark:text-brand-400 hover:underline">{{ $deal->client?->name }}</a></div>
                 @if($deal->expected_close_date)<div class="flex justify-between"><span class="text-surface-500">Previsão</span><span class="{{ $deal->isOverdue() ? 'text-red-600 font-semibold' : '' }}">{{ $deal->expected_close_date->format('d/m/Y') }}</span></div>@endif
                 @if($deal->source)<div class="flex justify-between"><span class="text-surface-500">Origem</span><span>{{ \App\Models\Client::SOURCES[$deal->source] ?? $deal->source }}</span></div>@endif
                 @if($deal->lost_reason)<div class="pt-2 border-t border-surface-100 dark:border-surface-800"><span class="text-surface-500 block mb-1">Motivo da perda</span>{{ $deal->lost_reason }}</div>@endif

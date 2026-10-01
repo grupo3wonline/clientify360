@@ -56,12 +56,13 @@ class CommercialModulesTest extends TestCase
         FinancialEntry::create(['direction' => 'payable', 'description' => 'Aluguel', 'amount' => 900, 'due_date' => now()->subDays(2), 'status' => 'pending']);
         Activity::create(['client_id' => $client->id, 'deal_id' => $deal->id, 'type' => 'call', 'title' => 'Ligação', 'happened_at' => now(), 'next_step' => 'Retornar', 'next_step_at' => now()->addDay()]);
 
+        // Telas Blade mantidas. O CRUD de clientes, produtos, tags, atendimentos
+        // e agenda migrou para o Filament (/app/*) e não tem mais rota Blade.
         $pages = [
             '/app', // painel Filament (home autenticada)
-            route('clients.index'), route('clients.index', ['tag' => $tag->id]), route('clients.show', $client), route('clients.create'), route('clients.edit', $client),
+            route('dashboard'), // painel KPI em Blade
             route('deals.index'), route('deals.list'), route('deals.show', $deal), route('stages.index'),
-            route('activities.index'), route('tags.index'),
-            route('products.index'), route('products.index', ['filter' => 'low_stock']), route('products.create'), route('products.show', $product), route('products.edit', $product),
+            route('activities.index'),
             route('quotes.index'), route('quotes.create'), route('quotes.create', ['deal_id' => $deal->id]), route('quotes.show', $quote), route('quotes.edit', $quote), route('quotes.print', $quote),
             route('finance.index'), route('finance.entries'), route('finance.entries', ['status' => 'overdue']), route('finance.categories'),
             route('lead-forms.index'), route('lead-forms.show', $form), route('lead-forms.edit', $form),
@@ -93,7 +94,7 @@ class CommercialModulesTest extends TestCase
         $bobClient = $this->clientFor($bob);
 
         $this->get(route('deals.show', $aliceDeal))->assertNotFound();
-        $this->get(route('products.show', $aliceProduct))->assertNotFound();
+        // O CRUD de produtos migrou para o Filament; a busca (mantida) não vaza entre contas.
         $this->get(route('products.search', ['q' => 'Alice']))->assertExactJson([]);
 
         // Validação de vínculo rejeita IDs de outra conta (falha comum do "exists:tabela,id")
@@ -105,8 +106,10 @@ class CommercialModulesTest extends TestCase
             'items' => [['product_id' => $aliceProduct->id, 'description' => 'x', 'quantity' => 1, 'unit_price' => 1]],
         ])->assertSessionHasErrors('items.0.product_id');
 
-        $this->put(route('clients.update', $bobClient), ['name' => 'Bob', '_tags' => 1, 'tag_ids' => [$aliceTag->id]])
-            ->assertSessionHasErrors('tag_ids.0');
+        // O vínculo de tags a clientes migrou para o Filament; o escopo por conta
+        // garante que a tag de outra conta sequer é visível para o Bob.
+        $this->actingAs($bob);
+        $this->assertFalse(Tag::whereKey($aliceTag->id)->exists());
         $this->assertCount(0, $bobClient->fresh()->tags);
     }
 
@@ -196,12 +199,6 @@ class CommercialModulesTest extends TestCase
             ]);
         }
         $this->post(route('quotes.store'), [])->assertRedirect(route('quotes.index'))->assertSessionHas('error');
-
-        // O limite original de clientes continua funcionando (plan.limit sem parâmetro)
-        for ($i = 0; $i < 9; $i++) {
-            Client::create(['name' => "C{$i}"]);
-        }
-        $this->get(route('clients.create'))->assertRedirect(route('clients.index'));
     }
 
     // ------------------------------------------------------------- captação

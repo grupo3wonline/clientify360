@@ -5,11 +5,10 @@ declare(strict_types=1);
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\BillingController;
-use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FinanceController;
-use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\LeadFormController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
@@ -18,9 +17,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicLeadFormController;
 use App\Http\Controllers\QuoteController;
-use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\TagController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TermsController;
 use Illuminate\Support\Facades\Route;
@@ -41,10 +38,10 @@ Route::middleware('throttle:60,1')->group(function (): void {
     Route::get('/contato', fn () => redirect('/#contato', 301))->name('contact');
 });
 
-// Dashboard (authenticated)
-// Dashboard → painel Filament (/app) é a home autenticada. A rota é mantida
-// porque o Breeze (verificação de e-mail etc.) e vários links apontam para ela.
-Route::get('/dashboard', fn () => redirect('/app'))
+// Dashboard (authenticated) — painel KPI em Blade (DashboardController invocável).
+// É a home autenticada e o destino do login; o Breeze (verificação de e-mail etc.)
+// e vários links apontam para ela.
+Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'throttle:120,1'])->name('dashboard');
 
 // Authenticated routes
@@ -71,22 +68,25 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     });
 
     // Clients CRUD
+    // Retired — covered by Filament ClientResource (verified on branch). Views kept for rollback.
     // create/store ANTES do resource: senão "clients/{client}" captura "clients/create" (404)
-    Route::get('clients/create', [ClientController::class, 'create'])->middleware('plan.limit')->name('clients.create');
-    Route::post('clients', [ClientController::class, 'store'])->middleware('plan.limit')->name('clients.store');
-    Route::resource('clients', ClientController::class)->except(['create', 'store']);
+    // Route::get('clients/create', [ClientController::class, 'create'])->middleware('plan.limit')->name('clients.create');
+    // Route::post('clients', [ClientController::class, 'store'])->middleware('plan.limit')->name('clients.store');
+    // Route::resource('clients', ClientController::class)->except(['create', 'store']);
 
     // Reminders / Agenda
-    Route::get('reminders', [ReminderController::class, 'index'])->name('reminders.index');
-    Route::post('reminders', [ReminderController::class, 'store'])->name('reminders.store');
-    Route::patch('reminders/{reminder}/complete', [ReminderController::class, 'complete'])->name('reminders.complete');
-    Route::delete('reminders/{reminder}', [ReminderController::class, 'destroy'])->name('reminders.destroy');
+    // Retired — covered by Filament ReminderResource (verified on branch). Views kept for rollback.
+    // Route::get('reminders', [ReminderController::class, 'index'])->name('reminders.index');
+    // Route::post('reminders', [ReminderController::class, 'store'])->name('reminders.store');
+    // Route::patch('reminders/{reminder}/complete', [ReminderController::class, 'complete'])->name('reminders.complete');
+    // Route::delete('reminders/{reminder}', [ReminderController::class, 'destroy'])->name('reminders.destroy');
 
     // Interactions / Support
-    Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');
-    Route::post('interactions', [InteractionController::class, 'store'])->name('interactions.store');
-    Route::patch('interactions/{interaction}/status', [InteractionController::class, 'updateStatus'])->name('interactions.updateStatus');
-    Route::delete('interactions/{interaction}', [InteractionController::class, 'destroy'])->name('interactions.destroy');
+    // Retired — covered by Filament InteractionResource (verified on branch). Views kept for rollback.
+    // Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');
+    // Route::post('interactions', [InteractionController::class, 'store'])->name('interactions.store');
+    // Route::patch('interactions/{interaction}/status', [InteractionController::class, 'updateStatus'])->name('interactions.updateStatus');
+    // Route::delete('interactions/{interaction}', [InteractionController::class, 'destroy'])->name('interactions.destroy');
 
     // Reports
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
@@ -126,16 +126,19 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     Route::post('activities', [ActivityController::class, 'store'])->name('activities.store');
     Route::delete('activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
-    Route::get('tags', [TagController::class, 'index'])->name('tags.index');
-    Route::post('tags', [TagController::class, 'store'])->name('tags.store');
-    Route::put('tags/{tag}', [TagController::class, 'update'])->name('tags.update');
-    Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
+    // Retired — covered by Filament TagResource (verified on branch). Views kept for rollback.
+    // Route::get('tags', [TagController::class, 'index'])->name('tags.index');
+    // Route::post('tags', [TagController::class, 'store'])->name('tags.store');
+    // Route::put('tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+    // Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
 
     // ===== Vendas: produtos/estoque + orçamentos (sistema-vendas, OSPOS, CrmPlus) =====
+    // Products: CRUD retired — covered by Filament ProductResource (verified on branch). Views kept for rollback.
+    // KEEP products/search (feeds o construtor de orçamentos) e products/{product}/movement (movimentação de estoque).
     Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
-    Route::get('products/create', [ProductController::class, 'create'])->middleware('plan.limit:products')->name('products.create');
-    Route::post('products', [ProductController::class, 'store'])->middleware('plan.limit:products')->name('products.store');
-    Route::resource('products', ProductController::class)->except(['create', 'store']);
+    // Route::get('products/create', [ProductController::class, 'create'])->middleware('plan.limit:products')->name('products.create');
+    // Route::post('products', [ProductController::class, 'store'])->middleware('plan.limit:products')->name('products.store');
+    // Route::resource('products', ProductController::class)->except(['create', 'store']);
     Route::post('products/{product}/movement', [ProductController::class, 'movement'])->name('products.movement');
 
     Route::get('quotes/create', [QuoteController::class, 'create'])->middleware('plan.limit:quotes_per_month')->name('quotes.create');

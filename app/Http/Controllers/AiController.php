@@ -64,12 +64,15 @@ final class AiController extends Controller
         $provider = $request->input('provider', $user->ai_preferred_provider ?? 'gemini');
         $result = $this->aiService->analyzeClient($user, $client, $provider);
 
+        // O CRUD de clientes migrou para o Filament; volta para a edição do cliente no painel.
+        $clientUrl = url('/app/clients/'.$client->getKey().'/edit');
+
         if ($result === null) {
-            return redirect()->route('clients.show', $client)
+            return redirect()->to($clientUrl)
                 ->with('error', 'Erro ao analisar. Verifique suas credenciais de IA.');
         }
 
-        return redirect()->route('clients.show', $client)
+        return redirect()->to($clientUrl)
             ->with('ai_analysis', $result)
             ->with('success', 'Análise de IA gerada com sucesso!');
     }

@@ -30,8 +30,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // O painel Filament (/app) é a experiência principal autenticada.
-        return redirect()->intended('/app');
+        // O painel KPI em Blade (/dashboard) é a home autenticada.
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

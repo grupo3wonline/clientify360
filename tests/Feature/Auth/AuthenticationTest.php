@@ -29,8 +29,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        // O painel Filament (/app) é a home autenticada.
-        $response->assertRedirect('/app');
+        // O painel KPI em Blade (/dashboard) é a home autenticada.
+        $response->assertRedirect(route('dashboard'));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

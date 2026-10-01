@@ -61,7 +61,7 @@
 
         <div class="space-y-6">
             <div class="c-card p-5 space-y-3 text-sm">
-                <div class="flex justify-between"><span class="text-surface-500">Cliente</span><a href="{{ route('clients.show', $quote->client_id) }}" class="text-brand-600 dark:text-brand-400 hover:underline">{{ $quote->client?->name }}</a></div>
+                <div class="flex justify-between"><span class="text-surface-500">Cliente</span><a href="{{ url('/app/clients/'.$quote->client_id.'/edit') }}" class="text-brand-600 dark:text-brand-400 hover:underline">{{ $quote->client?->name }}</a></div>
                 @if($quote->deal)<div class="flex justify-between"><span class="text-surface-500">Oportunidade</span><a href="{{ route('deals.show', $quote->deal) }}" class="hover:underline truncate ml-3">{{ $quote->deal->title }}</a></div>@endif
                 <div class="flex justify-between"><span class="text-surface-500">Emitido em</span><span>{{ $quote->created_at->format('d/m/Y') }}</span></div>
                 <div class="flex justify-between"><span class="text-surface-500">Válido até</span><span class="{{ $quote->isExpired() ? 'text-red-600 font-semibold' : '' }}">{{ $quote->valid_until?->format('d/m/Y') ?? '—' }}</span></div>

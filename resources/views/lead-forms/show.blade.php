@@ -44,7 +44,7 @@
                         @if($s->utm_source)<span class="c-badge bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 ml-1">{{ $s->utm_source }}</span>@endif
                         @if($s->note)<span class="block text-xs text-amber-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $s->note }}</span>@endif
                     </div>
-                    @if($s->client)<a href="{{ route('clients.show', $s->client_id) }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline">Ver cliente</a>@endif
+                    @if($s->client)<a href="{{ url('/app/clients/'.$s->client_id.'/edit') }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline">Ver cliente</a>@endif
                     @if($s->deal)<a href="{{ route('deals.show', $s->deal_id) }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline">Oportunidade</a>@endif
                     <span class="text-xs text-surface-400 whitespace-nowrap">{{ $s->created_at->format('d/m/Y H:i') }}</span>
                 </summary>

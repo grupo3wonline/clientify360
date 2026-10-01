@@ -49,7 +49,7 @@
                             <td class="c-td">
                                 <p class="font-medium text-surface-900 dark:text-white">{{ $e->description }}</p>
                                 <p class="text-xs text-surface-500">
-                                    @if($e->client)<a href="{{ route('clients.show', $e->client_id) }}" class="hover:underline">{{ $e->client->name }}</a>@else{{ $e->counterparty }}@endif
+                                    @if($e->client)<a href="{{ url('/app/clients/'.$e->client_id.'/edit') }}" class="hover:underline">{{ $e->client->name }}</a>@else{{ $e->counterparty }}@endif
                                     @if($e->quote) · <a href="{{ route('quotes.show', $e->quote_id) }}" class="hover:underline">{{ $e->quote->number }}</a>@endif
                                     @if($e->paid_at) · {{ $e->direction === 'receivable' ? 'recebido' : 'pago' }} em {{ $e->paid_at->format('d/m') }}@endif
                                 </p>

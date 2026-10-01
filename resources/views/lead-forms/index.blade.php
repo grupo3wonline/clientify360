@@ -46,7 +46,7 @@
                 <div class="px-5 py-3 flex items-center gap-3 border-b last:border-0 border-surface-100 dark:border-surface-800 text-sm">
                     <i class="fa-solid fa-user-plus text-brand-500"></i>
                     <div class="flex-1 min-w-0">
-                        @if($s->client)<a href="{{ route('clients.show', $s->client_id) }}" class="font-medium hover:underline">{{ $s->client->name }}</a>@else<span class="font-medium">{{ $s->data['name'] ?? $s->data['email'] ?? 'Lead' }}</span>@endif
+                        @if($s->client)<a href="{{ url('/app/clients/'.$s->client_id.'/edit') }}" class="font-medium hover:underline">{{ $s->client->name }}</a>@else<span class="font-medium">{{ $s->data['name'] ?? $s->data['email'] ?? 'Lead' }}</span>@endif
                         <span class="text-xs text-surface-500">via {{ $s->form?->name }}</span>
                         @if($s->note)<p class="text-xs text-amber-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $s->note }}</p>@endif
                     </div>

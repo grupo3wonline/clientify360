@@ -82,8 +82,9 @@ final class DealController extends Controller
             'status' => Deal::STATUS_OPEN,
         ]);
 
+        // O CRUD de clientes migrou para o Filament (/app/clients/{id}/edit).
         return redirect()->to($request->input('redirect_to') === 'client'
-                ? route('clients.show', $deal->client_id)
+                ? url('/app/clients/'.$deal->client_id.'/edit')
                 : route('deals.index'))
             ->with('success', 'Oportunidade criada com sucesso!');
     }

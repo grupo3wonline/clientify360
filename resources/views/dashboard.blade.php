@@ -31,7 +31,7 @@
                 <div class="w-12 h-12 bg-brand-50 dark:bg-brand-950/50 rounded-xl flex items-center justify-center">
                     <i class="fa-solid fa-users text-brand-600 dark:text-brand-400 text-lg"></i>
                 </div>
-                <a href="{{ route('clients.index') }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium">Ver todos →</a>
+                <a href="{{ url('/app/clients') }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium">Ver todos →</a>
             </div>
             <p class="text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Total de Clientes</p>
             <div class="flex items-baseline space-x-2">
@@ -81,7 +81,7 @@
                 </div>
             </div>
             <p class="text-sm font-medium text-surface-500 dark:text-surface-400 mb-3">Ação Rápida</p>
-            <a href="{{ route('clients.create') }}" class="inline-flex items-center px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition shadow-sm shadow-brand-600/25">
+            <a href="{{ url('/app/clients/create') }}" class="inline-flex items-center px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition shadow-sm shadow-brand-600/25">
                 <i class="fa-solid fa-user-plus mr-2 text-xs"></i> Novo Cliente
             </a>
         </div>
@@ -145,11 +145,11 @@
                 <i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Ações Rápidas
             </h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <a href="{{ route('clients.create') }}" class="flex items-center px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-800 hover:bg-brand-50 dark:hover:bg-brand-950/30 border border-surface-200 dark:border-surface-700 hover:border-brand-200 dark:hover:border-brand-800 transition group">
+                <a href="{{ url('/app/clients/create') }}" class="flex items-center px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-800 hover:bg-brand-50 dark:hover:bg-brand-950/30 border border-surface-200 dark:border-surface-700 hover:border-brand-200 dark:hover:border-brand-800 transition group">
                     <i class="fa-solid fa-user-plus text-brand-500 mr-3 group-hover:scale-110 transition-transform"></i>
                     <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Novo Cliente</span>
                 </a>
-                <a href="{{ route('clients.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-800 hover:bg-accent-50 dark:hover:bg-accent-950/30 border border-surface-200 dark:border-surface-700 hover:border-accent-200 dark:hover:border-accent-800 transition group">
+                <a href="{{ url('/app/clients') }}" class="flex items-center px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-800 hover:bg-accent-50 dark:hover:bg-accent-950/30 border border-surface-200 dark:border-surface-700 hover:border-accent-200 dark:hover:border-accent-800 transition group">
                     <i class="fa-solid fa-list text-accent-500 mr-3 group-hover:scale-110 transition-transform"></i>
                     <span class="text-sm font-medium text-surface-700 dark:text-surface-300">Ver Clientes</span>
                 </a>

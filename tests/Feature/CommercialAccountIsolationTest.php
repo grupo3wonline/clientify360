@@ -32,6 +32,9 @@ class CommercialAccountIsolationTest extends TestCase
 
     public function test_collaborator_can_view_and_edit_account_client(): void
     {
+        // O CRUD de clientes migrou para o Filament (ClientResource). A regra de
+        // negócio verificada aqui é o compartilhamento por CONTA: o colaborador
+        // enxerga e edita os clientes da conta do dono através do mesmo escopo global.
         $owner = User::factory()->create();
         $this->actingAs($owner);
         $client = Client::create(['name' => 'Cliente do Dono', 'email' => 'dono-cli@ex.com']);
@@ -39,12 +42,9 @@ class CommercialAccountIsolationTest extends TestCase
         $collaborator = $this->collaboratorFor($owner);
         $this->actingAs($collaborator);
 
-        $this->get(route('clients.show', $client))->assertOk();
-        $this->get(route('clients.edit', $client))->assertOk();
+        $this->assertTrue(Client::whereKey($client->id)->exists(), 'colaborador vê o cliente da conta');
 
-        $this->put(route('clients.update', $client), ['name' => 'Editado pelo Colaborador'])
-            ->assertRedirect(route('clients.index'));
-
+        $client->update(['name' => 'Editado pelo Colaborador']);
         $this->assertSame('Editado pelo Colaborador', $client->fresh()->name);
     }
 
@@ -57,9 +57,9 @@ class CommercialAccountIsolationTest extends TestCase
         $bob = User::factory()->create();
         $this->actingAs($bob);
 
-        // Global scope esconde o registro de outra conta → 404.
-        $this->get(route('clients.show', $aliceClient))->assertNotFound();
-        $this->put(route('clients.update', $aliceClient), ['name' => 'Hack'])->assertNotFound();
+        // Global scope esconde o registro de outra conta.
+        $this->assertFalse(Client::whereKey($aliceClient->id)->exists());
+        $this->assertNull(Client::find($aliceClient->id));
     }
 
     public function test_commercial_data_is_shared_within_account_not_across(): void

@@ -5,8 +5,8 @@
 {{--
     Uso:
     <x-breadcrumb :items="[
-        ['label' => 'Clientes', 'url' => route('clients.index')],
-        ['label' => 'Novo Cliente'],
+        ['label' => 'Orçamentos', 'url' => route('quotes.index')],
+        ['label' => 'Novo Orçamento'],
     ]" />
 --}}
 

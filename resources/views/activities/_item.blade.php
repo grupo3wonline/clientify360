@@ -11,7 +11,7 @@
             <p class="text-sm font-semibold text-surface-900 dark:text-white">{{ $activity->title }}</p>
             <p class="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
                 {{ $activity->typeLabel() }} · {{ $activity->happened_at->format('d/m/Y H:i') }}
-                @if(!empty($showClient) && $activity->client) · <a class="text-brand-600 dark:text-brand-400 hover:underline" href="{{ route('clients.show', $activity->client_id) }}">{{ $activity->client->name }}</a>@endif
+                @if(!empty($showClient) && $activity->client) · <a class="text-brand-600 dark:text-brand-400 hover:underline" href="{{ url('/app/clients/'.$activity->client_id.'/edit') }}">{{ $activity->client->name }}</a>@endif
                 @if($activity->deal && empty($hideDeal)) · <a class="hover:underline" href="{{ route('deals.show', $activity->deal_id) }}"><i class="fa-solid fa-handshake mr-0.5"></i>{{ $activity->deal->title }}</a>@endif
             </p>
             @if($activity->description)<p class="text-sm text-surface-600 dark:text-surface-400 mt-1.5 whitespace-pre-line">{{ $activity->description }}</p>@endif
