@@ -11,6 +11,9 @@
 
         <title>{{ config('app.name', 'Clientify360') }} - @yield('title', 'Painel')</title>
 
+        {{-- Medição (GTM/GA4) --}}
+        <x-analytics />
+
         <!-- Google Fonts: Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

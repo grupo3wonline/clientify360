@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Activity extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     public const TYPES = [
         'note' => ['label' => 'Nota', 'icon' => 'fa-solid fa-note-sticky'],
@@ -41,7 +41,7 @@ class Activity extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id', 'client_id', 'deal_id', 'reminder_id', 'type', 'title', 'description',
+        'account_id', 'user_id', 'client_id', 'deal_id', 'reminder_id', 'type', 'title', 'description',
         'happened_at', 'outcome', 'next_step', 'next_step_at',
     ];
 

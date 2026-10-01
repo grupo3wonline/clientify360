@@ -3,20 +3,28 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AiController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClientController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\LeadFormController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicLeadFormController;
 use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TermsController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Cashier\Http\Controllers\WebhookController;
 
 // Public page (Landing / Hotsite — página única de vendas)
 Route::middleware('throttle:60,1')->group(function (): void {
@@ -34,8 +42,10 @@ Route::middleware('throttle:60,1')->group(function (): void {
 });
 
 // Dashboard (authenticated)
-Route::get('/dashboard', DashboardController::class)
-    ->middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->name('dashboard');
+// Dashboard → painel Filament (/app) é a home autenticada. A rota é mantida
+// porque o Breeze (verificação de e-mail etc.) e vários links apontam para ela.
+Route::get('/dashboard', fn () => redirect('/app'))
+    ->middleware(['auth', 'throttle:120,1'])->name('dashboard');
 
 // Authenticated routes
 Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->group(function (): void {
@@ -44,12 +54,21 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Billing / Subscription
-    Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing.index');
-    Route::post('/billing/subscribe', [\App\Http\Controllers\BillingController::class, 'subscribe'])->name('billing.subscribe');
-    Route::post('/billing/cancel', [\App\Http\Controllers\BillingController::class, 'cancel'])->name('billing.cancel');
-    Route::post('/billing/resume', [\App\Http\Controllers\BillingController::class, 'resume'])->name('billing.resume');
-    Route::get('/billing/portal', [\App\Http\Controllers\BillingController::class, 'portal'])->name('billing.portal');
+    // Equipe / Colaboradores (ACL: permissão account.members)
+    Route::get('/equipe', [TeamController::class, 'index'])->name('team.index');
+    Route::post('/equipe/convites', [TeamController::class, 'invite'])->name('team.invite');
+    Route::patch('/equipe/membros/{member}/papel', [TeamController::class, 'updateRole'])->name('team.updateRole');
+    Route::delete('/equipe/membros/{member}', [TeamController::class, 'removeMember'])->name('team.removeMember');
+    Route::delete('/equipe/convites/{invitation}', [TeamController::class, 'revokeInvite'])->name('team.revokeInvite');
+
+    // Billing / Subscription (apenas quem tem permissão de cobrança — Dono)
+    Route::middleware('permission:account.billing')->group(function (): void {
+        Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+        Route::post('/billing/subscribe', [BillingController::class, 'subscribe'])->name('billing.subscribe');
+        Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+        Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
+        Route::get('/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
+    });
 
     // Clients CRUD
     // create/store ANTES do resource: senão "clients/{client}" captura "clients/create" (404)
@@ -58,32 +77,33 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     Route::resource('clients', ClientController::class)->except(['create', 'store']);
 
     // Reminders / Agenda
-    Route::get('reminders', [\App\Http\Controllers\ReminderController::class, 'index'])->name('reminders.index');
-    Route::post('reminders', [\App\Http\Controllers\ReminderController::class, 'store'])->name('reminders.store');
-    Route::patch('reminders/{reminder}/complete', [\App\Http\Controllers\ReminderController::class, 'complete'])->name('reminders.complete');
-    Route::delete('reminders/{reminder}', [\App\Http\Controllers\ReminderController::class, 'destroy'])->name('reminders.destroy');
+    Route::get('reminders', [ReminderController::class, 'index'])->name('reminders.index');
+    Route::post('reminders', [ReminderController::class, 'store'])->name('reminders.store');
+    Route::patch('reminders/{reminder}/complete', [ReminderController::class, 'complete'])->name('reminders.complete');
+    Route::delete('reminders/{reminder}', [ReminderController::class, 'destroy'])->name('reminders.destroy');
 
     // Interactions / Support
-    Route::get('interactions', [\App\Http\Controllers\InteractionController::class, 'index'])->name('interactions.index');
-    Route::post('interactions', [\App\Http\Controllers\InteractionController::class, 'store'])->name('interactions.store');
-    Route::patch('interactions/{interaction}/status', [\App\Http\Controllers\InteractionController::class, 'updateStatus'])->name('interactions.updateStatus');
-    Route::delete('interactions/{interaction}', [\App\Http\Controllers\InteractionController::class, 'destroy'])->name('interactions.destroy');
+    Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');
+    Route::post('interactions', [InteractionController::class, 'store'])->name('interactions.store');
+    Route::patch('interactions/{interaction}/status', [InteractionController::class, 'updateStatus'])->name('interactions.updateStatus');
+    Route::delete('interactions/{interaction}', [InteractionController::class, 'destroy'])->name('interactions.destroy');
 
     // Reports
-    Route::get('reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 
     // Notifications
-    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('notifications/mark-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markRead');
-    Route::post('notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
 
     // AI Analysis (Professional plan only)
-    Route::get('ai/settings', [\App\Http\Controllers\AiController::class, 'settings'])->name('ai.settings');
-    Route::post('ai/settings', [\App\Http\Controllers\AiController::class, 'saveSettings'])->name('ai.saveSettings');
-    Route::post('ai/analyze/{client}', [\App\Http\Controllers\AiController::class, 'analyze'])->name('ai.analyze');
+    Route::get('ai/settings', [AiController::class, 'settings'])->name('ai.settings');
+    Route::post('ai/settings', [AiController::class, 'saveSettings'])->name('ai.saveSettings');
+    Route::post('ai/analyze/{client}', [AiController::class, 'analyze'])->name('ai.analyze');
 
     // Export (Professional plan only)
-    Route::get('/export/clients', [\App\Http\Controllers\ExportController::class, 'clients'])->name('export.clients');
+    Route::get('/export/clients', [ExportController::class, 'clients'])->name('export.clients');
+    Route::get('/export/clients/xlsx', [ExportController::class, 'clientsExcel'])->name('export.clients.xlsx');
 
     // ===== CRM comercial (CrmPlus + crm-master) =====
     Route::get('pipeline', [DealController::class, 'index'])->name('deals.index');
@@ -160,5 +180,5 @@ Route::middleware(['auth'])->group(function (): void {
 require __DIR__.'/auth.php';
 
 // Stripe Webhook (no CSRF, no auth)
-Route::post('/stripe/webhook', [\Laravel\Cashier\Http\Controllers\WebhookController::class, 'handleWebhook'])
+Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
     ->name('cashier.webhook');

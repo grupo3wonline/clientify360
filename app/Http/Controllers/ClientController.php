@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\DTOs\ClientDTO;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
-use App\Models\Client;
 use App\Models\Tag;
 use App\Services\ClientService;
 use Illuminate\Http\RedirectResponse;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FinancialCategory extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     public const DEFAULTS = [
         ['name' => 'Vendas de produtos', 'type' => 'income', 'color' => '#10b981'],
@@ -30,21 +30,21 @@ class FinancialCategory extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['user_id', 'name', 'type', 'color'];
+    protected $fillable = ['account_id', 'user_id', 'name', 'type', 'color'];
 
     public function entries(): HasMany
     {
         return $this->hasMany(FinancialEntry::class, 'category_id');
     }
 
-    public static function ensureDefaultsFor(string $userId): void
+    public static function ensureDefaultsFor(string $accountId): void
     {
-        if (static::withoutGlobalScope('owned')->withTrashed()->where('user_id', $userId)->exists()) {
+        if (static::withoutGlobalScope('owned')->withTrashed()->where('account_id', $accountId)->exists()) {
             return;
         }
 
         foreach (self::DEFAULTS as $category) {
-            static::create($category + ['user_id' => $userId]);
+            static::create($category + ['account_id' => $accountId]);
         }
     }
 }

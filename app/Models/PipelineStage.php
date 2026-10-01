@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -12,13 +12,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PipelineStage extends Model
 {
-    use BelongsToUser, HasUuid;
+    use BelongsToAccount, HasUuid;
 
     protected $keyType = 'string';
 
     public $incrementing = false;
 
-    protected $fillable = ['user_id', 'name', 'color', 'position', 'probability', 'is_active'];
+    protected $fillable = ['account_id', 'user_id', 'name', 'color', 'position', 'probability', 'is_active'];
 
     /** Etapas criadas automaticamente no primeiro acesso ao funil (padrão CrmPlus). */
     public const DEFAULTS = [
@@ -49,17 +49,17 @@ class PipelineStage extends Model
     }
 
     /**
-     * Garante que o usuário tenha etapas. Recebe o user_id explicitamente para
+     * Garante que a conta tenha etapas. Recebe o account_id explicitamente para
      * funcionar também no formulário público (sem usuário logado).
      */
-    public static function ensureDefaultsFor(string $userId): void
+    public static function ensureDefaultsFor(string $accountId): void
     {
-        if (static::withoutGlobalScope('owned')->where('user_id', $userId)->exists()) {
+        if (static::withoutGlobalScope('owned')->where('account_id', $accountId)->exists()) {
             return;
         }
 
         foreach (self::DEFAULTS as $stage) {
-            static::create($stage + ['user_id' => $userId, 'is_active' => true]);
+            static::create($stage + ['account_id' => $accountId, 'is_active' => true]);
         }
     }
 }

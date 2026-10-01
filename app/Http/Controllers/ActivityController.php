@@ -60,7 +60,7 @@ final class ActivityController extends Controller
             if (!empty($data['next_step']) && !empty($data['next_step_at'])) {
                 $reminderId = Reminder::create([
                     'client_id' => $data['client_id'],
-                    'title' => 'Próximo passo: ' . mb_strimwidth($data['next_step'], 0, 200, '…'),
+                    'title' => 'Próximo passo: '.mb_strimwidth($data['next_step'], 0, 200, '…'),
                     'description' => $data['title'],
                     'remind_at' => $data['next_step_at'],
                 ])->id;

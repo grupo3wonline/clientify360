@@ -127,7 +127,7 @@ final class ProductController extends Controller
             $data['document'] ?? null,
         );
 
-        return back()->with('success', 'Estoque atualizado. Saldo atual: ' . rtrim(rtrim(number_format((float) $product->stock, 3, ',', '.'), '0'), ',') . " {$product->unit}");
+        return back()->with('success', 'Estoque atualizado. Saldo atual: '.rtrim(rtrim(number_format((float) $product->stock, 3, ',', '.'), '0'), ',')." {$product->unit}");
     }
 
     /** Busca usada pelo editor de orçamentos (autocomplete). */

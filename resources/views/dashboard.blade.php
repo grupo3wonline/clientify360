@@ -58,7 +58,9 @@
                 <div class="w-12 h-12 bg-amber-50 dark:bg-amber-950/50 rounded-xl flex items-center justify-center">
                     <i class="fa-solid fa-crown text-amber-600 dark:text-amber-400 text-lg"></i>
                 </div>
-                <a href="{{ route('billing.index') }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium">Gerenciar →</a>
+                @can('account.billing')
+                    <a href="{{ route('billing.index') }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium">Gerenciar →</a>
+                @endcan
             </div>
             <p class="text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Plano Atual</p>
             <p class="text-3xl font-bold text-surface-900 dark:text-white">{{ $currentPlan['name'] }}</p>
@@ -113,8 +115,8 @@
         </a>
     </div>
 
-    <!-- Upgrade Banner (basic plan only) -->
-    @if(($currentPlan['slug'] ?? '') === 'basic')
+    <!-- Upgrade Banner (basic plan only, apenas quem gerencia cobrança) -->
+    @if(($currentPlan['slug'] ?? '') === 'basic' && auth()->user()->can('account.billing'))
         <div class="bg-gradient-to-r from-brand-50 to-accent-50 dark:from-brand-950/30 dark:to-accent-950/30 rounded-2xl border border-brand-200 dark:border-brand-800/50 p-6 mb-8">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div class="flex items-start space-x-4">

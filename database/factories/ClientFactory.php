@@ -18,7 +18,8 @@ final class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            // Cria uma conta (via usuário dono) e vincula o cliente a ela.
+            'account_id' => fn () => User::factory()->create()->account_id,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),

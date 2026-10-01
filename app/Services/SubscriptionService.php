@@ -4,18 +4,34 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Account;
+use App\Models\Client;
+use App\Models\LeadForm;
+use App\Models\Product;
+use App\Models\Quote;
 use App\Models\User;
 use Carbon\Carbon;
 
+/**
+ * A assinatura é da CONTA (tenant), não do usuário. Os métodos recebem o
+ * usuário por conveniência dos controllers e resolvem a conta dele como a
+ * entidade Billable do Cashier.
+ */
 final class SubscriptionService
 {
-    private const PLAN_BASIC = 'basic';
-    private const PLAN_PROFESSIONAL = 'professional';
     private const SUBSCRIPTION_NAME = 'default';
+
+    /** Resolve a conta (entidade Billable) a partir do usuário. */
+    private function billable(User $user): ?Account
+    {
+        return $user->account;
+    }
 
     public function getCurrentPlan(User $user): array
     {
-        if ($user->subscribed(self::SUBSCRIPTION_NAME)) {
+        $account = $this->billable($user);
+
+        if ($account !== null && $account->subscribed(self::SUBSCRIPTION_NAME)) {
             return config('plans.professional');
         }
 
@@ -29,7 +45,9 @@ final class SubscriptionService
 
     public function isProfessional(User $user): bool
     {
-        return $user->subscribed(self::SUBSCRIPTION_NAME);
+        $account = $this->billable($user);
+
+        return $account !== null && $account->subscribed(self::SUBSCRIPTION_NAME);
     }
 
     public function isBasic(User $user): bool
@@ -64,18 +82,20 @@ final class SubscriptionService
     }
 
     /**
-     * Uso atual do recurso. Os models têm escopo global por usuário, mas aqui
-     * filtramos explicitamente por user_id para funcionar também fora de uma
-     * requisição autenticada (ex.: formulário público de captação).
+     * Uso atual do recurso na conta. Os models têm escopo global por conta, mas
+     * aqui filtramos explicitamente por account_id para funcionar também fora de
+     * uma requisição autenticada (ex.: formulário público de captação).
      */
     public function getUsage(User $user, string $resource): int
     {
+        $accountId = $user->account_id;
+
         return match ($resource) {
-            'clients' => \App\Models\Client::withoutGlobalScope('owned')->where('user_id', $user->id)->count(),
-            'products' => \App\Models\Product::withoutGlobalScope('owned')->where('user_id', $user->id)->count(),
-            'lead_forms' => \App\Models\LeadForm::withoutGlobalScope('owned')->where('user_id', $user->id)->count(),
-            'quotes_per_month' => \App\Models\Quote::withoutGlobalScope('owned')->withTrashed()
-                ->where('user_id', $user->id)
+            'clients' => Client::withoutGlobalScope('owned')->where('account_id', $accountId)->count(),
+            'products' => Product::withoutGlobalScope('owned')->where('account_id', $accountId)->count(),
+            'lead_forms' => LeadForm::withoutGlobalScope('owned')->where('account_id', $accountId)->count(),
+            'quotes_per_month' => Quote::withoutGlobalScope('owned')->withTrashed()
+                ->where('account_id', $accountId)
                 ->where('created_at', '>=', now()->startOfMonth())
                 ->count(),
             default => 0,
@@ -98,7 +118,8 @@ final class SubscriptionService
 
     public function getRenewalDate(User $user): ?Carbon
     {
-        $subscription = $user->subscription(self::SUBSCRIPTION_NAME);
+        $account = $this->billable($user);
+        $subscription = $account?->subscription(self::SUBSCRIPTION_NAME);
 
         if ($subscription === null) {
             return null;
@@ -122,12 +143,14 @@ final class SubscriptionService
 
     public function getPaymentHistory(User $user): array
     {
-        if (!$user->hasStripeId()) {
+        $account = $this->billable($user);
+
+        if ($account === null || !$account->hasStripeId()) {
             return [];
         }
 
         try {
-            $invoices = $user->invoices();
+            $invoices = $account->invoices();
 
             return $invoices->map(function ($invoice) {
                 return [
@@ -145,7 +168,8 @@ final class SubscriptionService
 
     public function getSubscriptionStatus(User $user): string
     {
-        $subscription = $user->subscription(self::SUBSCRIPTION_NAME);
+        $account = $this->billable($user);
+        $subscription = $account?->subscription(self::SUBSCRIPTION_NAME);
 
         if ($subscription === null) {
             return 'free';
@@ -164,17 +188,19 @@ final class SubscriptionService
 
     public function createCheckoutSession(User $user, string $priceId): string
     {
-        return $user->newSubscription(self::SUBSCRIPTION_NAME, $priceId)
+        $account = $this->requireAccount($user);
+
+        return $account->newSubscription(self::SUBSCRIPTION_NAME, $priceId)
             ->checkout([
-                'success_url' => route('billing.index') . '?checkout=success',
-                'cancel_url' => route('billing.index') . '?checkout=cancel',
+                'success_url' => route('billing.index').'?checkout=success',
+                'cancel_url' => route('billing.index').'?checkout=cancel',
             ])
             ->url;
     }
 
     public function cancelSubscription(User $user): void
     {
-        $subscription = $user->subscription(self::SUBSCRIPTION_NAME);
+        $subscription = $this->billable($user)?->subscription(self::SUBSCRIPTION_NAME);
 
         if ($subscription !== null && !$subscription->canceled()) {
             $subscription->cancel();
@@ -183,7 +209,7 @@ final class SubscriptionService
 
     public function resumeSubscription(User $user): void
     {
-        $subscription = $user->subscription(self::SUBSCRIPTION_NAME);
+        $subscription = $this->billable($user)?->subscription(self::SUBSCRIPTION_NAME);
 
         if ($subscription !== null && $subscription->onGracePeriod()) {
             $subscription->resume();
@@ -192,7 +218,26 @@ final class SubscriptionService
 
     public function getBillingPortalUrl(User $user): string
     {
-        return $user->billingPortalUrl(route('billing.index'));
+        return $this->requireAccount($user)->billingPortalUrl(route('billing.index'));
+    }
+
+    private function requireAccount(User $user): Account
+    {
+        $account = $this->billable($user);
+
+        if ($account === null) {
+            throw new \RuntimeException('Usuário sem conta associada.');
+        }
+
+        return $account;
+    }
+
+    /** A conta do usuário já é cliente no Stripe (tem assinatura/forma de pagamento)? */
+    public function hasStripeCustomer(User $user): bool
+    {
+        $account = $this->billable($user);
+
+        return $account !== null && $account->hasStripeId();
     }
 
     /**
@@ -202,22 +247,24 @@ final class SubscriptionService
      */
     public function syncSubscriptionFromStripe(User $user): void
     {
-        if (!$user->hasStripeId()) {
+        $account = $this->billable($user);
+
+        if ($account === null || !$account->hasStripeId()) {
             return;
         }
 
         // If already subscribed locally, no need to sync
-        if ($user->subscribed(self::SUBSCRIPTION_NAME)) {
+        if ($account->subscribed(self::SUBSCRIPTION_NAME)) {
             return;
         }
 
         try {
-            $stripeCustomer = $user->asStripeCustomer(['subscriptions']);
+            $stripeCustomer = $account->asStripeCustomer(['subscriptions']);
             $subscriptions = $stripeCustomer->subscriptions->data ?? [];
 
             foreach ($subscriptions as $stripeSubscription) {
                 if ($stripeSubscription->status === 'active' || $stripeSubscription->status === 'trialing') {
-                    $user->subscriptions()->create([
+                    $account->subscriptions()->create([
                         'type' => self::SUBSCRIPTION_NAME,
                         'stripe_id' => $stripeSubscription->id,
                         'stripe_status' => $stripeSubscription->status,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,9 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FinancialEntry extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     public const RECEIVABLE = 'receivable';
+
     public const PAYABLE = 'payable';
 
     public const PAYMENT_METHODS = [
@@ -33,7 +34,7 @@ class FinancialEntry extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id', 'direction', 'category_id', 'client_id', 'quote_id', 'description', 'counterparty',
+        'account_id', 'user_id', 'direction', 'category_id', 'client_id', 'quote_id', 'description', 'counterparty',
         'amount', 'due_date', 'paid_at', 'paid_amount', 'status', 'payment_method',
         'installment', 'installments_total', 'notes',
     ];

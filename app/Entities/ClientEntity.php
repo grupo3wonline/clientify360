@@ -7,14 +7,23 @@ namespace App\Entities;
 final class ClientEntity
 {
     private ?string $id;
+
     private string $name;
+
     private ?string $email;
+
     private ?string $phone;
+
     private ?string $document;
+
     private ?string $address;
+
     private ?string $city;
+
     private ?string $state;
+
     private ?string $zipCode;
+
     private ?string $notes;
 
     public function __construct(array $attributes = [])

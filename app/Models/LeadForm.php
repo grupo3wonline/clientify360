@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class LeadForm extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     /** Campos que o serviço de captação sabe mapear para o cadastro do cliente. */
     public const MAPPABLE_FIELDS = [
@@ -33,7 +33,7 @@ class LeadForm extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id', 'name', 'slug', 'title', 'description', 'color', 'button_text', 'success_message',
+        'account_id', 'user_id', 'name', 'slug', 'title', 'description', 'color', 'button_text', 'success_message',
         'redirect_url', 'fields', 'default_source', 'create_deal', 'pipeline_stage_id', 'is_active',
         'submissions_count',
     ];
@@ -67,7 +67,7 @@ class LeadForm extends Model
     public static function generateSlug(string $name): string
     {
         do {
-            $slug = Str::limit(Str::slug($name), 60, '') . '-' . Str::lower(Str::random(6));
+            $slug = Str::limit(Str::slug($name), 60, '').'-'.Str::lower(Str::random(6));
         } while (static::withoutGlobalScope('owned')->withTrashed()->where('slug', $slug)->exists());
 
         return $slug;

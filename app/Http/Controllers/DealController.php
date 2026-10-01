@@ -20,7 +20,7 @@ final class DealController extends Controller
 {
     public function index(Request $request): View
     {
-        PipelineStage::ensureDefaultsFor((string) auth()->id());
+        PipelineStage::ensureDefaultsFor((string) auth()->user()->account_id);
 
         $stages = PipelineStage::ordered()->get();
         $search = trim((string) $request->query('search', ''));
@@ -119,7 +119,7 @@ final class DealController extends Controller
         $deal->markWon();
         $this->log($deal, 'Oportunidade ganha 🎉', 'positive');
 
-        return back()->with('success', 'Oportunidade marcada como GANHA! Valor: R$ ' . number_format((float) $deal->value, 2, ',', '.'));
+        return back()->with('success', 'Oportunidade marcada como GANHA! Valor: R$ '.number_format((float) $deal->value, 2, ',', '.'));
     }
 
     public function lose(Request $request, Deal $deal): RedirectResponse
@@ -129,7 +129,7 @@ final class DealController extends Controller
         ]);
 
         $deal->markLost($validated['lost_reason']);
-        $this->log($deal, 'Oportunidade perdida: ' . $validated['lost_reason'], 'negative');
+        $this->log($deal, 'Oportunidade perdida: '.$validated['lost_reason'], 'negative');
 
         return back()->with('success', 'Oportunidade marcada como perdida.');
     }

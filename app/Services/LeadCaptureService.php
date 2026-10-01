@@ -31,6 +31,7 @@ final class LeadCaptureService
     {
         return DB::transaction(function () use ($form, $data, $meta): LeadFormSubmission {
             $owner = User::findOrFail($form->user_id);
+            $accountId = $form->account_id ?? $owner->account_id;
             $client = null;
             $deal = null;
             $note = null;
@@ -40,7 +41,7 @@ final class LeadCaptureService
             // Deduplicação: mesmo e-mail = mesmo cliente (evita cadastro repetido a cada envio)
             if ($email) {
                 $client = Client::withoutGlobalScope('owned')
-                    ->where('user_id', $owner->id)
+                    ->where('account_id', $accountId)
                     ->where('email', $email)
                     ->first();
             }
@@ -48,38 +49,40 @@ final class LeadCaptureService
             if ($client === null) {
                 if ($this->subscriptions->canCreate($owner, 'clients')) {
                     $client = new Client([
-                        'name' => $data['name'] ?? ($email ?: 'Lead ' . now()->format('d/m H:i')),
+                        'name' => $data['name'] ?? ($email ?: 'Lead '.now()->format('d/m H:i')),
                         'email' => $email,
                         'phone' => $data['phone'] ?? null,
                         'city' => $data['city'] ?? null,
                         'source' => array_key_exists($form->default_source, Client::SOURCES) ? $form->default_source : 'site',
                         'notes' => $this->buildNotes($form, $data),
                     ]);
+                    $client->account_id = $accountId;
                     $client->user_id = $owner->id;
                     $client->save();
                 } else {
                     // O lead NÃO se perde: fica registrado no envio para o dono ver e fazer upgrade
-                    $note = 'Limite de clientes do plano atingido — cliente não foi criado automaticamente.';
+                    $note = 'Limite de clientes do seu plano atingido. Este lead foi salvo aqui, mas não virou cliente automaticamente. Faça upgrade do plano para liberar novos cadastros e não perder oportunidades.';
                 }
             }
 
             if ($client !== null && $form->create_deal) {
-                PipelineStage::ensureDefaultsFor($owner->id);
+                PipelineStage::ensureDefaultsFor($accountId);
 
                 $stageId = $form->pipeline_stage_id
-                    ?? PipelineStage::withoutGlobalScope('owned')->where('user_id', $owner->id)->where('is_active', true)->orderBy('position')->value('id');
+                    ?? PipelineStage::withoutGlobalScope('owned')->where('account_id', $accountId)->where('is_active', true)->orderBy('position')->value('id');
                 $probability = (int) (PipelineStage::withoutGlobalScope('owned')->whereKey($stageId)->value('probability') ?? 10);
 
                 $deal = new Deal([
                     'client_id' => $client->id,
                     'pipeline_stage_id' => $stageId,
-                    'title' => 'Lead: ' . ($data['company'] ?? $client->name),
+                    'title' => 'Lead: '.($data['company'] ?? $client->name),
                     'description' => $data['message'] ?? null,
                     'value' => 0,
                     'probability' => $probability,
                     'status' => Deal::STATUS_OPEN,
                     'source' => $form->default_source,
                 ]);
+                $deal->account_id = $accountId;
                 $deal->user_id = $owner->id;
                 $deal->save();
             }
@@ -93,6 +96,7 @@ final class LeadCaptureService
                     'description' => $this->buildNotes($form, $data),
                     'happened_at' => now(),
                 ]);
+                $activity->account_id = $accountId;
                 $activity->user_id = $owner->id;
                 $activity->save();
             }
@@ -110,6 +114,7 @@ final class LeadCaptureService
                 'utm_campaign' => $meta['utm_campaign'] ?? null,
                 'note' => $note,
             ]);
+            $submission->account_id = $accountId;
             $submission->user_id = $owner->id;
             $submission->save();
 
@@ -125,7 +130,7 @@ final class LeadCaptureService
 
         return collect($data)
             ->filter(fn ($v) => $v !== null && $v !== '')
-            ->map(fn ($v, $k) => ($labels[$k] ?? $k) . ': ' . $v)
+            ->map(fn ($v, $k) => ($labels[$k] ?? $k).': '.$v)
             ->implode("\n");
     }
 }

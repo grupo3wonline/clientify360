@@ -66,8 +66,10 @@ final class FinanceService
     public function monthSummary(?Carbon $month = null): array
     {
         $month ??= now();
-        $start = $month->copy()->startOfMonth()->toDateString();
-        $end = $month->copy()->endOfMonth()->toDateString();
+        // Limites como datetime cobrindo o mês inteiro: `paid_at`/`due_date` têm cast `date`
+        // e são gravados como `Y-m-d 00:00:00`, então o fim do mês precisa alcançar o fim do dia.
+        $start = $month->copy()->startOfMonth()->startOfDay();
+        $end = $month->copy()->endOfMonth()->endOfDay();
 
         $received = (float) FinancialEntry::receivable()->where('status', 'paid')->whereBetween('paid_at', [$start, $end])->sum('paid_amount');
         $paid = (float) FinancialEntry::payable()->where('status', 'paid')->whereBetween('paid_at', [$start, $end])->sum('paid_amount');
@@ -92,15 +94,15 @@ final class FinanceService
      */
     public function cashFlow(int $monthsBack = 5, int $monthsAhead = 1): array
     {
-        $from = now()->subMonths($monthsBack)->startOfMonth();
-        $to = now()->addMonths($monthsAhead)->endOfMonth();
+        $from = now()->subMonths($monthsBack)->startOfMonth()->startOfDay();
+        $to = now()->addMonths($monthsAhead)->endOfMonth()->endOfDay();
 
         $paid = FinancialEntry::where('status', 'paid')
-            ->whereBetween('paid_at', [$from->toDateString(), $to->toDateString()])
+            ->whereBetween('paid_at', [$from, $to])
             ->get(['direction', 'paid_at', 'paid_amount']);
 
         $pending = FinancialEntry::pending()
-            ->whereBetween('due_date', [now()->startOfMonth()->toDateString(), $to->toDateString()])
+            ->whereBetween('due_date', [now()->startOfMonth()->startOfDay(), $to])
             ->get(['direction', 'due_date', 'amount']);
 
         $months = [];

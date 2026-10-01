@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\Client;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class StoreClientRequest extends FormRequest
 {
@@ -37,9 +39,9 @@ final class StoreClientRequest extends FormRequest
             'state' => ['nullable', 'string', 'max:2'],
             'zip_code' => ['nullable', 'string', 'max:10'],
             'notes' => ['nullable', 'string', 'max:1000'],
-            'source' => ['nullable', 'string', \Illuminate\Validation\Rule::in(array_keys(\App\Models\Client::SOURCES))],
+            'source' => ['nullable', 'string', Rule::in(array_keys(Client::SOURCES))],
             'tag_ids' => ['nullable', 'array'],
-            'tag_ids.*' => ['string', \Illuminate\Validation\Rule::exists('tags', 'id')->where('user_id', $this->user()?->id)],
+            'tag_ids.*' => ['string', Rule::exists('tags', 'id')->where('user_id', $this->user()?->id)],
             'score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'score_label' => ['nullable', 'string', 'max:20'],
         ];

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LeadFormSubmission extends Model
 {
-    use BelongsToUser, HasUuid;
+    use BelongsToAccount, HasUuid;
 
     protected $keyType = 'string';
 
     public $incrementing = false;
 
     protected $fillable = [
-        'lead_form_id', 'user_id', 'client_id', 'deal_id', 'data', 'ip', 'user_agent', 'referrer',
+        'lead_form_id', 'account_id', 'user_id', 'client_id', 'deal_id', 'data', 'ip', 'user_agent', 'referrer',
         'utm_source', 'utm_medium', 'utm_campaign', 'note',
     ];
 

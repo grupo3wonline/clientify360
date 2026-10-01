@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
 
 /**
  * `exists` restrito aos registros do usuário logado.

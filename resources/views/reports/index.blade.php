@@ -57,6 +57,107 @@
         </div>
     </div>
 
+    <!-- Desempenho comercial -->
+    <h2 class="text-sm font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider mb-3 mt-2">Desempenho comercial</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fa-solid fa-trophy text-accent-500"></i>
+                <span class="text-[10px] font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-1.5 py-0.5 rounded">{{ $commercial['deals_lost'] }} perdidas</span>
+            </div>
+            <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ $commercial['deals_won'] }}</p>
+            <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Oportunidades Ganhas</p>
+        </div>
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fa-solid fa-percent text-brand-500"></i>
+            </div>
+            <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ number_format($commercial['conversion_rate'], 1, ',', '.') }}%</p>
+            <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Taxa de Conversão</p>
+        </div>
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fa-solid fa-file-invoice-dollar text-teal-500"></i>
+                <span class="text-[10px] font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-1.5 py-0.5 rounded">{{ $commercial['quotes_waiting'] }} aguardando</span>
+            </div>
+            <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ $commercial['quotes_approved'] }}</p>
+            <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Orçamentos Aprovados</p>
+        </div>
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fa-solid fa-sack-dollar text-accent-500"></i>
+            </div>
+            <p class="text-lg font-bold text-surface-900 dark:text-white">@money($commercial['deals_won_value'])</p>
+            <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Valor Ganho</p>
+        </div>
+    </div>
+
+    <!-- Resumo financeiro do mês -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-accent-50 dark:bg-accent-950/40 rounded-2xl border border-accent-200 dark:border-accent-900 p-5">
+            <p class="text-lg font-bold text-accent-700 dark:text-accent-300">@money($finance['received'])</p>
+            <p class="text-[10px] text-accent-600 dark:text-accent-400 uppercase tracking-wider mt-1">Recebido no mês</p>
+        </div>
+        <div class="bg-red-50 dark:bg-red-950/40 rounded-2xl border border-red-200 dark:border-red-900 p-5">
+            <p class="text-lg font-bold text-red-700 dark:text-red-300">@money($finance['paid'])</p>
+            <p class="text-[10px] text-red-600 dark:text-red-400 uppercase tracking-wider mt-1">Pago no mês</p>
+        </div>
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <p class="text-lg font-bold {{ $finance['balance'] >= 0 ? 'text-accent-600 dark:text-accent-400' : 'text-red-600 dark:text-red-400' }}">@money($finance['balance'])</p>
+            <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Saldo do mês</p>
+        </div>
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <p class="text-lg font-bold text-amber-600 dark:text-amber-400">@money($finance['to_receive'])</p>
+            <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">A receber no mês</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Produtos mais vendidos -->
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+            <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-4 flex items-center">
+                <i class="fa-solid fa-boxes-stacked text-brand-500 mr-2"></i> Mais Vendidos (orçamentos aprovados)
+            </h3>
+            @if(count($commercial['top_products']) > 0)
+            <div class="space-y-3">
+                @foreach($commercial['top_products'] as $i => $product)
+                <div class="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <span class="w-6 h-6 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 flex items-center justify-center text-xs font-bold flex-shrink-0">{{ $i + 1 }}</span>
+                        <span class="text-sm font-medium text-surface-800 dark:text-surface-200 truncate">{{ $product['name'] }}</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-xs text-surface-500 flex-shrink-0">
+                        <span>@qty($product['quantity']) un</span>
+                        <span class="font-semibold text-surface-700 dark:text-surface-300">@money($product['total'])</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-xs text-surface-400 italic">Nenhuma venda registrada no período.</p>
+            @endif
+        </div>
+
+        <!-- Motivos de perda -->
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+            <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-4 flex items-center">
+                <i class="fa-solid fa-circle-xmark text-red-500 mr-2"></i> Motivos de Perda
+            </h3>
+            @if(count($commercial['lost_reasons']) > 0)
+            <div class="space-y-3">
+                @foreach($commercial['lost_reasons'] as $reason => $count)
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-surface-700 dark:text-surface-300 truncate">{{ $reason }}</span>
+                    <span class="text-sm font-semibold text-surface-900 dark:text-white px-2 py-0.5 bg-surface-100 dark:bg-surface-800 rounded flex-shrink-0 ml-2">{{ $count }}</span>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-xs text-surface-400 italic">Nenhuma oportunidade perdida no período.</p>
+            @endif
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Score Distribution -->
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">

@@ -78,7 +78,7 @@ final class BillingController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->hasStripeId()) {
+        if (!$this->subscriptionService->hasStripeCustomer($user)) {
             return redirect()->route('billing.index')
                 ->with('error', 'Você precisa ter uma assinatura ativa para acessar o portal.');
         }

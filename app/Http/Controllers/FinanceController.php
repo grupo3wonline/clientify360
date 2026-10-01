@@ -24,7 +24,7 @@ final class FinanceController extends Controller
 
     public function index(): View
     {
-        FinancialCategory::ensureDefaultsFor((string) auth()->id());
+        FinancialCategory::ensureDefaultsFor((string) auth()->user()->account_id);
 
         $summary = $this->finance->monthSummary();
         $cashFlow = $this->finance->cashFlow();
@@ -49,7 +49,7 @@ final class FinanceController extends Controller
 
     public function entries(Request $request): View
     {
-        FinancialCategory::ensureDefaultsFor((string) auth()->id());
+        FinancialCategory::ensureDefaultsFor((string) auth()->user()->account_id);
 
         $direction = in_array($request->query('direction'), ['receivable', 'payable'], true) ? $request->query('direction') : null;
         $status = $request->query('status');
@@ -140,7 +140,7 @@ final class FinanceController extends Controller
 
     public function categories(): View
     {
-        FinancialCategory::ensureDefaultsFor((string) auth()->id());
+        FinancialCategory::ensureDefaultsFor((string) auth()->user()->account_id);
         $categories = FinancialCategory::withCount('entries')->orderBy('type')->orderBy('name')->get();
 
         return view('finance.categories', compact('categories'));

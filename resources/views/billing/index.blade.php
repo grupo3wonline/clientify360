@@ -1,18 +1,18 @@
 <x-app-layout>
-    @section('title', 'Financeiro')
+    @section('title', 'Assinatura')
 
     <x-slot name="header">
         <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
             <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
             <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Financeiro</span>
+            <span class="text-surface-800 dark:text-surface-200 font-medium">Assinatura</span>
         </nav>
     </x-slot>
 
     <!-- Page Header -->
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Financeiro</h1>
-        <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Gerencie sua assinatura e pagamentos</p>
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Assinatura</h1>
+        <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Gerencie o plano, a vigência e o histórico de pagamentos da sua conta</p>
     </div>
 
     <!-- Current Plan Card -->

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -14,10 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Deal extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     public const STATUS_OPEN = 'open';
+
     public const STATUS_WON = 'won';
+
     public const STATUS_LOST = 'lost';
 
     public const STATUS_LABELS = [
@@ -31,7 +33,7 @@ class Deal extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id', 'client_id', 'pipeline_stage_id', 'title', 'description', 'value',
+        'account_id', 'user_id', 'client_id', 'pipeline_stage_id', 'title', 'description', 'value',
         'probability', 'status', 'expected_close_date', 'closed_at', 'lost_reason', 'source',
     ];
 

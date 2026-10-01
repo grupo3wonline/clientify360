@@ -6,23 +6,41 @@ namespace App\Models;
 
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Cashier\Billable;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use Billable, HasFactory, HasUuid, Notifiable, SoftDeletes;
+    use HasFactory, HasRoles, HasUuid, Notifiable, SoftDeletes;
+
+    /** Papéis dentro de uma conta. */
+    public const ROLE_OWNER = 'owner';
+
+    public const ROLE_MANAGER = 'manager';
+
+    public const ROLE_COLLABORATOR = 'collaborator';
+
+    public const ROLE_LABELS = [
+        self::ROLE_OWNER => 'Dono',
+        self::ROLE_MANAGER => 'Gestor',
+        self::ROLE_COLLABORATOR => 'Colaborador',
+    ];
 
     protected $keyType = 'string';
 
     public $incrementing = false;
 
     protected $fillable = [
+        'account_id',
         'name',
         'username',
         'email',
@@ -56,8 +74,41 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function clients(): \Illuminate\Database\Eloquent\Relations\HasMany
+    /** @return BelongsTo<Account, $this> */
+    public function account(): BelongsTo
     {
-        return $this->hasMany(\App\Models\Client::class);
+        return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Contas das quais este usuário é o dono.
+     *
+     * @return HasMany<Account, $this>
+     */
+    public function ownedAccounts(): HasMany
+    {
+        return $this->hasMany(Account::class, 'owner_id');
+    }
+
+    public function clients(): HasMany
+    {
+        return $this->hasMany(Client::class);
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->account_id !== null && $this->account?->owner_id === $this->id;
+    }
+
+    /** A conta do usuário tem o plano Profissional ativo? (assinatura é da conta) */
+    public function isProfessional(): bool
+    {
+        return $this->account !== null && $this->account->subscribed('default');
+    }
+
+    /** Acesso ao painel: precisa ter uma conta associada e e-mail verificado. */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->account_id !== null && $this->hasVerifiedEmail();
     }
 }

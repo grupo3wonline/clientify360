@@ -59,6 +59,7 @@ final class StockService
             $product->setRawAttributes($locked->getAttributes(), true);
 
             return StockMovement::create([
+                'account_id' => $locked->account_id,
                 'user_id' => $locked->user_id,
                 'product_id' => $locked->id,
                 'type' => $type,

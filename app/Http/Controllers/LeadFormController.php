@@ -90,7 +90,7 @@ final class LeadFormController extends Controller
 
     private function formData(LeadForm $form): array
     {
-        PipelineStage::ensureDefaultsFor((string) auth()->id());
+        PipelineStage::ensureDefaultsFor((string) auth()->user()->account_id);
 
         return [
             'form' => $form,

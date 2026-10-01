@@ -1,8 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Middleware\CheckPlanLimit;
+use App\Http\Middleware\EnsureTermsAccepted;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetSpatieTeam;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,11 +20,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(SecurityHeaders::class);
+
+        // Define o contexto de equipe (conta) do Spatie Permission por request.
+        $middleware->web(append: [
+            SetSpatieTeam::class,
+        ]);
 
         $middleware->alias([
-            'plan.limit' => \App\Http\Middleware\CheckPlanLimit::class,
-            'terms.accepted' => \App\Http\Middleware\EnsureTermsAccepted::class,
+            'plan.limit' => CheckPlanLimit::class,
+            'terms.accepted' => EnsureTermsAccepted::class,
+            // ACL por conta (Spatie Permission)
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

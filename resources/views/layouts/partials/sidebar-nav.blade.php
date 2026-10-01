@@ -1,5 +1,5 @@
 @php
-    // [rota, padrão "ativo", ícone, rótulo]
+    // [rota, padrão "ativo", ícone, rótulo, (opcional) permissão ACL, (opcional) descrição/tooltip]
     $groups = [
         'Principal' => [
             ['dashboard', 'dashboard', 'fa-gauge-high', 'Dashboard'],
@@ -25,8 +25,9 @@
             ['ai.settings', 'ai.*', 'fa-wand-magic-sparkles', 'IA / Análise'],
         ],
         'Conta' => [
-            ['profile.edit', 'profile.*', 'fa-user-gear', 'Meu Perfil'],
-            ['billing.index', 'billing.*', 'fa-credit-card', 'Assinatura'],
+            ['profile.edit', 'profile.*', 'fa-user-gear', 'Meu perfil', null, 'Edite seus dados pessoais, e-mail e senha'],
+            ['team.index', 'team.*', 'fa-users-gear', 'Equipe', 'account.members', 'Convide membros e defina suas permissões de acesso'],
+            ['billing.index', 'billing.*', 'fa-credit-card', 'Assinatura', 'account.billing', 'Gerencie seu plano, pagamentos e faturas'],
         ],
     ];
 @endphp
@@ -36,12 +37,22 @@
         <div>
             <p class="px-3 mb-2 text-[11px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">{{ $groupLabel }}</p>
             <div class="space-y-0.5">
-                @foreach($items as [$route, $pattern, $icon, $label])
-                    @php $active = request()->routeIs(...(array) $pattern); @endphp
-                    <a href="{{ route($route) }}" @if($active) aria-current="page" @endif
+                @foreach($items as $item)
+                    @php([$route, $pattern, $icon, $label] = $item)
+                    @php($permission = $item[4] ?? null)
+                    @php($description = $item[5] ?? null)
+                    @continue($permission !== null && ! auth()->user()?->can($permission))
+                    @php($active = request()->routeIs(...(array) $pattern))
+                    <a href="{{ route($route) }}" @if($active) aria-current="page" @endif @if($description) title="{{ $description }}" @endif
                        class="flex items-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ $active ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
                         <i class="fa-solid {{ $icon }} w-5 mr-3 text-center {{ $active ? 'text-brand-500' : '' }}"></i>
-                        {{ $label }}
+                        <span class="flex-1">{{ $label }}</span>
+                        @if($route === 'notifications.index' && ($notificationCount ?? 0) > 0)
+                            <span class="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[10px] font-bold bg-red-500 text-white"
+                                  aria-label="{{ $notificationCount }} notificações pendentes">
+                                {{ $notificationCount > 99 ? '99+' : $notificationCount }}
+                            </span>
+                        @endif
                     </a>
                 @endforeach
             </div>

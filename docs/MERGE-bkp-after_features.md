@@ -68,3 +68,54 @@ php artisan test             # 35 testes
 `<iframe>` seria preciso liberar `frame-ancestors` e remover a verificação CSRF só nas rotas `/f/*`
 (o cookie de sessão não é enviado dentro de iframe de outro domínio). Isso reduz proteções de segurança,
 então **não foi feito** — fica a seu critério.
+
+---
+
+# Rodada 2 — Correções e novos recursos (30/09/2026)
+
+Continuação do desenvolvimento após a mesclagem. Foco em corrigir o que estava
+quebrado e completar funcionalidades que ficaram pela metade.
+
+## Correções
+
+1. **Resumo financeiro do mês retornava zero** (`FinanceService::monthSummary()` e
+   `cashFlow()`). As colunas `paid_at`/`due_date` têm cast `date` e são gravadas como
+   `Y-m-d 00:00:00`; o `whereBetween` usava o fim do mês como `Y-m-d` (sem hora), então
+   o último dia do mês caía fora do intervalo. Os limites agora usam `startOfDay()`/`endOfDay()`.
+   Isso fazia o teste `finance entries can be settled and overdue is computed` falhar.
+
+2. **Notificações "marcar como lida" eram ilusórias.** As notificações são geradas em
+   tempo real (lembretes, financeiro, estoque, leads, oportunidades) e não ficavam
+   persistidas, então o botão de marcar como lida não fazia nada e a notificação reaparecia.
+   Agora existe a tabela `dismissed_notifications` (chave estável por usuário): dispensar
+   uma notificação a esconde de verdade; "Dispensar todas" some com todas as atuais.
+   Se o mesmo alerta mudar de conteúdo (a chave muda), ele reaparece — correto.
+
+## Novos recursos
+
+3. **Badge de notificações no menu lateral.** Mostra a contagem de alertas pendentes
+   sem precisar abrir a tela. A geração foi extraída para `NotificationService` (singleton
+   com cache por request), reaproveitada pela página e pelo badge — sem recomputar.
+
+4. **Relatórios comerciais.** A tela de Relatórios só cobria clientes/atendimentos. Agora
+   inclui, no período selecionado: oportunidades ganhas × perdidas, valor ganho, taxa de
+   conversão, orçamentos aprovados e aguardando, resumo financeiro do mês (recebido, pago,
+   saldo, a receber), produtos mais vendidos e principais motivos de perda. Lógica em
+   `ReportService`, mantendo o controller fino.
+
+## Testes
+
+- Corrigido o teste financeiro que falhava.
+- Novos: `NotificationsTest` (4 casos — geração, dispensar individual, dispensar todas,
+  isolamento por usuário) e `ReportTest` (2 casos — render com métricas comerciais e
+  cálculo da taxa de conversão).
+- Removido o placeholder `tests/Unit/ExampleTest.php`.
+- Suíte: **40 testes, 203 asserções, tudo verde** (`php artisan test`).
+
+## Publicar
+
+```bash
+php artisan migrate      # 1 migration nova: create_dismissed_notifications_table (com down())
+php artisan view:clear
+php artisan test
+```

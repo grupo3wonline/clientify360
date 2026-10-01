@@ -9,12 +9,16 @@ use App\Models\Client;
 use App\Models\Deal;
 use App\Models\FinancialEntry;
 use App\Models\LeadForm;
+use App\Models\LeadFormSubmission;
 use App\Models\PipelineStage;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Models\Reminder;
 use App\Models\Tag;
 use App\Models\User;
+use App\Services\FinanceService;
+use App\Services\QuoteService;
+use App\Services\StockService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,7 +34,7 @@ class CommercialModulesTest extends TestCase
     {
         $this->actingAs($user);
 
-        return Client::create(['name' => 'Cliente Teste', 'email' => 'c' . uniqid() . '@ex.com'] + $attrs);
+        return Client::create(['name' => 'Cliente Teste', 'email' => 'c'.uniqid().'@ex.com'] + $attrs);
     }
 
     // ---------------------------------------------------------------- telas
@@ -40,9 +44,9 @@ class CommercialModulesTest extends TestCase
         $user = User::factory()->create();
         $client = $this->clientFor($user);
         $product = Product::create(['name' => 'Camiseta', 'price' => 50, 'cost' => 20, 'track_stock' => true, 'stock' => 3, 'min_stock' => 5]);
-        PipelineStage::ensureDefaultsFor($user->id);
+        PipelineStage::ensureDefaultsFor($user->account_id);
         $deal = Deal::create(['client_id' => $client->id, 'title' => 'Site', 'value' => 1000, 'pipeline_stage_id' => PipelineStage::first()->id, 'expected_close_date' => now()->subDay()]);
-        $quote = app(\App\Services\QuoteService::class)->save(null, ['client_id' => $client->id, 'deal_id' => $deal->id, 'title' => 'Proposta'], [
+        $quote = app(QuoteService::class)->save(null, ['client_id' => $client->id, 'deal_id' => $deal->id, 'title' => 'Proposta'], [
             ['product_id' => $product->id, 'description' => 'Camiseta', 'quantity' => 1, 'unit_price' => 50],
         ]);
         $tag = Tag::create(['name' => 'VIP', 'color' => '#ff0000']);
@@ -53,7 +57,7 @@ class CommercialModulesTest extends TestCase
         Activity::create(['client_id' => $client->id, 'deal_id' => $deal->id, 'type' => 'call', 'title' => 'Ligação', 'happened_at' => now(), 'next_step' => 'Retornar', 'next_step_at' => now()->addDay()]);
 
         $pages = [
-            route('dashboard'),
+            '/app', // painel Filament (home autenticada)
             route('clients.index'), route('clients.index', ['tag' => $tag->id]), route('clients.show', $client), route('clients.create'), route('clients.edit', $client),
             route('deals.index'), route('deals.list'), route('deals.show', $deal), route('stages.index'),
             route('activities.index'), route('tags.index'),
@@ -66,7 +70,7 @@ class CommercialModulesTest extends TestCase
 
         foreach ($pages as $url) {
             $res = $this->get($url);
-            $this->assertSame(200, $res->status(), "GET {$url} → {$res->status()} " . mb_substr((string) $res->exception?->getMessage(), 0, 300));
+            $this->assertSame(200, $res->status(), "GET {$url} → {$res->status()} ".mb_substr((string) $res->exception?->getMessage(), 0, 300));
         }
 
         $this->get(route('products.search', ['q' => 'cami']))->assertOk()->assertJsonFragment(['name' => 'Camiseta']);
@@ -113,7 +117,7 @@ class CommercialModulesTest extends TestCase
         $user = User::factory()->create();
         $client = $this->clientFor($user);
         $product = Product::create(['name' => 'Notebook', 'price' => 3000, 'track_stock' => true]);
-        app(\App\Services\StockService::class)->move($product, 'in', 5, 'Compra', 2000);
+        app(StockService::class)->move($product, 'in', 5, 'Compra', 2000);
         $service = Product::create(['type' => 'service', 'name' => 'Instalação', 'price' => 100]);
         $deal = Deal::create(['client_id' => $client->id, 'title' => 'Notebooks', 'value' => 6000]);
 
@@ -126,7 +130,7 @@ class CommercialModulesTest extends TestCase
         ])->assertRedirect();
 
         $quote = Quote::firstOrFail();
-        $this->assertSame('ORC-' . now()->format('Y') . '-0001', $quote->number);
+        $this->assertSame('ORC-'.now()->format('Y').'-0001', $quote->number);
         $this->assertEquals(6100.01, (float) $quote->subtotal);
         $this->assertEquals(6000.01, (float) $quote->total);
 
@@ -157,9 +161,9 @@ class CommercialModulesTest extends TestCase
         $user = User::factory()->create();
         $client = $this->clientFor($user);
         $product = Product::create(['name' => 'Cadeira', 'price' => 200, 'track_stock' => true]);
-        app(\App\Services\StockService::class)->move($product, 'in', 1);
+        app(StockService::class)->move($product, 'in', 1);
 
-        $quote = app(\App\Services\QuoteService::class)->save(null, ['client_id' => $client->id, 'title' => 'Cadeiras'], [
+        $quote = app(QuoteService::class)->save(null, ['client_id' => $client->id, 'title' => 'Cadeiras'], [
             ['product_id' => $product->id, 'description' => 'Cadeira', 'quantity' => 4, 'unit_price' => 200],
         ]);
 
@@ -183,11 +187,11 @@ class CommercialModulesTest extends TestCase
 
         LeadForm::create(['name' => 'Primeiro', 'slug' => 'primeiro-x1', 'title' => 'T', 'fields' => []]);
         $res = $this->get(route('lead-forms.create'));
-        $this->assertSame(302, $res->status(), 'lead-forms.create: ' . mb_substr((string) $res->exception?->getMessage(), 0, 300));
+        $this->assertSame(302, $res->status(), 'lead-forms.create: '.mb_substr((string) $res->exception?->getMessage(), 0, 300));
         $res->assertRedirect(route('lead-forms.index'))->assertSessionHas('error');
 
         for ($i = 0; $i < 5; $i++) {
-            app(\App\Services\QuoteService::class)->save(null, ['client_id' => $client->id, 'title' => "Q{$i}"], [
+            app(QuoteService::class)->save(null, ['client_id' => $client->id, 'title' => "Q{$i}"], [
                 ['description' => 'Item', 'quantity' => 1, 'unit_price' => 10],
             ]);
         }
@@ -240,7 +244,7 @@ class CommercialModulesTest extends TestCase
 
         // Honeypot: robô "tem sucesso" mas nada é gravado
         $this->post(route('lead-forms.submit', $form->slug), $payload + ['website_url' => 'http://spam'])->assertSessionHas('lead_success');
-        $this->assertSame(2, \App\Models\LeadFormSubmission::withoutGlobalScope('owned')->count());
+        $this->assertSame(2, LeadFormSubmission::withoutGlobalScope('owned')->count());
 
         // Formulário pausado some do ar
         LeadForm::withoutGlobalScope('owned')->whereKey($form->id)->update(['is_active' => false]);
@@ -260,7 +264,7 @@ class CommercialModulesTest extends TestCase
         $this->post(route('lead-forms.submit', $form->slug), ['data' => ['email' => 'novo@ex.com'], 'lgpd_consent' => 1])
             ->assertSessionHas('lead_success');
 
-        $submission = \App\Models\LeadFormSubmission::withoutGlobalScope('owned')->firstOrFail();
+        $submission = LeadFormSubmission::withoutGlobalScope('owned')->firstOrFail();
         $this->assertNull($submission->client_id);
         $this->assertStringContainsString('Limite', (string) $submission->note);
         $this->assertSame(10, Client::withoutGlobalScope('owned')->where('user_id', $owner->id)->count());
@@ -272,7 +276,7 @@ class CommercialModulesTest extends TestCase
     {
         $user = User::factory()->create();
         $client = $this->clientFor($user);
-        PipelineStage::ensureDefaultsFor($user->id);
+        PipelineStage::ensureDefaultsFor($user->account_id);
         $stages = PipelineStage::ordered()->get();
         $deal = Deal::create(['client_id' => $client->id, 'title' => 'App', 'value' => 5000, 'pipeline_stage_id' => $stages[0]->id]);
 
@@ -311,7 +315,7 @@ class CommercialModulesTest extends TestCase
         $this->assertSame('paid', $entry->status);
         $this->assertSame(0, FinancialEntry::overdue()->count());
 
-        $summary = app(\App\Services\FinanceService::class)->monthSummary();
+        $summary = app(FinanceService::class)->monthSummary();
         $this->assertEquals(99.5, $summary['paid']);
         $this->assertEquals(-99.5, $summary['balance']);
     }

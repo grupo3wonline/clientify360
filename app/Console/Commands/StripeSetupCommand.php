@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 final class StripeSetupCommand extends Command
 {
@@ -20,12 +21,13 @@ final class StripeSetupCommand extends Command
 
         if (empty($secret)) {
             $this->error('STRIPE_SECRET is not configured in .env');
+
             return self::FAILURE;
         }
 
         // Create Product
         $this->info('Creating product...');
-        $productResponse = \Illuminate\Support\Facades\Http::withBasicAuth($secret, '')
+        $productResponse = Http::withBasicAuth($secret, '')
             ->withoutVerifying()
             ->asForm()
             ->post('https://api.stripe.com/v1/products', [
@@ -35,7 +37,8 @@ final class StripeSetupCommand extends Command
             ]);
 
         if ($productResponse->failed()) {
-            $this->error('Failed to create product: ' . $productResponse->body());
+            $this->error('Failed to create product: '.$productResponse->body());
+
             return self::FAILURE;
         }
 
@@ -44,7 +47,7 @@ final class StripeSetupCommand extends Command
 
         // Create Price
         $this->info('Creating price...');
-        $priceResponse = \Illuminate\Support\Facades\Http::withBasicAuth($secret, '')
+        $priceResponse = Http::withBasicAuth($secret, '')
             ->withoutVerifying()
             ->asForm()
             ->post('https://api.stripe.com/v1/prices', [
@@ -56,7 +59,8 @@ final class StripeSetupCommand extends Command
             ]);
 
         if ($priceResponse->failed()) {
-            $this->error('Failed to create price: ' . $priceResponse->body());
+            $this->error('Failed to create price: '.$priceResponse->body());
+
             return self::FAILURE;
         }
 
@@ -72,5 +76,4 @@ final class StripeSetupCommand extends Command
 
         return self::SUCCESS;
     }
-
 }

@@ -18,7 +18,7 @@
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Gerencie sua base de clientes</p>
         </div>
         <div class="flex items-center gap-3">
-            @if(auth()->user()->subscribed('default'))
+            @if(auth()->user()->isProfessional())
                 <a href="{{ route('export.clients') }}"
                    class="inline-flex items-center px-4 py-2.5 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-xl transition shadow-sm shadow-accent-600/25"
                    title="Exportar clientes em CSV">

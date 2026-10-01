@@ -13,7 +13,7 @@ final class PipelineStageController extends Controller
 {
     public function index(): View
     {
-        PipelineStage::ensureDefaultsFor((string) auth()->id());
+        PipelineStage::ensureDefaultsFor((string) auth()->user()->account_id);
         $stages = PipelineStage::withCount(['deals' => fn ($q) => $q->where('status', 'open')])->orderBy('position')->get();
 
         return view('deals.stages', compact('stages'));

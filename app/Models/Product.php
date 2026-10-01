@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     public const UNITS = ['un' => 'Unidade', 'h' => 'Hora', 'mes' => 'Mês', 'kg' => 'Kg', 'm' => 'Metro', 'm2' => 'm²', 'cx' => 'Caixa', 'pct' => 'Pacote'];
 
@@ -22,7 +22,7 @@ class Product extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id', 'type', 'sku', 'name', 'description', 'unit', 'price', 'promo_price', 'cost',
+        'account_id', 'user_id', 'type', 'sku', 'name', 'description', 'unit', 'price', 'promo_price', 'cost',
         'track_stock', 'stock', 'min_stock', 'ncm', 'supplier', 'is_active',
     ];
 

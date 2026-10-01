@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\DTOs\ClientDTO;
 use App\Interfaces\ClientRepositoryInterface;
 use App\Models\Client;
+use App\Models\Tag;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -29,10 +30,10 @@ final class ClientRepository implements ClientRepositoryInterface
             $escapedSearch = str_replace(['%', '_'], ['\%', '\_'], $search);
             $query->where(function ($q) use ($escapedSearch): void {
                 $q->where('name', 'like', "%{$escapedSearch}%")
-                  ->orWhere('email', 'like', "%{$escapedSearch}%")
-                  ->orWhere('phone', 'like', "%{$escapedSearch}%")
-                  ->orWhere('document', 'like', "%{$escapedSearch}%")
-                  ->orWhere('city', 'like', "%{$escapedSearch}%");
+                    ->orWhere('email', 'like', "%{$escapedSearch}%")
+                    ->orWhere('phone', 'like', "%{$escapedSearch}%")
+                    ->orWhere('document', 'like', "%{$escapedSearch}%")
+                    ->orWhere('city', 'like', "%{$escapedSearch}%");
             });
         }
 
@@ -73,14 +74,14 @@ final class ClientRepository implements ClientRepositoryInterface
         return Client::count();
     }
 
-    /** Só vincula tags do próprio usuário (Tag tem escopo global por user_id). */
+    /** Só vincula tags da própria conta (Tag tem escopo global por account_id). */
     private function syncTags(Client $client, ClientDTO $dto): void
     {
         if ($dto->tagIds === null) {
             return;
         }
 
-        $allowed = \App\Models\Tag::whereIn('id', $dto->tagIds)->pluck('id')->all();
+        $allowed = Tag::whereIn('id', $dto->tagIds)->pluck('id')->all();
         $client->tags()->sync($allowed);
     }
 }

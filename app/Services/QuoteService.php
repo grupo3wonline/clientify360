@@ -27,20 +27,20 @@ final class QuoteService
         private readonly FinanceService $finance,
     ) {}
 
-    /** Próximo número no formato ORC-2026-0001, sequencial por usuário e por ano. */
-    public function nextNumber(string $userId): string
+    /** Próximo número no formato ORC-2026-0001, sequencial por conta e por ano. */
+    public function nextNumber(string $accountId): string
     {
-        $prefix = 'ORC-' . now()->format('Y') . '-';
+        $prefix = 'ORC-'.now()->format('Y').'-';
 
         $last = Quote::withoutGlobalScope('owned')->withTrashed()
-            ->where('user_id', $userId)
-            ->where('number', 'like', $prefix . '%')
+            ->where('account_id', $accountId)
+            ->where('number', 'like', $prefix.'%')
             ->orderByDesc('number')
             ->value('number');
 
         $sequence = $last ? ((int) substr($last, strlen($prefix))) + 1 : 1;
 
-        return $prefix . str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
+        return $prefix.str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -54,8 +54,9 @@ final class QuoteService
     {
         return DB::transaction(function () use ($quote, $data, $items): Quote {
             if ($quote === null) {
-                $userId = (string) auth()->id();
-                $quote = new Quote(['user_id' => $userId, 'number' => $this->nextNumber($userId), 'status' => 'draft']);
+                $accountId = (string) auth()->user()->account_id;
+                // account_id/user_id são preenchidos pelo trait BelongsToAccount ao criar.
+                $quote = new Quote(['number' => $this->nextNumber($accountId), 'status' => 'draft']);
             } elseif (!$quote->isEditable()) {
                 throw new RuntimeException('Orçamentos aprovados, recusados ou expirados não podem ser editados.');
             }
@@ -148,7 +149,7 @@ final class QuoteService
             }
 
             if ($insufficient !== [] && !($options['allow_negative_stock'] ?? false)) {
-                throw new RuntimeException('Estoque insuficiente: ' . implode('; ', $insufficient) . '.');
+                throw new RuntimeException('Estoque insuficiente: '.implode('; ', $insufficient).'.');
             }
 
             foreach ($quote->items as $item) {
@@ -159,7 +160,7 @@ final class QuoteService
 
             // 2. Contas a receber
             if ((float) $quote->total > 0) {
-                FinancialCategory::ensureDefaultsFor($quote->user_id);
+                FinancialCategory::ensureDefaultsFor($quote->account_id);
                 $hasServiceOnly = $quote->items->every(fn ($i) => $i->product?->type === 'service');
                 $categoryName = $hasServiceOnly ? 'Prestação de serviços' : 'Vendas de produtos';
                 $categoryId = FinancialCategory::where('type', 'income')->where('name', $categoryName)->value('id');
@@ -181,12 +182,13 @@ final class QuoteService
 
             // 4. Histórico do cliente
             Activity::create([
+                'account_id' => $quote->account_id,
                 'user_id' => $quote->user_id,
                 'client_id' => $quote->client_id,
                 'deal_id' => $quote->deal_id,
                 'type' => 'proposal',
                 'title' => "Orçamento {$quote->number} aprovado",
-                'description' => 'Total: R$ ' . number_format((float) $quote->total, 2, ',', '.'),
+                'description' => 'Total: R$ '.number_format((float) $quote->total, 2, ',', '.'),
                 'happened_at' => now(),
                 'outcome' => 'positive',
             ]);
@@ -209,7 +211,7 @@ final class QuoteService
         return $this->save(null, [
             'client_id' => $quote->client_id,
             'deal_id' => $quote->deal_id,
-            'title' => $quote->title . ' (cópia)',
+            'title' => $quote->title.' (cópia)',
             'valid_until' => now()->addDays(15)->toDateString(),
             'payment_terms' => $quote->payment_terms,
             'notes' => $quote->notes,

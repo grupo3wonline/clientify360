@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Exports\ClientsExport;
 use App\Services\ClientService;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ExportController extends Controller
@@ -15,6 +18,14 @@ final class ExportController extends Controller
         private readonly ClientService $clientService,
         private readonly SubscriptionService $subscriptionService
     ) {}
+
+    /** Exporta clientes em XLSX (Laravel Excel), plano Profissional. */
+    public function clientsExcel(Request $request): BinaryFileResponse
+    {
+        abort_unless($this->subscriptionService->isProfessional($request->user()), 403, 'Exportação disponível apenas no plano Profissional.');
+
+        return Excel::download(new ClientsExport, 'clientes_'.now()->format('Y-m-d').'.xlsx');
+    }
 
     public function clients(Request $request): StreamedResponse
     {
@@ -28,7 +39,7 @@ final class ExportController extends Controller
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="clientes_' . now()->format('Y-m-d') . '.csv"',
+            'Content-Disposition' => 'attachment; filename="clientes_'.now()->format('Y-m-d').'.csv"',
         ];
 
         return response()->streamDownload(function () use ($clients): void {
@@ -68,6 +79,6 @@ final class ExportController extends Controller
             }
 
             fclose($handle);
-        }, 'clientes_' . now()->format('Y-m-d') . '.csv', $headers);
+        }, 'clientes_'.now()->format('Y-m-d').'.csv', $headers);
     }
 }
