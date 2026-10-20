@@ -1,12 +1,12 @@
 # Clientify360
 
-Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Laravel 13.
+Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Laravel 12.
 
 ## Stack Tecnológica
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Backend | Laravel 13 (PHP 8.3+) |
+| Backend | Laravel 12 (PHP 8.2+) |
 | Banco de Dados | MySQL 8 |
 | Frontend | Alpine.js + Tailwind CSS + HTML5 + CSS3 |
 | Autenticação | Laravel Breeze |
@@ -25,7 +25,7 @@ Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Larave
 
 ## Requisitos
 
-- PHP 8.3+
+- PHP 8.2+
 - Composer 2.x
 - MySQL 8.x
 - Node.js 20+ (para build de assets, opcional com CDN)

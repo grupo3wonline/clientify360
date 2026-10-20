@@ -4,7 +4,7 @@ Guia de publicação em hospedagem compartilhada (cPanel/HostGator).
 
 ## 1. Pré-requisitos
 
-- Conta HostGator com PHP 8.3+ habilitado (verifique em cPanel → "Selecionar versão do PHP").
+- Conta HostGator com PHP 8.2+ habilitado, de preferência 8.3 (verifique em cPanel → "Selecionar versão do PHP").
 - Banco MySQL 8 criado no cPanel (MySQL Databases): guarde nome do banco, usuário e senha.
 - Domínio apontado para a hospedagem.
 
