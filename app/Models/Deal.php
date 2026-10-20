@@ -6,7 +6,9 @@ namespace App\Models;
 
 use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
+use Database\Factories\DealFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Deal extends Model
 {
-    use BelongsToAccount, HasUuid, SoftDeletes;
+    /** @use HasFactory<DealFactory> */
+    use BelongsToAccount, HasFactory, HasUuid, SoftDeletes;
 
     public const STATUS_OPEN = 'open';
 

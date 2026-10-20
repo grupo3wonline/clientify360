@@ -6,13 +6,16 @@ namespace App\Models;
 
 use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
+use Database\Factories\PipelineStageFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PipelineStage extends Model
 {
-    use BelongsToAccount, HasUuid;
+    /** @use HasFactory<PipelineStageFactory> */
+    use BelongsToAccount, HasFactory, HasUuid;
 
     protected $keyType = 'string';
 

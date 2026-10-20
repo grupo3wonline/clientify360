@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
+use Database\Factories\QuoteFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    use BelongsToAccount, HasUuid, SoftDeletes;
+    /** @use HasFactory<QuoteFactory> */
+    use BelongsToAccount, HasFactory, HasUuid, SoftDeletes;
 
     public const STATUS_LABELS = [
         'draft' => 'Rascunho',

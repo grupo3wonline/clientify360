@@ -6,14 +6,17 @@ namespace App\Models;
 
 use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use BelongsToAccount, HasUuid, SoftDeletes;
+    /** @use HasFactory<ProductFactory> */
+    use BelongsToAccount, HasFactory, HasUuid, SoftDeletes;
 
     public const UNITS = ['un' => 'Unidade', 'h' => 'Hora', 'mes' => 'Mês', 'kg' => 'Kg', 'm' => 'Metro', 'm2' => 'm²', 'cx' => 'Caixa', 'pct' => 'Pacote'];
 
