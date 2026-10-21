@@ -267,6 +267,33 @@ class CommercialModulesTest extends TestCase
         $this->assertSame(10, Client::withoutGlobalScope('owned')->where('user_id', $owner->id)->count());
     }
 
+    public function test_lead_form_button_color_is_restricted_to_the_vetted_palette(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $payload = fn (string $color): array => [
+            'name' => 'Captação', 'title' => 'Fale com a gente', 'color' => $color,
+            'button_text' => 'Enviar', 'default_source' => 'site',
+            'fields' => [['name' => 'email', 'label' => 'E-mail', 'type' => 'email', 'required' => '1']],
+        ];
+
+        // Cor fora da paleta (contraste não garantido) é rejeitada e nada é gravado.
+        $this->from(route('lead-forms.create'))
+            ->post(route('lead-forms.store'), $payload('#ffff00'))
+            ->assertSessionHasErrors('color');
+        $this->assertSame(0, LeadForm::withoutGlobalScope('owned')->count());
+
+        // Cor da paleta aprovada é aceita e persistida.
+        $valid = array_key_first(LeadForm::BRAND_PALETTE);
+        $res = $this->post(route('lead-forms.store'), $payload($valid));
+        $res->assertSessionHas('success');
+
+        $form = LeadForm::withoutGlobalScope('owned')->firstOrFail();
+        $this->assertSame($valid, $form->color);
+        $res->assertRedirect(route('lead-forms.show', $form));
+    }
+
     // ----------------------------------------------------- CRM / financeiro
 
     public function test_activity_next_step_becomes_a_reminder_and_deal_can_be_moved_and_lost(): void

@@ -105,7 +105,7 @@ final class LeadFormController extends Controller
             'name' => ['required', 'string', 'max:100'],
             'title' => ['required', 'string', 'max:200'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'color' => ['required', 'string', Rule::in(array_keys(LeadForm::BRAND_PALETTE))],
             'button_text' => ['required', 'string', 'max:50'],
             'success_message' => ['nullable', 'string', 'max:500'],
             'redirect_url' => ['nullable', 'url:http,https', 'max:500'],
@@ -122,6 +122,7 @@ final class LeadFormController extends Controller
             'fields.*.name.regex' => 'O identificador do campo deve ter só letras minúsculas, números e _ (ex.: empresa, cargo).',
             'fields.*.name.distinct' => 'Há campos repetidos.',
             'redirect_url.url' => 'Informe uma URL válida começando com http:// ou https://',
+            'color.in' => 'Escolha uma das cores disponíveis na paleta.',
         ]);
 
         $data['fields'] = collect($request->input('fields'))->values()->map(fn ($f) => [

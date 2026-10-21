@@ -28,6 +28,22 @@ class LeadForm extends Model
 
     public const FIELD_TYPES = ['text' => 'Texto', 'email' => 'E-mail', 'tel' => 'Telefone', 'textarea' => 'Texto longo'];
 
+    /**
+     * Curated button colors drawn from the design tokens. Every value is dark enough that white
+     * text clears WCAG AA (>= 4.5:1), so no user pick can produce an unreadable button.
+     * Single source of truth: the builder UI and server validation both read from here.
+     */
+    public const BRAND_PALETTE = [
+        '#4f46e5' => 'Índigo',
+        '#4338ca' => 'Índigo escuro',
+        '#2563eb' => 'Azul',
+        '#059669' => 'Verde',
+        '#047857' => 'Verde escuro',
+        '#dc2626' => 'Vermelho',
+        '#b45309' => 'Âmbar',
+        '#334155' => 'Grafite',
+    ];
+
     protected $keyType = 'string';
 
     public $incrementing = false;

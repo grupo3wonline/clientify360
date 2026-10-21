@@ -10,12 +10,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         @foreach(['income' => ['Receitas', 'fa-arrow-down text-accent-500'], 'expense' => ['Despesas', 'fa-arrow-up text-red-500']] as $type => [$label, $icon])
             <div class="c-card overflow-hidden h-fit">
-                <h3 class="px-5 py-4 text-sm font-semibold border-b border-surface-100 dark:border-surface-800"><i class="fa-solid {{ $icon }} mr-2"></i>{{ $label }}</h3>
+                <h2 class="px-5 py-4 text-sm font-semibold border-b border-surface-100 dark:border-surface-800"><i class="fa-solid {{ $icon }} mr-2" aria-hidden="true"></i>{{ $label }}</h2>
                 @foreach($categories->where('type', $type) as $cat)
                     <div class="px-5 py-3 flex items-center gap-3 border-b last:border-0 border-surface-100 dark:border-surface-800">
-                        <span class="w-3 h-3 rounded-full" style="background: {{ $cat->color }}"></span>
+                        <span class="w-3 h-3 rounded-full ring-1 ring-surface-200 dark:ring-surface-700" style="background: {{ $cat->color }}" aria-hidden="true"></span>
                         <span class="flex-1 text-sm">{{ $cat->name }}</span>
-                        <span class="text-xs text-surface-400">{{ $cat->entries_count }}</span>
+                        <span class="text-xs text-surface-500" title="{{ $cat->entries_count }} lançamento(s)">{{ $cat->entries_count }}</span>
                         <x-confirm-delete :action="route('finance.categories.destroy', $cat)" title="Excluir categoria?" text="Os lançamentos continuam existindo, apenas sem esta categoria nas próximas listagens." />
                     </div>
                 @endforeach
@@ -23,7 +23,7 @@
         @endforeach
 
         <div class="c-card p-5 h-fit">
-            <h3 class="text-sm font-semibold mb-4"><i class="fa-solid fa-plus-circle text-brand-500 mr-2"></i>Nova categoria</h3>
+            <h2 class="text-sm font-semibold mb-4"><i class="fa-solid fa-plus-circle text-brand-500 mr-2" aria-hidden="true"></i>Nova categoria</h2>
             <form action="{{ route('finance.categories.store') }}" method="POST" class="space-y-3">
                 @csrf
                 <div><label class="c-label">Nome</label><input name="name" required maxlength="80" class="c-input" autocomplete="off">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>

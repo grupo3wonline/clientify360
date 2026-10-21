@@ -42,12 +42,26 @@
             <div class="c-card overflow-hidden">
                 <div class="px-5 py-4 border-b border-surface-100 dark:border-surface-800 flex flex-wrap items-center justify-between gap-3">
                     <h3 class="text-sm font-semibold"><i class="fa-solid fa-list-check text-brand-500 mr-2"></i>Itens</h3>
-                    <div class="relative w-full sm:w-80" @click.outside="results = []">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400 text-xs"></i>
-                        <input type="search" x-model="term" @input.debounce.300ms="search()" @focus="search()" placeholder="Buscar produto/serviço do catálogo..." class="c-input pl-9 py-2" autocomplete="off">
-                        <ul x-show="results.length" x-cloak class="absolute z-20 mt-1 w-full c-card shadow-xl max-h-72 overflow-y-auto py-1">
-                            <template x-for="p in results" :key="p.id">
-                                <li><button type="button" @click="addProduct(p)" class="w-full text-left px-4 py-2 hover:bg-surface-50 dark:hover:bg-surface-800 text-sm flex justify-between gap-3">
+                    <div class="relative w-full sm:w-80" @click.outside="closeResults()">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400 text-xs" aria-hidden="true"></i>
+                        <input type="search" x-model="term"
+                               @input.debounce.300ms="search()" @focus="search()"
+                               @keydown.down.prevent="moveHighlight(1)"
+                               @keydown.up.prevent="moveHighlight(-1)"
+                               @keydown.enter.prevent="chooseHighlighted()"
+                               @keydown.escape.prevent="closeResults()"
+                               placeholder="Buscar produto/serviço do catálogo..." class="c-input pl-9 py-2" autocomplete="off"
+                               role="combobox" aria-autocomplete="list" aria-controls="catalog-results"
+                               :aria-expanded="results.length ? 'true' : 'false'"
+                               :aria-activedescendant="highlighted >= 0 && results.length ? 'catalog-opt-' + highlighted : null"
+                               aria-label="Buscar produto ou serviço do catálogo">
+                        <ul x-show="results.length" x-cloak id="catalog-results" role="listbox" aria-label="Resultados do catálogo"
+                            class="absolute z-20 mt-1 w-full c-card shadow-xl max-h-72 overflow-y-auto py-1">
+                            <template x-for="(p, idx) in results" :key="p.id">
+                                <li role="option" :id="'catalog-opt-' + idx" :aria-selected="highlighted === idx ? 'true' : 'false'">
+                                    <button type="button" @click="addProduct(p)" @mouseenter="highlighted = idx"
+                                            class="w-full text-left px-4 py-2 text-sm flex justify-between gap-3"
+                                            :class="highlighted === idx ? 'bg-surface-50 dark:bg-surface-800' : 'hover:bg-surface-50 dark:hover:bg-surface-800'">
                                     <span><span x-text="p.name"></span> <span class="text-xs text-surface-400" x-text="p.sku ? '· ' + p.sku : ''"></span></span>
                                     <span class="text-xs whitespace-nowrap"><span x-text="brl(p.price)"></span><span x-show="p.track_stock" class="ml-1 text-surface-400" x-text="'(' + p.stock + ' ' + p.unit + ')'"></span></span>
                                 </button></li>
@@ -63,19 +77,19 @@
                             <input type="hidden" :name="`items[${i}][product_id]`" :value="item.product_id ?? ''">
                             <div class="col-span-12 md:col-span-6">
                                 <label class="c-label text-xs" x-show="i === 0">Descrição</label>
-                                <input :name="`items[${i}][description]`" x-model="item.description" required maxlength="255" class="c-input py-2" placeholder="Descrição do item" autocomplete="off">
+                                <input :name="`items[${i}][description]`" x-model="item.description" required maxlength="255" class="c-input py-2" placeholder="Descrição do item" autocomplete="off" :aria-label="'Descrição item ' + (i + 1)">
                             </div>
                             <div class="col-span-4 md:col-span-2">
                                 <label class="c-label text-xs" x-show="i === 0">Qtd.</label>
-                                <input type="number" step="0.001" min="0.001" :name="`items[${i}][quantity]`" x-model.number="item.quantity" required class="c-input py-2" autocomplete="off">
+                                <input type="number" step="0.001" min="0.001" :name="`items[${i}][quantity]`" x-model.number="item.quantity" required class="c-input py-2" autocomplete="off" :aria-label="'Quantidade item ' + (i + 1)">
                             </div>
                             <div class="col-span-5 md:col-span-2">
                                 <label class="c-label text-xs" x-show="i === 0">Unitário</label>
-                                <input type="number" step="0.01" min="0" :name="`items[${i}][unit_price]`" x-model.number="item.unit_price" required class="c-input py-2" autocomplete="off">
+                                <input type="number" step="0.01" min="0" :name="`items[${i}][unit_price]`" x-model.number="item.unit_price" required class="c-input py-2" autocomplete="off" :aria-label="'Preço unitário item ' + (i + 1)">
                             </div>
                             <div class="col-span-3 md:col-span-2 flex items-center justify-end gap-2">
                                 <span class="text-sm font-semibold whitespace-nowrap" x-text="brl(lineTotal(item))"></span>
-                                <button type="button" @click="items.splice(i, 1)" class="p-1.5 text-surface-400 hover:text-red-600" title="Remover item"><i class="fa-solid fa-xmark"></i></button>
+                                <button type="button" @click="items.splice(i, 1)" class="p-1.5 text-surface-400 hover:text-red-600" title="Remover item" :aria-label="'Remover item ' + (i + 1)"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                             </div>
                         </div>
                     </template>
@@ -128,6 +142,7 @@
                 discount: initialDiscount,
                 term: '',
                 results: [],
+                highlighted: -1,
                 brl: (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
                 lineTotal: (it) => Math.round((Number(it.quantity) || 0) * (Number(it.unit_price) || 0) * 100) / 100,
                 subtotal() { return this.items.reduce((s, it) => s + this.lineTotal(it), 0); },
@@ -137,11 +152,25 @@
                     const existing = this.items.find((it) => it.product_id === p.id);
                     if (existing) { existing.quantity = Number(existing.quantity) + 1; }
                     else { this.items.push(withKey({ product_id: p.id, description: p.name, unit_price: p.price })); }
-                    this.term = ''; this.results = [];
+                    this.term = ''; this.closeResults();
+                },
+                closeResults() { this.results = []; this.highlighted = -1; },
+                moveHighlight(dir) {
+                    if (!this.results.length) { return; }
+                    const count = this.results.length;
+                    this.highlighted = (this.highlighted + dir + count) % count;
+                },
+                chooseHighlighted() {
+                    if (this.highlighted >= 0 && this.results[this.highlighted]) { this.addProduct(this.results[this.highlighted]); }
                 },
                 async search() {
-                    const res = await fetch(`{{ route('products.search') }}?q=${encodeURIComponent(this.term)}`, { headers: { Accept: 'application/json' } });
-                    this.results = res.ok ? await res.json() : [];
+                    try {
+                        const res = await fetch(`{{ route('products.search') }}?q=${encodeURIComponent(this.term)}`, { headers: { Accept: 'application/json' } });
+                        this.results = res.ok ? await res.json() : [];
+                    } catch (e) {
+                        this.results = [];
+                    }
+                    this.highlighted = this.results.length ? 0 : -1;
                 },
             };
         }

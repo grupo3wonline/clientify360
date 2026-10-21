@@ -9,8 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     {{-- CSS próprio e enxuto (sem Tailwind CDN): a página pública precisa carregar rápido no 4G. --}}
+    @php
+        // Readable foreground (black/white) over the form color, using WCAG relative luminance.
+        $hex = ltrim((string) $form->color, '#');
+        $rgb = strlen($hex) === 6 ? array_map('hexdec', str_split($hex, 2)) : [37, 99, 235];
+        $lin = static fn (int $c): float => ($c / 255) <= 0.03928 ? ($c / 255) / 12.92 : (((($c / 255) + 0.055) / 1.055) ** 2.4);
+        $luminance = 0.2126 * $lin($rgb[0]) + 0.7152 * $lin($rgb[1]) + 0.0722 * $lin($rgb[2]);
+        $onColor = $luminance > 0.179 ? '#111827' : '#ffffff';
+    @endphp
     <style>
-        :root { --c: {{ $form->color }}; }
+        :root { --c: {{ $form->color }}; --on-c: {{ $onColor }}; }
         * { box-sizing: border-box; }
         body { margin: 0; min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; background: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; padding: 16px; }
         .card { width: 100%; max-width: 460px; background: #fff; border-radius: 20px; box-shadow: 0 10px 40px -10px rgba(15, 23, 42, .15); overflow: hidden; }
@@ -27,7 +35,7 @@
         .err { color: #dc2626; font-size: 12px; margin-top: 4px; }
         .consent { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: #64748b; font-weight: 400; margin: 6px 0 18px; }
         .consent input { width: auto; margin-top: 2px; }
-        button { width: 100%; border: 0; border-radius: 12px; padding: 13px; font: inherit; font-weight: 700; font-size: 15px; color: #fff; background: var(--c); cursor: pointer; transition: filter .15s; }
+        button { width: 100%; border: 0; border-radius: 12px; padding: 13px; font: inherit; font-weight: 700; font-size: 15px; color: var(--on-c); background: var(--c); cursor: pointer; transition: filter .15s; }
         button:hover { filter: brightness(1.08); }
         .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
         .ok { text-align: center; padding: 20px 0; }

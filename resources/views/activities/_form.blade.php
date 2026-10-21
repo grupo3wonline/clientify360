@@ -5,8 +5,8 @@
         <input type="hidden" name="client_id" value="{{ $client->id }}">
     @else
         <div>
-            <label class="c-label" for="act-client">Cliente</label>
-            <select id="act-client" name="client_id" required class="c-input" autocomplete="off">
+            <label class="c-label" for="act-client">Cliente <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">(obrigatório)</span></label>
+            <select id="act-client" name="client_id" required aria-required="true" class="c-input" autocomplete="off">
                 <option value="">Selecione...</option>
                 @foreach($clients as $c)<option value="{{ $c->id }}" @selected(old('client_id') === $c->id)>{{ $c->name }}</option>@endforeach
             </select>
@@ -15,7 +15,7 @@
     @endif
     @if(!empty($deal))<input type="hidden" name="deal_id" value="{{ $deal->id }}">@endif
 
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
             <label class="c-label" for="act-type">Tipo</label>
             <select id="act-type" name="type" class="c-input" autocomplete="off">
@@ -31,8 +31,8 @@
         </div>
     </div>
     <div>
-        <label class="c-label" for="act-title">O que aconteceu? <span class="text-red-500">*</span></label>
-        <input id="act-title" name="title" required maxlength="255" value="{{ old('title') }}" class="c-input" autocomplete="off" placeholder="Ex.: Ligação de apresentação">
+        <label class="c-label" for="act-title">O que aconteceu? <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">(obrigatório)</span></label>
+        <input id="act-title" name="title" required aria-required="true" maxlength="255" value="{{ old('title') }}" class="c-input" autocomplete="off" placeholder="Ex.: Ligação de apresentação">
         @error('title') <p class="c-error">{{ $message }}</p> @enderror
     </div>
     <div>
