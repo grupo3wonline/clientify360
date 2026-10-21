@@ -21,6 +21,7 @@ use App\Http\Controllers\PublicLeadFormController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TermsController;
@@ -92,6 +93,16 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     Route::patch('appointments/{appointment}/confirm', [AppointmentController::class, 'confirm'])->name('appointments.confirm');
     Route::patch('appointments/{appointment}/done', [AppointmentController::class, 'done'])->name('appointments.done');
     Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+
+    // Service Orders / Ordens de Serviço
+    // create/store ANTES do resource: senão "service-orders/{service_order}" captura "service-orders/create".
+    Route::get('service-orders/create', [ServiceOrderController::class, 'create'])->name('service-orders.create');
+    Route::post('service-orders', [ServiceOrderController::class, 'store'])->name('service-orders.store');
+    Route::resource('service-orders', ServiceOrderController::class)->except(['create', 'store']);
+    Route::patch('service-orders/{service_order}/start', [ServiceOrderController::class, 'start'])->name('service-orders.start');
+    Route::patch('service-orders/{service_order}/complete', [ServiceOrderController::class, 'complete'])->name('service-orders.complete');
+    Route::patch('service-orders/{service_order}/cancel', [ServiceOrderController::class, 'cancel'])->name('service-orders.cancel');
+    Route::patch('service-orders/{service_order}/billing', [ServiceOrderController::class, 'billing'])->name('service-orders.billing');
 
     // Interactions / Support
     Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');

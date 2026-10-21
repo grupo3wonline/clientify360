@@ -12,6 +12,7 @@
             ['deals.index', ['deals.*', 'stages.*'], 'fa-filter-circle-dollar', 'Funil de vendas'],
             ['activities.index', 'activities.*', 'fa-timeline', 'Histórico'],
             ['quotes.index', 'quotes.*', 'fa-file-invoice-dollar', 'Orçamentos'],
+            ['service-orders.index', 'service-orders.*', 'fa-screwdriver-wrench', 'Ordens de Serviço', 'service_orders.view', 'Gerencie ordens de serviço: status, execução e faturamento'],
             ['products.index', 'products.*', 'fa-boxes-stacked', 'Produtos e estoque'],
             ['lead-forms.index', 'lead-forms.*', 'fa-magnet', 'Captação de leads'],
             ['tags.index', 'tags.*', 'fa-tags', 'Tags'],
