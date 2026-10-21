@@ -26,10 +26,10 @@
             <h3 class="text-sm font-semibold mb-4"><i class="fa-solid fa-plus-circle text-brand-500 mr-2"></i>Nova categoria</h3>
             <form action="{{ route('finance.categories.store') }}" method="POST" class="space-y-3">
                 @csrf
-                <div><label class="c-label">Nome</label><input name="name" required maxlength="80" class="c-input">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label">Nome</label><input name="name" required maxlength="80" class="c-input" autocomplete="off">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="c-label">Tipo</label><select name="type" class="c-input"><option value="expense">Despesa</option><option value="income">Receita</option></select></div>
-                    <div><label class="c-label">Cor</label><input type="color" name="color" value="#64748b" class="h-10 w-full rounded-lg border border-surface-200 dark:border-surface-700"></div>
+                    <div><label class="c-label">Tipo</label><select name="type" class="c-input" autocomplete="off"><option value="expense">Despesa</option><option value="income">Receita</option></select></div>
+                    <div><label class="c-label">Cor</label><input type="color" name="color" value="#64748b" class="h-10 w-full rounded-lg border border-surface-200 dark:border-surface-700" autocomplete="off"></div>
                 </div>
                 <button class="c-btn-primary w-full">Criar</button>
             </form>

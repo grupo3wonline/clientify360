@@ -23,11 +23,11 @@
         <div class="space-y-3">
             <div>
                 <label class="c-label text-xs">Link direto (WhatsApp, e-mail, botão do site)</label>
-                <div class="flex gap-2"><input readonly value="{{ $url }}" class="c-input py-2 font-mono text-xs"><button type="button" @click="copy(@js($url), 'url')" class="c-btn-ghost px-3"><i class="fa-solid" :class="copied === 'url' ? 'fa-check text-accent-500' : 'fa-copy'"></i></button><a href="{{ $url }}" target="_blank" rel="noopener" class="c-btn-ghost px-3"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+                <div class="flex gap-2"><input readonly value="{{ $url }}" class="c-input py-2 font-mono text-xs" autocomplete="off"><button type="button" @click="copy(@js($url), 'url')" class="c-btn-ghost px-3"><i class="fa-solid" :class="copied === 'url' ? 'fa-check text-accent-500' : 'fa-copy'"></i></button><a href="{{ $url }}" target="_blank" rel="noopener" class="c-btn-ghost px-3"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
             </div>
             <div>
                 <label class="c-label text-xs">Com rastreamento de campanha (exemplo: bio do Instagram)</label>
-                <div class="flex gap-2"><input readonly value="{{ $utm }}" class="c-input py-2 font-mono text-xs"><button type="button" @click="copy(@js($utm), 'utm')" class="c-btn-ghost px-3"><i class="fa-solid" :class="copied === 'utm' ? 'fa-check text-accent-500' : 'fa-copy'"></i></button></div>
+                <div class="flex gap-2"><input readonly value="{{ $utm }}" class="c-input py-2 font-mono text-xs" autocomplete="off"><button type="button" @click="copy(@js($utm), 'utm')" class="c-btn-ghost px-3"><i class="fa-solid" :class="copied === 'utm' ? 'fa-check text-accent-500' : 'fa-copy'"></i></button></div>
                 <p class="c-hint">Troque <code>utm_source</code> por <code>facebook</code>, <code>google</code>, etc. — a origem aparece em cada lead abaixo.</p>
             </div>
         </div>

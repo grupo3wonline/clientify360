@@ -34,21 +34,21 @@
                         <div class="grid grid-cols-3 gap-1 bg-surface-100 dark:bg-surface-800 rounded-xl p-1">
                             @foreach(\App\Models\StockMovement::TYPES as $k => $label)
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="type" value="{{ $k }}" x-model="type" class="sr-only peer">
+                                    <input type="radio" name="type" value="{{ $k }}" x-model="type" class="sr-only peer" autocomplete="off">
                                     <span class="block text-center py-1.5 rounded-lg text-xs font-medium peer-checked:bg-white dark:peer-checked:bg-surface-700 peer-checked:shadow-sm">{{ $label }}</span>
                                 </label>
                             @endforeach
                         </div>
                         <div>
                             <label class="c-label" x-text="type === 'adjust' ? 'Novo saldo (contagem física)' : 'Quantidade'"></label>
-                            <input type="number" step="0.001" min="0" name="quantity" required class="c-input">
+                            <input type="number" step="0.001" min="0" name="quantity" required class="c-input" autocomplete="off">
                             @error('quantity') <p class="c-error">{{ $message }}</p> @enderror
                         </div>
                         <div x-show="type === 'in'" class="grid grid-cols-2 gap-3">
-                            <div><label class="c-label">Custo unit.</label><input type="number" step="0.01" min="0" name="unit_cost" class="c-input" :disabled="type !== 'in'"></div>
-                            <div><label class="c-label">Nº da nota</label><input name="document" maxlength="60" class="c-input" :disabled="type !== 'in'"></div>
+                            <div><label class="c-label">Custo unit.</label><input type="number" step="0.01" min="0" name="unit_cost" class="c-input" autocomplete="off" :disabled="type !== 'in'"></div>
+                            <div><label class="c-label">Nº da nota</label><input name="document" maxlength="60" class="c-input" autocomplete="off" :disabled="type !== 'in'"></div>
                         </div>
-                        <div><label class="c-label">Motivo</label><input name="reason" maxlength="255" class="c-input" placeholder="Opcional"></div>
+                        <div><label class="c-label">Motivo</label><input name="reason" maxlength="255" class="c-input" placeholder="Opcional" autocomplete="off"></div>
                         <button class="c-btn-primary w-full">Registrar movimentação</button>
                     </form>
                 </div>

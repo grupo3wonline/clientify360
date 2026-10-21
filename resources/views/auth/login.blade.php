@@ -31,7 +31,7 @@
         <!-- Remember Me -->
         <div class="flex items-center justify-between mt-4">
             <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-surface-300 dark:border-surface-600 text-brand-600 shadow-sm focus:ring-brand-500 dark:bg-surface-800" name="remember">
+                <input id="remember_me" type="checkbox" class="rounded border-surface-300 dark:border-surface-600 text-brand-600 shadow-sm focus:ring-brand-500 dark:bg-surface-800" name="remember" autocomplete="off">
                 <span class="ms-2 text-sm text-surface-600 dark:text-surface-400">Lembrar-me</span>
             </label>
 

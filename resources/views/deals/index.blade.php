@@ -32,7 +32,7 @@
     <form method="GET" class="mb-4 max-w-sm">
         <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400 text-xs"></i>
-            <input type="search" name="search" value="{{ $search }}" placeholder="Buscar por título ou cliente..." class="c-input pl-9">
+            <input type="search" name="search" value="{{ $search }}" placeholder="Buscar por título ou cliente..." class="c-input pl-9" autocomplete="off">
         </div>
     </form>
 
@@ -74,7 +74,7 @@
                             <form action="{{ route('deals.move', $deal) }}" method="POST" class="mt-2.5">
                                 @csrf @method('PATCH')
                                 <label class="sr-only" for="stage-{{ $deal->id }}">Mover para etapa</label>
-                                <select id="stage-{{ $deal->id }}" name="pipeline_stage_id" onchange="this.form.submit()"
+                                <select id="stage-{{ $deal->id }}" name="pipeline_stage_id" onchange="this.form.submit()" autocomplete="off"
                                         class="w-full text-xs py-1 px-2 rounded-lg border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-surface-600 dark:text-surface-300">
                                     @foreach($stages as $s)
                                         <option value="{{ $s->id }}" @selected($s->id === $stage->id)>{{ $s->name }}</option>

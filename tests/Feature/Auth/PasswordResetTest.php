@@ -49,6 +49,22 @@ class PasswordResetTest extends TestCase
         });
     }
 
+    public function test_forgot_password_is_rate_limited_to_six_per_minute(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+
+        // The throttle:6,1 middleware allows 6 requests per minute; the 7th is blocked.
+        for ($i = 0; $i < 6; $i++) {
+            $this->post('/forgot-password', ['email' => $user->email])
+                ->assertStatus(302);
+        }
+
+        $this->post('/forgot-password', ['email' => $user->email])
+            ->assertStatus(429);
+    }
+
     public function test_password_can_be_reset_with_valid_token(): void
     {
         Notification::fake();

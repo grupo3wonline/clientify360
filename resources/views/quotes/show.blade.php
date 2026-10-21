@@ -100,16 +100,16 @@
                     <li>Registra no histórico do cliente.</li>
                 </ul>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="c-label">Parcelas</label><input type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input"></div>
-                    <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input type="date" name="first_due_date" value="{{ old('first_due_date', now()->format('Y-m-d')) }}" class="c-input"></div>
+                    <div><label class="c-label">Parcelas</label><input type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input" autocomplete="off"></div>
+                    <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input type="date" name="first_due_date" value="{{ old('first_due_date', now()->format('Y-m-d')) }}" class="c-input" autocomplete="off"></div>
                 </div>
                 <p class="c-hint" x-show="n > 1" x-text="n + 'x de ' + ({{ (float) $quote->total }} / n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + ' (mensais)'"></p>
                 <div>
                     <label class="c-label">Forma de pagamento</label>
-                    <select name="payment_method" class="c-input"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach</select>
+                    <select name="payment_method" class="c-input" autocomplete="off"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach</select>
                 </div>
                 <label class="flex items-start gap-2 text-xs text-surface-500 cursor-pointer">
-                    <input type="checkbox" name="allow_negative_stock" value="1" class="mt-0.5 rounded border-surface-300 text-brand-600">
+                    <input type="checkbox" name="allow_negative_stock" value="1" class="mt-0.5 rounded border-surface-300 text-brand-600" autocomplete="off">
                     Permitir mesmo com estoque insuficiente (o saldo ficará negativo — útil para venda sob encomenda).
                 </label>
                 <div class="flex justify-end gap-2 pt-2">

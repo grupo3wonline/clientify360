@@ -21,11 +21,11 @@
     </div>
 
     <form method="GET" class="flex flex-wrap gap-2 mb-4">
-        <select name="status" class="c-input w-auto" onchange="this.form.submit()">
+        <select name="status" class="c-input w-auto" onchange="this.form.submit()" autocomplete="off">
             <option value="">Todos os status</option>
             @foreach(\App\Models\Quote::STATUS_LABELS as $k => $label)<option value="{{ $k }}" @selected($status === $k)>{{ $label }}</option>@endforeach
         </select>
-        <input type="search" name="search" value="{{ $search }}" placeholder="Número, título ou cliente..." class="c-input w-full sm:w-72">
+        <input type="search" name="search" value="{{ $search }}" placeholder="Número, título ou cliente..." class="c-input w-full sm:w-72" autocomplete="off">
     </form>
 
     <div class="c-card overflow-hidden">

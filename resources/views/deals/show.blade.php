@@ -32,7 +32,7 @@
                     <form action="{{ route('deals.move', $deal) }}" method="POST" class="pt-3 border-t border-surface-100 dark:border-surface-800">
                         @csrf @method('PATCH')
                         <label class="c-label" for="move-stage">Etapa</label>
-                        <select id="move-stage" name="pipeline_stage_id" onchange="this.form.submit()" class="c-input">
+                        <select id="move-stage" name="pipeline_stage_id" onchange="this.form.submit()" class="c-input" autocomplete="off">
                             @foreach($stages as $s)<option value="{{ $s->id }}" @selected($s->id === $deal->pipeline_stage_id)>{{ $s->name }} ({{ $s->probability }}%)</option>@endforeach
                         </select>
                     </form>
@@ -79,12 +79,12 @@
             @csrf
             <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Por que perdemos?</h2>
             <div>
-                <select name="lost_reason" class="c-input" required x-data x-on:change="if ($el.value === '__other') { $el.name = ''; $refs.other.name = 'lost_reason'; $refs.other.classList.remove('hidden'); $refs.other.focus() }">
+                <select name="lost_reason" class="c-input" required autocomplete="off" x-data x-on:change="if ($el.value === '__other') { $el.name = ''; $refs.other.name = 'lost_reason'; $refs.other.classList.remove('hidden'); $refs.other.focus() }">
                     <option value="">Selecione...</option>
                     @foreach(['Preço', 'Escolheu concorrente', 'Sem orçamento no momento', 'Sem resposta / sumiu', 'Não era o perfil', 'Adiou o projeto'] as $r)<option>{{ $r }}</option>@endforeach
                     <option value="__other">Outro...</option>
                 </select>
-                <input x-ref="other" class="c-input mt-2 hidden" maxlength="255" placeholder="Descreva o motivo">
+                <input x-ref="other" class="c-input mt-2 hidden" maxlength="255" placeholder="Descreva o motivo" autocomplete="off">
                 @error('lost_reason') <p class="c-error">{{ $message }}</p> @enderror
             </div>
             <div class="flex justify-end gap-2">

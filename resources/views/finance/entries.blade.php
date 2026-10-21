@@ -73,10 +73,10 @@
                                             <h2 class="text-lg font-semibold text-surface-900 dark:text-white">{{ $e->direction === 'receivable' ? 'Registrar recebimento' : 'Registrar pagamento' }}</h2>
                                             <p class="text-sm text-surface-500 whitespace-normal">{{ $e->description }}</p>
                                             <div class="grid grid-cols-2 gap-3">
-                                                <div><label class="c-label">Data</label><input type="date" name="paid_at" value="{{ now()->format('Y-m-d') }}" max="{{ now()->format('Y-m-d') }}" class="c-input"></div>
-                                                <div><label class="c-label">Valor</label><input type="number" step="0.01" min="0" name="paid_amount" value="{{ $e->amount }}" class="c-input"></div>
+                                                <div><label class="c-label">Data</label><input type="date" name="paid_at" value="{{ now()->format('Y-m-d') }}" max="{{ now()->format('Y-m-d') }}" class="c-input" autocomplete="off"></div>
+                                                <div><label class="c-label">Valor</label><input type="number" step="0.01" min="0" name="paid_amount" value="{{ $e->amount }}" class="c-input" autocomplete="off"></div>
                                             </div>
-                                            <div><label class="c-label">Forma</label><select name="payment_method" class="c-input"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}" @selected($e->payment_method === $k)>{{ $label }}</option>@endforeach</select></div>
+                                            <div><label class="c-label">Forma</label><select name="payment_method" class="c-input" autocomplete="off"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}" @selected($e->payment_method === $k)>{{ $label }}</option>@endforeach</select></div>
                                             <div class="flex justify-end gap-2"><button type="button" x-on:click="$dispatch('close')" class="c-btn-ghost">Cancelar</button><button class="c-btn-success">Confirmar</button></div>
                                         </form>
                                     </x-modal>
@@ -105,27 +105,27 @@
             <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Novo lançamento</h2>
             <div class="grid grid-cols-2 gap-2">
                 @foreach(['receivable' => ['A receber', 'fa-arrow-down', 'peer-checked:border-accent-500 peer-checked:bg-accent-50 dark:peer-checked:bg-accent-950/30'], 'payable' => ['A pagar', 'fa-arrow-up', 'peer-checked:border-red-400 peer-checked:bg-red-50 dark:peer-checked:bg-red-950/30']] as $k => [$label, $icon, $cls])
-                    <label class="cursor-pointer"><input type="radio" name="direction" value="{{ $k }}" x-model="dir" class="sr-only peer">
+                    <label class="cursor-pointer"><input type="radio" name="direction" value="{{ $k }}" x-model="dir" class="sr-only peer" autocomplete="off">
                         <span class="flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-surface-200 dark:border-surface-700 text-sm font-medium {{ $cls }}"><i class="fa-solid {{ $icon }}"></i>{{ $label }}</span></label>
                 @endforeach
             </div>
-            <div><label class="c-label">Descrição <span class="text-red-500">*</span></label><input name="description" required maxlength="255" value="{{ old('description') }}" class="c-input" placeholder="Ex.: Aluguel do escritório">@error('description')<p class="c-error">{{ $message }}</p>@enderror</div>
+            <div><label class="c-label">Descrição <span class="text-red-500">*</span></label><input name="description" required maxlength="255" value="{{ old('description') }}" class="c-input" placeholder="Ex.: Aluguel do escritório" autocomplete="off">@error('description')<p class="c-error">{{ $message }}</p>@enderror</div>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div><label class="c-label">Valor total <span class="text-red-500">*</span></label><input type="number" step="0.01" min="0.01" name="amount" required value="{{ old('amount') }}" class="c-input">@error('amount')<p class="c-error">{{ $message }}</p>@enderror</div>
-                <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input type="date" name="due_date" required value="{{ old('due_date', now()->format('Y-m-d')) }}" class="c-input"></div>
-                <div><label class="c-label">Parcelas</label><input type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input"></div>
+                <div><label class="c-label">Valor total <span class="text-red-500">*</span></label><input type="number" step="0.01" min="0.01" name="amount" required value="{{ old('amount') }}" class="c-input" autocomplete="off">@error('amount')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input type="date" name="due_date" required value="{{ old('due_date', now()->format('Y-m-d')) }}" class="c-input" autocomplete="off"></div>
+                <div><label class="c-label">Parcelas</label><input type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input" autocomplete="off"></div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label class="c-label">Categoria</label>
-                    <select name="category_id" class="c-input">
+                    <select name="category_id" class="c-input" autocomplete="off">
                         <option value="">—</option>
                         @foreach($categories as $c)<option value="{{ $c->id }}" x-show="dir === '{{ $c->type === 'income' ? 'receivable' : 'payable' }}'" @selected(old('category_id') === $c->id)>{{ $c->name }}</option>@endforeach
                     </select></div>
                 <div x-show="dir === 'receivable'"><label class="c-label">Cliente</label>
-                    <select name="client_id" class="c-input" :disabled="dir !== 'receivable'"><option value="">—</option>@foreach($clients as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach</select></div>
-                <div x-show="dir === 'payable'"><label class="c-label">Fornecedor / favorecido</label><input name="counterparty" maxlength="255" class="c-input" :disabled="dir !== 'payable'"></div>
+                    <select name="client_id" class="c-input" autocomplete="off" :disabled="dir !== 'receivable'"><option value="">—</option>@foreach($clients as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach</select></div>
+                <div x-show="dir === 'payable'"><label class="c-label">Fornecedor / favorecido</label><input name="counterparty" maxlength="255" class="c-input" autocomplete="off" :disabled="dir !== 'payable'"></div>
             </div>
-            <div><label class="c-label">Forma de pagamento</label><select name="payment_method" class="c-input"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach</select></div>
+            <div><label class="c-label">Forma de pagamento</label><select name="payment_method" class="c-input" autocomplete="off"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach</select></div>
             <div class="flex justify-end gap-2 pt-2"><button type="button" x-on:click="$dispatch('close')" class="c-btn-ghost">Cancelar</button><button class="c-btn-primary">Lançar</button></div>
         </form>
     </x-modal>

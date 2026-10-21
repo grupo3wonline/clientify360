@@ -23,7 +23,7 @@
                 </div>
                 <p class="text-3xl font-bold mt-4" style="color: {{ $form->color }}">{{ $form->submissions_count }} <span class="text-sm font-medium text-surface-400">leads</span></p>
                 <div class="mt-4 flex items-center gap-2">
-                    <input readonly value="{{ $form->publicUrl() }}" class="c-input py-1.5 text-xs font-mono" aria-label="Link público">
+                    <input readonly value="{{ $form->publicUrl() }}" class="c-input py-1.5 text-xs font-mono" aria-label="Link público" autocomplete="off">
                     <button type="button" @click="navigator.clipboard.writeText(@js($form->publicUrl())); copied = true; setTimeout(() => copied = false, 1500)" class="c-btn-ghost px-3 py-1.5" title="Copiar link">
                         <i class="fa-solid" :class="copied ? 'fa-check text-accent-500' : 'fa-copy'"></i>
                     </button>

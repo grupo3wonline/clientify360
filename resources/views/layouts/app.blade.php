@@ -162,7 +162,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     title: 'Sucesso!',
-                    text: '{{ session('success') }}',
+                    text: @js(session('success')),
                     icon: 'success',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#4f46e5',
@@ -177,7 +177,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     title: 'Erro!',
-                    text: '{{ session('error') }}',
+                    text: @js(session('error')),
                     icon: 'error',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#dc2626',

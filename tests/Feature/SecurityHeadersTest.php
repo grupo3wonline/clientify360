@@ -26,6 +26,26 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString("frame-ancestors 'self'", $csp);
     }
 
+    public function test_csp_keeps_analytics_and_stripe_hosts_and_drops_cdns(): void
+    {
+        $csp = $this->get('/')->headers->get('Content-Security-Policy');
+
+        // Analytics (GTM/GA) hosts are required by the <x-analytics> component.
+        $this->assertStringContainsString('https://www.googletagmanager.com', $csp);
+        $this->assertStringContainsString('https://www.google-analytics.com', $csp);
+        $this->assertStringContainsString('https://region1.google-analytics.com', $csp);
+
+        // Stripe hosts remain.
+        $this->assertStringContainsString('https://api.stripe.com', $csp);
+        $this->assertStringContainsString('https://js.stripe.com', $csp);
+
+        // CDNs are vendored via Vite now and the 3W Online link is not an iframe.
+        $this->assertStringNotContainsString('cdn.tailwindcss.com', $csp);
+        $this->assertStringNotContainsString('cdnjs.cloudflare.com', $csp);
+        $this->assertStringNotContainsString('cdn.jsdelivr.net', $csp);
+        $this->assertStringNotContainsString('www.3wonline.com.br', $csp);
+    }
+
     public function test_csrf_protection_blocks_post_without_token(): void
     {
         // Em ambiente de teste o CSRF é desabilitado pelo framework; aqui validamos

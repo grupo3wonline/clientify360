@@ -70,7 +70,7 @@
                         <div class="field">
                             <label for="{{ $id }}">{{ $field['label'] }} @if(!empty($field['required']))<span class="req">*</span>@endif</label>
                             @if($field['type'] === 'textarea')
-                                <textarea id="{{ $id }}" name="data[{{ $field['name'] }}]" maxlength="3000" @if(!empty($field['required'])) required @endif>{{ old('data.' . $field['name']) }}</textarea>
+                                <textarea id="{{ $id }}" name="data[{{ $field['name'] }}]" maxlength="3000" autocomplete="off" @if(!empty($field['required'])) required @endif>{{ old('data.' . $field['name']) }}</textarea>
                             @else
                                 <input id="{{ $id }}" type="{{ $field['type'] }}" name="data[{{ $field['name'] }}]" value="{{ old('data.' . $field['name']) }}" maxlength="255"
                                        @if(!empty($field['required'])) required @endif
@@ -83,7 +83,7 @@
                     {{-- Honeypot anti-spam: invisível para pessoas --}}
                     <div class="hp" aria-hidden="true"><label for="website_url">Não preencha</label><input id="website_url" name="website_url" tabindex="-1" autocomplete="off"></div>
 
-                    <label class="consent"><input type="checkbox" name="lgpd_consent" value="1" required @checked(old('lgpd_consent'))>
+                    <label class="consent"><input type="checkbox" name="lgpd_consent" value="1" required autocomplete="off" @checked(old('lgpd_consent'))>
                         <span>Autorizo o contato e o tratamento dos meus dados para esta finalidade, conforme a LGPD.</span></label>
                     @error('lgpd_consent')<div class="err" style="margin:-10px 0 14px">{{ $message }}</div>@enderror
 

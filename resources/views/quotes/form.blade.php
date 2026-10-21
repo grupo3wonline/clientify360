@@ -17,12 +17,12 @@
             <div class="c-card p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
                     <label class="c-label" for="title">Título <span class="text-red-500">*</span></label>
-                    <input id="title" name="title" required maxlength="255" value="{{ old('title', $quote->title) }}" class="c-input" placeholder="Ex.: Desenvolvimento de loja virtual">
+                    <input id="title" name="title" required maxlength="255" value="{{ old('title', $quote->title) }}" class="c-input" placeholder="Ex.: Desenvolvimento de loja virtual" autocomplete="off">
                     @error('title') <p class="c-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="c-label" for="client_id">Cliente <span class="text-red-500">*</span></label>
-                    <select id="client_id" name="client_id" required class="c-input">
+                    <select id="client_id" name="client_id" required class="c-input" autocomplete="off">
                         <option value="">Selecione...</option>
                         @foreach($clients as $c)<option value="{{ $c->id }}" @selected(old('client_id', $quote->client_id) === $c->id)>{{ $c->name }}</option>@endforeach
                     </select>
@@ -30,7 +30,7 @@
                 </div>
                 <div>
                     <label class="c-label" for="deal_id">Oportunidade (opcional)</label>
-                    <select id="deal_id" name="deal_id" class="c-input">
+                    <select id="deal_id" name="deal_id" class="c-input" autocomplete="off">
                         <option value="">Nenhuma</option>
                         @foreach($deals as $d)<option value="{{ $d->id }}" @selected(old('deal_id', $quote->deal_id) === $d->id)>{{ $d->title }} — {{ $d->client?->name }}</option>@endforeach
                     </select>
@@ -63,15 +63,15 @@
                             <input type="hidden" :name="`items[${i}][product_id]`" :value="item.product_id ?? ''">
                             <div class="col-span-12 md:col-span-6">
                                 <label class="c-label text-xs" x-show="i === 0">Descrição</label>
-                                <input :name="`items[${i}][description]`" x-model="item.description" required maxlength="255" class="c-input py-2" placeholder="Descrição do item">
+                                <input :name="`items[${i}][description]`" x-model="item.description" required maxlength="255" class="c-input py-2" placeholder="Descrição do item" autocomplete="off">
                             </div>
                             <div class="col-span-4 md:col-span-2">
                                 <label class="c-label text-xs" x-show="i === 0">Qtd.</label>
-                                <input type="number" step="0.001" min="0.001" :name="`items[${i}][quantity]`" x-model.number="item.quantity" required class="c-input py-2">
+                                <input type="number" step="0.001" min="0.001" :name="`items[${i}][quantity]`" x-model.number="item.quantity" required class="c-input py-2" autocomplete="off">
                             </div>
                             <div class="col-span-5 md:col-span-2">
                                 <label class="c-label text-xs" x-show="i === 0">Unitário</label>
-                                <input type="number" step="0.01" min="0" :name="`items[${i}][unit_price]`" x-model.number="item.unit_price" required class="c-input py-2">
+                                <input type="number" step="0.01" min="0" :name="`items[${i}][unit_price]`" x-model.number="item.unit_price" required class="c-input py-2" autocomplete="off">
                             </div>
                             <div class="col-span-3 md:col-span-2 flex items-center justify-end gap-2">
                                 <span class="text-sm font-semibold whitespace-nowrap" x-text="brl(lineTotal(item))"></span>
@@ -89,11 +89,11 @@
             <div class="c-card p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="c-label" for="payment_terms">Condições de pagamento</label>
-                    <textarea id="payment_terms" name="payment_terms" rows="3" maxlength="1000" class="c-input resize-none" placeholder="Ex.: 50% na aprovação e 50% na entrega. PIX ou boleto.">{{ old('payment_terms', $quote->payment_terms) }}</textarea>
+                    <textarea id="payment_terms" name="payment_terms" rows="3" maxlength="1000" class="c-input resize-none" placeholder="Ex.: 50% na aprovação e 50% na entrega. PIX ou boleto." autocomplete="off">{{ old('payment_terms', $quote->payment_terms) }}</textarea>
                 </div>
                 <div>
                     <label class="c-label" for="notes">Observações</label>
-                    <textarea id="notes" name="notes" rows="3" maxlength="3000" class="c-input resize-none" placeholder="Prazo de entrega, garantias, o que não está incluso...">{{ old('notes', $quote->notes) }}</textarea>
+                    <textarea id="notes" name="notes" rows="3" maxlength="3000" class="c-input resize-none" placeholder="Prazo de entrega, garantias, o que não está incluso..." autocomplete="off">{{ old('notes', $quote->notes) }}</textarea>
                 </div>
             </div>
         </div>
@@ -103,12 +103,12 @@
             <div class="c-card p-5 xl:sticky xl:top-24 space-y-4">
                 <div>
                     <label class="c-label" for="valid_until">Válido até</label>
-                    <input id="valid_until" type="date" name="valid_until" value="{{ old('valid_until', $quote->valid_until?->format('Y-m-d')) }}" class="c-input">
+                    <input id="valid_until" type="date" name="valid_until" value="{{ old('valid_until', $quote->valid_until?->format('Y-m-d')) }}" class="c-input" autocomplete="off">
                 </div>
                 <dl class="space-y-2 text-sm pt-2 border-t border-surface-100 dark:border-surface-800">
                     <div class="flex justify-between"><dt class="text-surface-500">Subtotal</dt><dd x-text="brl(subtotal())"></dd></div>
                     <div class="flex justify-between items-center gap-3"><dt class="text-surface-500"><label for="discount">Desconto (R$)</label></dt>
-                        <dd><input id="discount" type="number" step="0.01" min="0" name="discount" x-model.number="discount" class="c-input py-1.5 w-32 text-right"></dd></div>
+                        <dd><input id="discount" type="number" step="0.01" min="0" name="discount" x-model.number="discount" class="c-input py-1.5 w-32 text-right" autocomplete="off"></dd></div>
                     <div class="flex justify-between text-lg font-bold pt-2 border-t border-surface-100 dark:border-surface-800"><dt>Total</dt><dd class="text-accent-700 dark:text-accent-400" x-text="brl(total())"></dd></div>
                 </dl>
                 <p class="c-hint">Os totais são recalculados no servidor ao salvar.</p>
