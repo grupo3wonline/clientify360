@@ -10,11 +10,11 @@
     <div class="flex flex-col lg:flex-row gap-6">
         <div class="flex-1 min-w-0">
             <form method="GET" class="flex flex-wrap gap-2 mb-4">
-                <select name="type" class="c-input w-auto" onchange="this.form.submit()">
+                <select name="type" class="c-input w-auto" autocomplete="off" onchange="this.form.submit()">
                     <option value="">Todos os tipos</option>
                     @foreach(\App\Models\Activity::TYPES as $k => $t)<option value="{{ $k }}" @selected($type === $k)>{{ $t['label'] }}</option>@endforeach
                 </select>
-                <select name="client_id" class="c-input w-auto max-w-xs" onchange="this.form.submit()">
+                <select name="client_id" class="c-input w-auto max-w-xs" autocomplete="off" onchange="this.form.submit()">
                     <option value="">Todos os clientes</option>
                     @foreach($clients as $c)<option value="{{ $c->id }}" @selected($clientId === $c->id)>{{ $c->name }}</option>@endforeach
                 </select>
