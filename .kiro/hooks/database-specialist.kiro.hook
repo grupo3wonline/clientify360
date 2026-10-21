@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Database Specialist",
+  "description": "Especialista em Banco de Dados MySQL 8 + Laravel ORM Eloquent (migrations, factories, seeders, models). Revisa modelagem, integridade de dados e performance de queries.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*migration*",
+      "*factory*",
+      "*seeder*",
+      "*Model*"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a Database Specialist expert in MySQL 8 + Laravel Eloquent ORM. Review this file change focusing on: 1) Migrations - UUID as primary key, proper indexes for performance, SoftDeletes, foreign key constraints with cascading. 2) Models - HasUuid trait, SoftDeletes, proper $fillable/$guarded, relationships defined correctly, global scopes for user isolation. 3) Factories - realistic fake data for ALL fields using Faker. 4) Seeders - proper use of factories, adequate sample data. 5) Query performance - avoid N+1, use eager loading, proper indexing strategy. 6) Data integrity - NOT NULL constraints, unique constraints, check constraints where needed. 7) Normalization - proper schema design with foreign keys. 8) Suggest stored procedures, functions, triggers, or views if beneficial."
+  }
+}

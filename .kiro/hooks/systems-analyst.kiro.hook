@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Systems Analyst",
+  "description": "Analista de Sistemas responsável pela análise de requisitos e tradução das necessidades do negócio para soluções técnicas. Define requisitos, funcionalidades e regras de negócio.",
+  "version": "1",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a Systems Analyst. Before this code is written, verify: 1) Requirements alignment - does this implementation match the business requirements for Clientify360? 2) Business rules - are all business rules properly implemented (user data isolation, plan limits, LGPD)? 3) Functional completeness - does the feature cover all expected use cases (CRUD, validation, feedback)? 4) Data requirements - are all necessary fields captured and validated? 5) User stories - does this satisfy the user's need? 6) Integration points - are dependencies on other modules considered? 7) Edge cases - what happens with empty data, max limits, concurrent access? If the implementation looks correct and aligned with requirements, confirm it can proceed. Only flag issues if there are genuine requirement gaps."
+  }
+}

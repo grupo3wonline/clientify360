@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Web Design Specialist",
+  "description": "Especialista em Web Design responsável pela criação visual e experiência de interfaces para websites e sistemas web (Layout, Interface visual, Experiência do usuário, Responsividade). Revisa alterações em arquivos de view e CSS para garantir qualidade visual, responsividade mobile-first e experiência do usuário.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.blade.php",
+      "*.css"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a Web Design Specialist. Review this file change focusing on: 1) Visual layout quality and consistency, 2) User interface design best practices, 3) User experience (intuitive navigation, clear hierarchy), 4) Responsiveness (mobile-first approach with Tailwind CSS breakpoints). Ensure the design is modern, professional, and follows the project's visual standards. Flag any issues with spacing, alignment, color contrast, or responsive breakpoints."
+  }
+}

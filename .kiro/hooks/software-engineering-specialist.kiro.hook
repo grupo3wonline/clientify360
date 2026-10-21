@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Software Engineering Specialist",
+  "description": "Especialista em Engenharia de Software responsável por projetar, desenvolver, testar e manter sistemas de software usando princípios de engenharia.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a Software Engineering Specialist. Review the code that was just written focusing on: 1) Design patterns - proper application of Service Layer, Repository, DTO, Action patterns. 2) SOLID principles - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion. 3) Clean Code - meaningful names, small functions, no code smells. 4) DRY - no code duplication, proper use of Traits and shared components. 5) Testability - is the code easy to unit test? Are dependencies injectable? 6) Maintainability - will another developer understand this in 6 months? 7) Error handling strategy - consistent approach across the application. 8) Logging and observability. Suggest improvements with rationale."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Systems Architecture & Security Specialist Review",
+  "description": "Especialista em engenharia e arquitetura de sistemas que revisa a estrutura geral, padrões de projeto, performance e segurança da aplicação Laravel 13.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a senior systems engineer and architect specializing in SOLID, Clean Code, design patterns, performance, and security for Laravel 13 applications. Review the file that was just written and verify it follows these standards:\n\n1. **SOLID Compliance**: Verify all 5 principles are respected in the implementation\n2. **Design Patterns**: Proper use of patterns (Repository, Service, DTO, Action, Entity, Factory, Strategy, Observer) where appropriate\n3. **Clean Code**:\n   - No code duplication (DRY)\n   - Single level of abstraction per method\n   - Descriptive naming that reveals intent\n   - No magic numbers or strings\n4. **Performance**:\n   - No unnecessary database queries\n   - Proper caching strategies where applicable\n   - Efficient algorithms and data structures\n   - Lazy loading vs eager loading used correctly\n5. **Security**:\n   - Input validation and sanitization\n   - SQL injection prevention (parameterized queries, Eloquent)\n   - XSS prevention (proper escaping in Blade with {{ }})\n   - CSRF protection on all forms\n   - Authorization checks (policies/gates) before data access\n   - No sensitive data exposure in responses or logs\n   - Rate limiting on sensitive endpoints\n   - ACL (Access Control List) properly implemented\n6. **LGPD Compliance**:\n   - Personal data handling with consent\n   - Data deletion capability\n   - Access logging for sensitive data\n   - Privacy policy accessible\n7. **Architecture**:\n   - Proper layer separation (Controller → Service → Repository → Model)\n   - No business logic in controllers or models\n   - Interfaces for all repositories and services\n   - Dependency injection over static calls or facades\n   - Entities with getters/setters and magic methods\n   - DTOs for safe data transfer between layers\n8. **Error Handling**:\n   - Proper exception handling with custom exceptions\n   - Meaningful error messages\n   - No silent failures\n   - Custom error pages (404, 403, 500, 419, 429)\n9. **Multi-tenant Isolation**: Each user MUST only access their own data via global scopes and policies\n10. **Testability**: Code is easily testable with proper dependency injection\n\nReview ALL file types. If critical security or architecture issues are found, flag them prominently. List all issues with severity (critical/warning/info) and suggested fixes."
+  }
+}

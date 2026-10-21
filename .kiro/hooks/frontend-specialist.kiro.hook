@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Frontend Specialist",
+  "description": "Especialista em Frontend responsável pela interface visual e experiência do usuário com Alpine.js + Laravel Breeze + HTML5 + CSS3 + Tailwind CSS, aplicando UI, UX, SEO, responsividade e reatividade com abordagem mobile first.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.blade.php",
+      "*.js",
+      "*.css"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a Frontend Specialist expert in Alpine.js + Laravel Breeze + HTML5 + CSS3 + Tailwind CSS. Review this file change focusing on: 1) Mobile-first responsive design with proper Tailwind breakpoints (base=mobile, md:tablet, lg:desktop). 2) Alpine.js reactivity - proper x-data, x-show, x-transition, @click usage. 3) SEO - semantic HTML5, meta tags, proper heading hierarchy. 4) UI components - modern professional layout with tooltips, help buttons, breadcrumbs. 5) SweetAlert2 - proper usage for alerts, confirmations, and feedback. 6) Font Awesome - consistent icon usage. 7) Dark/light theme support with proper dark: classes. 8) autocomplete=\"off\" on all inputs. 9) Accessibility and ARIA attributes."
+  }
+}

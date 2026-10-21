@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "QA Specialist",
+  "description": "Especialista QA responsável pela qualidade do software. Revisa código para identificar bugs potenciais, edge cases, validações faltantes e problemas de qualidade.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a QA Specialist responsible for software quality. Review the code that was just written focusing on: 1) Potential bugs and edge cases not handled. 2) Input validation completeness (both client-side and server-side). 3) Error handling - are all failure paths covered? 4) Data integrity - UUID usage, SoftDeletes, user isolation. 5) Security vulnerabilities - SQL injection, XSS, CSRF, mass assignment. 6) LGPD compliance - personal data handling, consent. 7) Performance issues - N+1 queries, missing indexes. 8) Suggest any missing test scenarios. Report issues with severity (critical, major, minor)."
+  }
+}
