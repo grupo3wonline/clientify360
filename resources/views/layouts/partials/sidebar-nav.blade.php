@@ -5,6 +5,7 @@
             ['dashboard', 'dashboard', 'fa-gauge-high', 'Dashboard'],
             ['clients.index', 'clients.*', 'fa-users', 'Clientes'],
             ['reminders.index', 'reminders.*', 'fa-calendar-check', 'Agenda'],
+            ['appointments.index', 'appointments.*', 'fa-calendar-days', 'Agendamentos', 'appointments.view'],
             ['interactions.index', 'interactions.*', 'fa-headset', 'Atendimentos'],
         ],
         'Comercial' => [

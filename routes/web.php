@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DealController;
@@ -82,6 +83,15 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
     Route::post('reminders', [ReminderController::class, 'store'])->name('reminders.store');
     Route::patch('reminders/{reminder}/complete', [ReminderController::class, 'complete'])->name('reminders.complete');
     Route::delete('reminders/{reminder}', [ReminderController::class, 'destroy'])->name('reminders.destroy');
+
+    // Appointments / Calendário
+    // create/store ANTES do resource: senão "appointments/{appointment}" captura "appointments/create".
+    Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+    Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::resource('appointments', AppointmentController::class)->except(['create', 'store']);
+    Route::patch('appointments/{appointment}/confirm', [AppointmentController::class, 'confirm'])->name('appointments.confirm');
+    Route::patch('appointments/{appointment}/done', [AppointmentController::class, 'done'])->name('appointments.done');
+    Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 
     // Interactions / Support
     Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');
