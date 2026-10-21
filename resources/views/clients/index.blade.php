@@ -157,7 +157,7 @@
                                             @method('DELETE')
                                         </form>
                                         <button onclick="confirmDelete('{{ $client->id }}')"
-                                                class="p-2 rounded-lg text-surface-400 hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-950/30 transition"
+                                                class="p-2 rounded-lg text-surface-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:text-danger-400 dark:hover:bg-danger-950/30 transition"
                                                 title="Excluir">
                                             <i class="fa-solid fa-trash-can text-sm"></i>
                                         </button>

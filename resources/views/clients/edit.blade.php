@@ -23,7 +23,7 @@
 
                     <p class="text-gray-600 dark:text-gray-400 mb-6">
                         <i class="fa-solid fa-circle-info mr-1 text-primary-500"></i>
-                        Atualize os dados do cliente abaixo. Campos marcados com <span class="text-red-500">*</span> são obrigatórios.
+                        Atualize os dados do cliente abaixo. Campos marcados com <span class="text-danger-500">*</span> são obrigatórios.
                     </p>
 
                     <form action="{{ route('clients.update', $client) }}" method="POST">
@@ -35,7 +35,7 @@
                             <!-- Name -->
                             <div class="md:col-span-2">
                                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Nome <span class="text-red-500">*</span>
+                                    Nome <span class="text-danger-500">*</span>
                                 </label>
                                 <input type="text"
                                        name="name"
@@ -46,7 +46,7 @@
                                        placeholder="Nome completo do cliente"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('name')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -63,7 +63,7 @@
                                        placeholder="email@exemplo.com"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('email')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -80,7 +80,7 @@
                                        placeholder="(00) 00000-0000"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('phone')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -97,7 +97,7 @@
                                        placeholder="CPF ou CNPJ"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('document')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -114,7 +114,7 @@
                                        placeholder="Rua, número, complemento"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('address')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -131,7 +131,7 @@
                                        placeholder="Nome da cidade"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('city')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -150,7 +150,7 @@
                                     @endforeach
                                 </select>
                                 @error('state')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -167,7 +167,7 @@
                                        placeholder="00000-000"
                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 @error('zip_code')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -187,7 +187,7 @@
                                           placeholder="Informações adicionais sobre o cliente..."
                                           class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-primary-500 focus:ring-primary-500">{{ old('notes', $client->notes) }}</textarea>
                                 @error('notes')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-danger-600 dark:text-danger-400">{{ $message }}</p>
                                 @enderror
                             </div>
 

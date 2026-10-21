@@ -25,7 +25,7 @@
                 @if($quote->status === 'draft')
                     <form action="{{ route('quotes.send', $quote) }}" method="POST">@csrf<button class="c-btn-ghost"><i class="fa-solid fa-paper-plane mr-2 text-xs"></i> Marcar como enviado</button></form>
                 @endif
-                <x-confirm-delete :action="route('quotes.reject', $quote)" method="POST" title="Cliente recusou?" text="O orçamento ficará como recusado." confirm="Recusado" class="c-btn-ghost text-red-600">
+                <x-confirm-delete :action="route('quotes.reject', $quote)" method="POST" title="Cliente recusou?" text="O orçamento ficará como recusado." confirm="Recusado" class="c-btn-ghost text-danger-600">
                     <i class="fa-solid fa-xmark mr-2 text-xs"></i> Recusado
                 </x-confirm-delete>
                 <button type="button" x-data @click="$dispatch('open-modal', 'approve')" class="c-btn-success"><i class="fa-solid fa-check-double mr-2 text-xs"></i> Aprovar e gerar venda</button>
@@ -52,7 +52,7 @@
                     </tbody>
                     <tfoot class="text-sm">
                         <tr><td colspan="3" class="c-td text-right text-surface-500">Subtotal</td><td class="c-td text-right">@money($quote->subtotal)</td></tr>
-                        @if((float) $quote->discount > 0)<tr><td colspan="3" class="c-td text-right text-surface-500">Desconto</td><td class="c-td text-right text-red-600">− @money($quote->discount)</td></tr>@endif
+                        @if((float) $quote->discount > 0)<tr><td colspan="3" class="c-td text-right text-surface-500">Desconto</td><td class="c-td text-right text-danger-600">− @money($quote->discount)</td></tr>@endif
                         <tr><td colspan="3" class="c-td text-right font-bold">Total</td><td class="c-td text-right text-lg font-bold text-accent-700 dark:text-accent-400 whitespace-nowrap">@money($quote->total)</td></tr>
                     </tfoot>
                 </table>
@@ -64,7 +64,7 @@
                 <div class="flex justify-between"><span class="text-surface-500">Cliente</span><a href="{{ route('clients.show', $quote->client_id) }}" class="text-brand-600 dark:text-brand-400 hover:underline">{{ $quote->client?->name }}</a></div>
                 @if($quote->deal)<div class="flex justify-between"><span class="text-surface-500">Oportunidade</span><a href="{{ route('deals.show', $quote->deal) }}" class="hover:underline truncate ml-3">{{ $quote->deal->title }}</a></div>@endif
                 <div class="flex justify-between"><span class="text-surface-500">Emitido em</span><span>{{ $quote->created_at->format('d/m/Y') }}</span></div>
-                <div class="flex justify-between"><span class="text-surface-500">Válido até</span><span class="{{ $quote->isExpired() ? 'text-red-600 font-semibold' : '' }}">{{ $quote->valid_until?->format('d/m/Y') ?? '—' }}</span></div>
+                <div class="flex justify-between"><span class="text-surface-500">Válido até</span><span class="{{ $quote->isExpired() ? 'text-danger-600 font-semibold' : '' }}">{{ $quote->valid_until?->format('d/m/Y') ?? '—' }}</span></div>
                 @if($quote->approved_at)<div class="flex justify-between"><span class="text-surface-500">Aprovado em</span><span>{{ $quote->approved_at->format('d/m/Y H:i') }}</span></div>@endif
                 @if($quote->payment_terms)<div class="pt-3 border-t border-surface-100 dark:border-surface-800"><p class="text-surface-500 mb-1">Condições</p><p class="whitespace-pre-line">{{ $quote->payment_terms }}</p></div>@endif
                 @if($quote->notes)<div class="pt-3 border-t border-surface-100 dark:border-surface-800"><p class="text-surface-500 mb-1">Observações</p><p class="whitespace-pre-line">{{ $quote->notes }}</p></div>@endif
@@ -83,7 +83,7 @@
             @endif
 
             @if($quote->status !== 'approved')
-                <div class="text-right"><x-confirm-delete :action="route('quotes.destroy', $quote)" title="Excluir orçamento?" class="text-xs text-red-600 hover:underline">Excluir orçamento</x-confirm-delete></div>
+                <div class="text-right"><x-confirm-delete :action="route('quotes.destroy', $quote)" title="Excluir orçamento?" class="text-xs text-danger-600 hover:underline">Excluir orçamento</x-confirm-delete></div>
             @endif
         </div>
     </div>

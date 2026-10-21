@@ -19,13 +19,14 @@
 
         <div>
             <x-input-label for="name" value="Nome" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="off" />
+            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" placeholder="Como você quer ser chamado" required autofocus autocomplete="off" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
             <x-input-label for="email" value="E-mail" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="off" />
+            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" placeholder="seu@email.com.br" required autocomplete="off" />
+            <p class="mt-1 text-xs text-surface-500 dark:text-surface-400">Usamos este e-mail para login e avisos importantes da conta.</p>
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
@@ -55,9 +56,9 @@
                     x-data="{ show: true }"
                     x-show="show"
                     x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-surface-600 dark:text-surface-400"
-                >Salvo.</p>
+                    x-init="setTimeout(() => show = false, 3000)"
+                    class="text-sm text-accent-600 dark:text-accent-400"
+                >Alterações salvas com sucesso.</p>
             @endif
         </div>
     </form>

@@ -13,9 +13,9 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div class="c-card p-4"><p class="text-xs text-surface-500">Itens ativos</p><p class="text-xl font-bold mt-1">{{ $stats['total'] }}</p></div>
-        <a href="{{ route('products.index', ['filter' => 'low_stock']) }}" class="c-card p-4 hover:shadow-md transition {{ $stats['low_stock'] ? 'border-amber-300 dark:border-amber-700' : '' }}">
-            <p class="text-xs text-surface-500"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i>Estoque baixo</p>
-            <p class="text-xl font-bold mt-1 {{ $stats['low_stock'] ? 'text-amber-600' : '' }}">{{ $stats['low_stock'] }}</p>
+        <a href="{{ route('products.index', ['filter' => 'low_stock']) }}" class="c-card p-4 hover:shadow-md transition {{ $stats['low_stock'] ? 'border-warning-300 dark:border-warning-700' : '' }}">
+            <p class="text-xs text-surface-500"><i class="fa-solid fa-triangle-exclamation text-warning-500 mr-1"></i>Estoque baixo</p>
+            <p class="text-xl font-bold mt-1 {{ $stats['low_stock'] ? 'text-warning-700' : '' }}">{{ $stats['low_stock'] }}</p>
         </a>
         <div class="c-card p-4" title="Saldo × custo dos itens com controle de estoque"><p class="text-xs text-surface-500">Valor em estoque (custo)</p><p class="text-xl font-bold mt-1">@money($stats['stock_value'])</p></div>
     </div>
@@ -53,8 +53,8 @@
                             <td class="c-td text-right text-xs hidden md:table-cell">{{ $p->marginPercent() !== null ? str_replace('.', ',', (string) $p->marginPercent()) . '%' : '—' }}</td>
                             <td class="c-td text-right whitespace-nowrap">
                                 @if($p->track_stock)
-                                    <span class="{{ $p->isLowStock() ? 'text-amber-600 font-semibold' : '' }}">@qty($p->stock) {{ $p->unit }}</span>
-                                    @if($p->isLowStock())<i class="fa-solid fa-triangle-exclamation text-amber-500 ml-1" title="Abaixo do mínimo (@qty($p->min_stock))"></i>@endif
+                                    <span class="{{ $p->isLowStock() ? 'text-warning-700 font-semibold' : '' }}">@qty($p->stock) {{ $p->unit }}</span>
+                                    @if($p->isLowStock())<i class="fa-solid fa-triangle-exclamation text-warning-500 ml-1" title="Abaixo do mínimo (@qty($p->min_stock))"></i>@endif
                                 @else
                                     <span class="text-xs text-surface-400">não controla</span>
                                 @endif

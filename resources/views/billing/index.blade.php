@@ -45,11 +45,11 @@
                             <span class="w-1.5 h-1.5 bg-accent-500 rounded-full mr-2 animate-pulse"></span> Ativo
                         </span>
                     @elseif($status === 'canceling')
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-warning-50 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300 border border-warning-200 dark:border-warning-800">
                             <i class="fa-solid fa-clock mr-1.5 text-[10px]"></i> Cancelando
                         </span>
                     @elseif($status === 'canceled')
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-danger-50 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300 border border-danger-200 dark:border-danger-800">
                             <i class="fa-solid fa-circle-xmark mr-1.5 text-[10px]"></i> Cancelado
                         </span>
                     @else
@@ -69,7 +69,7 @@
                         Próxima renovação: <strong class="text-surface-800 dark:text-surface-200">{{ $renewalDate->format('d/m/Y') }}</strong>
                     </p>
                     @if($daysUntilRenewal !== null)
-                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium {{ $daysUntilRenewal <= 3 ? 'bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800' : ($daysUntilRenewal <= 7 ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800' : 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800') }}">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium {{ $daysUntilRenewal <= 3 ? 'bg-danger-50 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300 border border-danger-200 dark:border-danger-800' : ($daysUntilRenewal <= 7 ? 'bg-warning-50 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300 border border-warning-200 dark:border-warning-800' : 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800') }}">
                         <i class="fa-solid fa-hourglass-half mr-1.5 text-[10px]"></i>
                         {{ $daysUntilRenewal }} {{ $daysUntilRenewal === 1 ? 'dia' : 'dias' }} para renovação
                     </span>
@@ -80,9 +80,9 @@
 
             @if($status === 'canceling' && $renewalDate)
             <div class="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800">
-                <div class="flex items-start space-x-3 bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 border border-amber-200 dark:border-amber-800/50">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
-                    <p class="text-sm text-amber-800 dark:text-amber-200">
+                <div class="flex items-start space-x-3 bg-warning-50 dark:bg-warning-950/30 rounded-xl p-4 border border-warning-200 dark:border-warning-800/50">
+                    <i class="fa-solid fa-triangle-exclamation text-warning-500 mt-0.5"></i>
+                    <p class="text-sm text-warning-800 dark:text-warning-200">
                         Sua assinatura será encerrada em <strong>{{ $renewalDate->format('d/m/Y') }}</strong>. Após essa data, você voltará ao plano Básico.
                     </p>
                 </div>
@@ -102,7 +102,7 @@
                     <form action="{{ route('billing.cancel') }}" method="POST" x-data>
                         @csrf
                         <button type="button" @click="Swal.fire({ title: 'Cancelar assinatura?', text: 'Você terá acesso até o final do período atual.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Sim, cancelar', cancelButtonText: 'Manter assinatura', customClass: { popup: 'rounded-2xl' } }).then((result) => { if (result.isConfirmed) $el.closest('form').submit() })"
-                                class="inline-flex items-center px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl transition shadow-sm">
+                                class="inline-flex items-center px-5 py-2.5 bg-danger-600 hover:bg-danger-700 text-white text-sm font-medium rounded-xl transition shadow-sm">
                             <i class="fa-solid fa-ban mr-2 text-xs"></i> Cancelar Assinatura
                         </button>
                     </form>
@@ -213,7 +213,7 @@
                                     <i class="fa-solid fa-check mr-1"></i> Pago
                                 </span>
                                 @else
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold bg-warning-50 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300 border border-warning-200 dark:border-warning-800">
                                     <i class="fa-solid fa-clock mr-1"></i> Pendente
                                 </span>
                                 @endif

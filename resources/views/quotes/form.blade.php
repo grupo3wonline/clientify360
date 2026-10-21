@@ -16,12 +16,12 @@
         <div class="xl:col-span-2 space-y-6">
             <div class="c-card p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
-                    <label class="c-label" for="title">Título <span class="text-red-500">*</span></label>
+                    <label class="c-label" for="title">Título <span class="text-danger-500">*</span></label>
                     <input id="title" name="title" required maxlength="255" value="{{ old('title', $quote->title) }}" class="c-input" placeholder="Ex.: Desenvolvimento de loja virtual">
                     @error('title') <p class="c-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="c-label" for="client_id">Cliente <span class="text-red-500">*</span></label>
+                    <label class="c-label" for="client_id">Cliente <span class="text-danger-500">*</span></label>
                     <select id="client_id" name="client_id" required class="c-input">
                         <option value="">Selecione...</option>
                         @foreach($clients as $c)<option value="{{ $c->id }}" @selected(old('client_id', $quote->client_id) === $c->id)>{{ $c->name }}</option>@endforeach
@@ -75,7 +75,7 @@
                             </div>
                             <div class="col-span-3 md:col-span-2 flex items-center justify-end gap-2">
                                 <span class="text-sm font-semibold whitespace-nowrap" x-text="brl(lineTotal(item))"></span>
-                                <button type="button" @click="items.splice(i, 1)" class="p-1.5 text-surface-400 hover:text-red-600" title="Remover item"><i class="fa-solid fa-xmark"></i></button>
+                                <button type="button" @click="items.splice(i, 1)" class="p-1.5 text-surface-400 hover:text-danger-600" title="Remover item"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         </div>
                     </template>

@@ -97,7 +97,7 @@
         <a href="{{ route('finance.index') }}" class="c-card p-5 hover:shadow-lg transition-shadow">
             <p class="text-xs font-medium text-surface-500 dark:text-surface-400"><i class="fa-solid fa-arrow-down text-accent-500 mr-1.5"></i>Recebido no mês</p>
             <p class="text-xl font-bold text-accent-700 dark:text-accent-400 mt-2">@money($business['received_month'])</p>
-            <p class="text-xs mt-1 {{ $business['overdue_count'] ? 'text-red-600 font-semibold' : 'text-surface-400' }}">
+            <p class="text-xs mt-1 {{ $business['overdue_count'] ? 'text-danger-600 font-semibold' : 'text-surface-400' }}">
                 @if($business['overdue_count']){{ $business['overdue_count'] }} lançamento(s) em atraso @else + @money($business['to_receive_month']) a receber @endif
             </p>
         </a>
@@ -109,7 +109,7 @@
         <a href="{{ route('lead-forms.index') }}" class="c-card p-5 hover:shadow-lg transition-shadow">
             <p class="text-xs font-medium text-surface-500 dark:text-surface-400"><i class="fa-solid fa-magnet text-purple-500 mr-1.5"></i>Leads (7 dias)</p>
             <p class="text-xl font-bold text-surface-900 dark:text-white mt-2">{{ $business['new_leads_week'] }}</p>
-            <p class="text-xs mt-1 {{ $business['low_stock'] ? 'text-amber-600 font-semibold' : 'text-surface-400' }}">
+            <p class="text-xs mt-1 {{ $business['low_stock'] ? 'text-warning-700 font-semibold' : 'text-surface-400' }}">
                 @if($business['low_stock'])<i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $business['low_stock'] }} produto(s) com estoque baixo @else {{ $business['reminders_today'] }} lembrete(s) hoje @endif
             </p>
         </a>

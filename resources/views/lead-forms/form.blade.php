@@ -18,11 +18,11 @@
             <div class="c-card p-5 space-y-4">
                 <h3 class="text-sm font-semibold"><i class="fa-solid fa-sliders text-brand-500 mr-2"></i>Configuração</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div><label class="c-label">Nome interno <span class="text-red-500">*</span></label><input name="name" required maxlength="100" value="{{ old('name', $form->name) }}" class="c-input" placeholder="Ex.: Bio do Instagram">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
+                    <div><label class="c-label">Nome interno <span class="text-danger-500">*</span></label><input name="name" required maxlength="100" value="{{ old('name', $form->name) }}" class="c-input" placeholder="Ex.: Bio do Instagram">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
                     <div><label class="c-label">Origem registrada no cliente</label>
                         <select name="default_source" class="c-input">@foreach($sources as $k => $label)<option value="{{ $k }}" @selected(old('default_source', $form->default_source) === $k)>{{ $label }}</option>@endforeach</select></div>
                 </div>
-                <div><label class="c-label">Título público <span class="text-red-500">*</span></label><input name="title" x-model="title" required maxlength="200" class="c-input">@error('title')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label">Título público <span class="text-danger-500">*</span></label><input name="title" x-model="title" required maxlength="200" class="c-input">@error('title')<p class="c-error">{{ $message }}</p>@enderror</div>
                 <div><label class="c-label">Texto de apoio</label><textarea name="description" rows="2" maxlength="1000" class="c-input resize-none" placeholder="Ex.: Receba um diagnóstico gratuito do seu site em 24h.">{{ old('description', $form->description) }}</textarea></div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <div><label class="c-label">Texto do botão</label><input name="button_text" x-model="button" required maxlength="50" class="c-input"></div>
@@ -68,7 +68,7 @@
                             <label class="col-span-2 sm:col-span-2 text-xs flex items-center gap-1 cursor-pointer"><input type="checkbox" :name="`fields[${i}][required]`" value="1" x-model="f.required" class="rounded border-surface-300 text-brand-600"> Obrig.</label>
                             <div class="col-span-1 flex justify-end gap-0.5">
                                 <button type="button" @click="move(i, -1)" x-show="i > 0" class="text-surface-400 hover:text-surface-700 p-1" title="Subir"><i class="fa-solid fa-arrow-up text-xs"></i></button>
-                                <button type="button" @click="fields.splice(i, 1)" class="text-surface-400 hover:text-red-600 p-1" title="Remover"><i class="fa-solid fa-xmark"></i></button>
+                                <button type="button" @click="fields.splice(i, 1)" class="text-surface-400 hover:text-danger-600 p-1" title="Remover"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         </div>
                     </template>
@@ -86,7 +86,7 @@
                     <div class="space-y-3 mt-4">
                         <template x-for="f in fields" :key="'p' + f.key">
                             <div>
-                                <span class="c-label text-xs"><span x-text="f.label || '(sem rótulo)'"></span><span x-show="f.required" class="text-red-500"> *</span></span>
+                                <span class="c-label text-xs"><span x-text="f.label || '(sem rótulo)'"></span><span x-show="f.required" class="text-danger-500"> *</span></span>
                                 <div class="c-input bg-surface-50 dark:bg-surface-800/50" :class="f.type === 'textarea' ? 'h-16' : 'h-9'"></div>
                             </div>
                         </template>

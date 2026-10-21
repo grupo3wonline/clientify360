@@ -45,10 +45,10 @@
                     @php($active = request()->routeIs(...(array) $pattern))
                     <a href="{{ route($route) }}" @if($active) aria-current="page" @endif @if($description) title="{{ $description }}" @endif
                        class="flex items-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ $active ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">
-                        <i class="fa-solid {{ $icon }} w-5 mr-3 text-center {{ $active ? 'text-brand-500' : '' }}"></i>
+                        <i class="fa-solid {{ $icon }} w-5 mr-3 text-center {{ $active ? 'text-brand-500' : '' }}" aria-hidden="true"></i>
                         <span class="flex-1">{{ $label }}</span>
                         @if($route === 'notifications.index' && ($notificationCount ?? 0) > 0)
-                            <span class="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[10px] font-bold bg-red-500 text-white"
+                            <span class="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[10px] font-bold bg-danger-500 text-white"
                                   aria-label="{{ $notificationCount }} notificações pendentes">
                                 {{ $notificationCount > 99 ? '99+' : $notificationCount }}
                             </span>

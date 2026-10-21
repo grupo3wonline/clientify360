@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\PersonalDataExportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ProfileController extends Controller
+final class ProfileController extends Controller
 {
+    public function __construct(
+        private readonly PersonalDataExportService $exportService
+    ) {}
+
     /**
      * Display the user's profile form.
      */
@@ -37,6 +43,18 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Export the authenticated user's own personal data as a JSON download (LGPD).
+     *
+     * Scope is strictly the data subject (the logged-in user): identity and
+     * account-membership fields only. It never includes other users' data, the
+     * whole tenant, credentials or AI keys.
+     */
+    public function exportPersonalData(Request $request): StreamedResponse
+    {
+        return $this->exportService->streamForUser($request->user());
     }
 
     /**

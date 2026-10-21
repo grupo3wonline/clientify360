@@ -42,7 +42,7 @@
                     <div class="flex-1 min-w-0 text-sm">
                         <span class="font-medium">{{ $s->data['name'] ?? $s->data['email'] ?? 'Lead' }}</span>
                         @if($s->utm_source)<span class="c-badge bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 ml-1">{{ $s->utm_source }}</span>@endif
-                        @if($s->note)<span class="block text-xs text-amber-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $s->note }}</span>@endif
+                        @if($s->note)<span class="block text-xs text-warning-700"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $s->note }}</span>@endif
                     </div>
                     @if($s->client)<a href="{{ route('clients.show', $s->client_id) }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline">Ver cliente</a>@endif
                     @if($s->deal)<a href="{{ route('deals.show', $s->deal_id) }}" class="text-xs text-brand-600 dark:text-brand-400 hover:underline">Oportunidade</a>@endif

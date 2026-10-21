@@ -17,7 +17,7 @@
             <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Novo Cliente</h1>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">
                 <i class="fa-solid fa-circle-info text-brand-500 mr-1"></i>
-                Preencha os dados abaixo. Campos com <span class="text-red-500 font-medium">*</span> são obrigatórios.
+                Preencha os dados abaixo. Campos com <span class="text-danger-500 font-medium">*</span> são obrigatórios.
             </p>
         </div>
 
@@ -36,13 +36,13 @@
                             <!-- Name -->
                             <div class="md:col-span-2">
                                 <label for="name" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
-                                    Nome <span class="text-red-500">*</span>
+                                    Nome <span class="text-danger-500">*</span>
                                 </label>
                                 <input type="text" name="name" id="name" value="{{ old('name') }}" autocomplete="off" required
                                        placeholder="Nome completo do cliente"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('name')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -53,7 +53,7 @@
                                        placeholder="email@exemplo.com"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('email')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -64,7 +64,7 @@
                                        placeholder="(00) 00000-0000"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('phone')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -75,7 +75,7 @@
                                        placeholder="CPF ou CNPJ"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('document')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
@@ -97,7 +97,7 @@
                                        placeholder="Rua, número, complemento"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('address')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -108,7 +108,7 @@
                                        placeholder="Nome da cidade"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('city')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -123,7 +123,7 @@
                                     @endforeach
                                 </select>
                                 @error('state')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -134,7 +134,7 @@
                                        placeholder="00000-000"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('zip_code')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                                 <input type="number" name="score" id="score" value="{{ old('score', 0) }}" min="0" max="100" autocomplete="off"
                                        class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 @error('score')
-                                    <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                                    <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
@@ -186,7 +186,7 @@
                                   placeholder="Informações adicionais sobre o cliente..."
                                   class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition resize-none">{{ old('notes') }}</textarea>
                         @error('notes')
-                            <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                            <p class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                         @enderror
                     </div>
                 </div>

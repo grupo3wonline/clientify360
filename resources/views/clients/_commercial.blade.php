@@ -7,7 +7,7 @@
             <dl class="space-y-2 text-sm">
                 <div class="flex justify-between"><dt class="text-surface-500">Já recebido</dt><dd class="font-semibold text-accent-700 dark:text-accent-400">@money($finance['received'])</dd></div>
                 <div class="flex justify-between"><dt class="text-surface-500">Em aberto</dt><dd class="font-semibold">@money($finance['open'])</dd></div>
-                <div class="flex justify-between"><dt class="text-surface-500">Em atraso</dt><dd class="font-semibold {{ $finance['overdue'] > 0 ? 'text-red-600' : '' }}">@money($finance['overdue'])</dd></div>
+                <div class="flex justify-between"><dt class="text-surface-500">Em atraso</dt><dd class="font-semibold {{ $finance['overdue'] > 0 ? 'text-danger-600' : '' }}">@money($finance['overdue'])</dd></div>
             </dl>
         </div>
 

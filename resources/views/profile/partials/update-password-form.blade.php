@@ -22,6 +22,7 @@
         <div>
             <x-input-label for="update_password_password" value="Nova Senha" />
             <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="off" />
+            <p class="mt-1 text-xs text-surface-500 dark:text-surface-400">Use ao menos 8 caracteres, combinando letras, números e símbolos.</p>
             <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
         </div>
 
@@ -39,9 +40,9 @@
                     x-data="{ show: true }"
                     x-show="show"
                     x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-surface-600 dark:text-surface-400"
-                >Salvo.</p>
+                    x-init="setTimeout(() => show = false, 3000)"
+                    class="text-sm text-accent-600 dark:text-accent-400"
+                >Senha atualizada com sucesso.</p>
             @endif
         </div>
     </form>

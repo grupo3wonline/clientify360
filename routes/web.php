@@ -51,6 +51,7 @@ Route::get('/dashboard', fn () => redirect('/app'))
 Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->group(function (): void {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile/exportar-dados', [ProfileController::class, 'exportPersonalData'])->name('profile.export');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 

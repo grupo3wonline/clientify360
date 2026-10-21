@@ -8,6 +8,7 @@ use App\Models\DismissedNotification;
 use App\Models\FinancialEntry;
 use App\Models\Reminder;
 use App\Models\User;
+use App\Services\AccountService;
 use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -78,5 +79,46 @@ class NotificationsTest extends TestCase
         $other = User::factory()->create();
         $this->actingAs($other);
         $this->assertSame(0, DismissedNotification::count());
+    }
+
+    public function test_it_dismisses_notifications_per_user_within_the_same_account(): void
+    {
+        // Dois colaboradores na MESMA conta (tenant).
+        $owner = User::factory()->create();
+        $collaborator = User::factory()->withoutAccount()->create();
+        app(AccountService::class)->addMember($collaborator, $owner->account, User::ROLE_COLLABORATOR);
+
+        // Alerta compartilhado pela conta: um lembrete atrasado.
+        $this->actingAs($owner);
+        $reminder = Reminder::create(['title' => 'Alerta da equipe', 'remind_at' => now()->subDay(), 'is_completed' => false]);
+        $key = 'reminder-'.$reminder->id;
+
+        // O NotificationService é singleton e mantém um cache por request;
+        // reinstanciamos a cada checagem para simular requests independentes.
+        $freshCount = function (): int {
+            $this->app->forgetInstance(NotificationService::class);
+
+            return app(NotificationService::class)->count();
+        };
+
+        // Ambos veem o alerta antes de qualquer dispensa.
+        $this->assertSame(1, $freshCount());
+
+        $this->actingAs($collaborator->fresh());
+        $this->assertSame(1, $freshCount());
+
+        // O owner (A) dispensa o alerta.
+        $this->actingAs($owner);
+        $this->post(route('notifications.markRead', $key))->assertRedirect(route('notifications.index'));
+        $this->assertSame(0, $freshCount());
+
+        // O colaborador (B), na mesma conta, continua vendo o alerta.
+        $this->actingAs($collaborator->fresh());
+        $this->assertSame(1, $freshCount());
+
+        $this->app->forgetInstance(NotificationService::class);
+        $this->get(route('notifications.index'))
+            ->assertOk()
+            ->assertSee('Alerta da equipe');
     }
 }

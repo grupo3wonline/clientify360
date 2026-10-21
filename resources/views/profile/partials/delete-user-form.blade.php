@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
-            Ao excluir sua conta, todos os seus recursos e dados serão apagados permanentemente. Antes de continuar, faça o download de qualquer informação que deseje manter. (Direito de exclusão — LGPD / GDPR)
+            Ao excluir sua conta, todos os seus recursos e dados serão apagados permanentemente e não poderão ser recuperados. Antes de continuar, baixe qualquer informação que deseje guardar. Este é o seu direito de exclusão previsto na LGPD.
         </p>
     </header>
 
@@ -24,7 +24,7 @@
             </h2>
 
             <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
-                Ao excluir sua conta, todos os seus recursos e dados serão apagados permanentemente. Digite sua senha para confirmar que deseja excluir permanentemente sua conta.
+                Esta ação é permanente e não pode ser desfeita. Digite sua senha para confirmar que deseja excluir definitivamente a sua conta.
             </p>
 
             <div class="mt-6">

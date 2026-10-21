@@ -30,10 +30,10 @@
                     @endif
                 </a>
                 <a href="{{ route('reminders.index', ['filter' => 'overdue']) }}"
-                   class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition {{ $filter === 'overdue' ? 'bg-white dark:bg-surface-700 text-red-700 dark:text-red-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200' }}">
+                   class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition {{ $filter === 'overdue' ? 'bg-white dark:bg-surface-700 text-danger-700 dark:text-danger-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200' }}">
                     <i class="fa-solid fa-exclamation-triangle mr-2 text-xs"></i> Atrasados
                     @if($counts['overdue'] > 0)
-                        <span class="ml-1.5 px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">{{ $counts['overdue'] }}</span>
+                        <span class="ml-1.5 px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-danger-100 dark:bg-danger-900 text-danger-700 dark:text-danger-300">{{ $counts['overdue'] }}</span>
                     @endif
                 </a>
                 <a href="{{ route('reminders.index', ['filter' => 'completed']) }}"
@@ -53,7 +53,7 @@
                                 @if($reminder->is_completed)
                                     <i class="fa-solid fa-check-circle text-accent-500"></i>
                                 @elseif($reminder->remind_at->isPast())
-                                    <i class="fa-solid fa-exclamation-circle text-red-500"></i>
+                                    <i class="fa-solid fa-exclamation-circle text-danger-500"></i>
                                 @else
                                     <i class="fa-regular fa-clock text-brand-500"></i>
                                 @endif
@@ -67,7 +67,7 @@
                             @endif
 
                             <div class="flex items-center flex-wrap gap-3 mt-3">
-                                <span class="inline-flex items-center text-xs {{ $reminder->remind_at->isPast() && !$reminder->is_completed ? 'text-red-600 dark:text-red-400' : 'text-surface-500 dark:text-surface-400' }}">
+                                <span class="inline-flex items-center text-xs {{ $reminder->remind_at->isPast() && !$reminder->is_completed ? 'text-danger-600 dark:text-danger-400' : 'text-surface-500 dark:text-surface-400' }}">
                                     <i class="fa-solid fa-calendar mr-1.5"></i>
                                     {{ $reminder->remind_at->format('d/m/Y H:i') }}
                                 </span>
@@ -94,7 +94,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" @click="Swal.fire({ title: 'Excluir lembrete?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
-                                        class="p-2 rounded-lg text-surface-400 hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-950/30 transition" title="Excluir">
+                                        class="p-2 rounded-lg text-surface-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:text-danger-400 dark:hover:bg-danger-950/30 transition" title="Excluir">
                                     <i class="fa-solid fa-trash-can text-sm"></i>
                                 </button>
                             </form>
@@ -134,12 +134,12 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
-                            <label for="title" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Título <span class="text-red-500">*</span></label>
+                            <label for="title" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Título <span class="text-danger-500">*</span></label>
                             <input type="text" name="title" id="title" value="{{ old('title') }}" required autocomplete="off"
                                    placeholder="Ex: Ligar para cliente"
                                    class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                             @error('title')
-                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-danger-600 dark:text-danger-400">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -162,11 +162,11 @@
                         </div>
 
                         <div>
-                            <label for="remind_at" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Data e Hora <span class="text-red-500">*</span></label>
+                            <label for="remind_at" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Data e Hora <span class="text-danger-500">*</span></label>
                             <input type="datetime-local" name="remind_at" id="remind_at" value="{{ old('remind_at') }}" required autocomplete="off"
                                    class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                             @error('remind_at')
-                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-danger-600 dark:text-danger-400">{{ $message }}</p>
                             @enderror
                         </div>
 

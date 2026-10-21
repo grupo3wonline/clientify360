@@ -1,5 +1,5 @@
 @php
-    $outcomeCls = ['positive' => 'text-accent-600', 'neutral' => 'text-surface-400', 'negative' => 'text-red-500'][$activity->outcome] ?? 'text-brand-500';
+    $outcomeCls = ['positive' => 'text-accent-600', 'neutral' => 'text-surface-400', 'negative' => 'text-danger-500'][$activity->outcome] ?? 'text-brand-500';
 @endphp
 <li class="relative pl-10 pb-5 last:pb-0">
     <span class="absolute left-[15px] top-8 bottom-0 w-px bg-surface-200 dark:bg-surface-800" aria-hidden="true"></span>
@@ -16,12 +16,12 @@
             </p>
             @if($activity->description)<p class="text-sm text-surface-600 dark:text-surface-400 mt-1.5 whitespace-pre-line">{{ $activity->description }}</p>@endif
             @if($activity->next_step)
-                <p class="mt-2 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg {{ $activity->reminder?->is_completed ? 'bg-accent-50 text-accent-700 dark:bg-accent-950/30 dark:text-accent-300 line-through' : 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-300' }}">
+                <p class="mt-2 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg {{ $activity->reminder?->is_completed ? 'bg-accent-50 text-accent-700 dark:bg-accent-950/30 dark:text-accent-300 line-through' : 'bg-warning-50 text-warning-800 dark:bg-warning-950/30 dark:text-warning-300' }}">
                     <i class="fa-solid fa-forward-step"></i> {{ $activity->next_step }}
                     @if($activity->next_step_at) — {{ $activity->next_step_at->format('d/m H:i') }}@endif
                 </p>
             @endif
         </div>
-        <x-confirm-delete :action="route('activities.destroy', $activity)" title="Remover do histórico?" class="p-1.5 rounded-lg text-surface-300 hover:text-red-600 transition" />
+        <x-confirm-delete :action="route('activities.destroy', $activity)" title="Remover do histórico?" class="p-1.5 rounded-lg text-surface-300 hover:text-danger-600 transition" />
     </div>
 </li>

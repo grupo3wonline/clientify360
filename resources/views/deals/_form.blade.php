@@ -4,13 +4,13 @@
     $stagesList = $stages ?? \App\Models\PipelineStage::ordered()->get();
 @endphp
 <div>
-    <label class="c-label" for="deal-title">Título <span class="text-red-500">*</span></label>
+    <label class="c-label" for="deal-title">Título <span class="text-danger-500">*</span></label>
     <input id="deal-title" name="title" value="{{ old('title', $deal?->title) }}" required maxlength="255" class="c-input" placeholder="Ex.: Site institucional + SEO">
     @error('title') <p class="c-error">{{ $message }}</p> @enderror
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
-        <label class="c-label" for="deal-client">Cliente <span class="text-red-500">*</span></label>
+        <label class="c-label" for="deal-client">Cliente <span class="text-danger-500">*</span></label>
         @if(!empty($fixedClient))
             <input type="hidden" name="client_id" value="{{ $fixedClient->id }}">
             <input type="hidden" name="redirect_to" value="client">
@@ -26,7 +26,7 @@
         @error('client_id') <p class="c-error">{{ $message }}</p> @enderror
     </div>
     <div>
-        <label class="c-label" for="deal-value">Valor estimado (R$) <span class="text-red-500">*</span></label>
+        <label class="c-label" for="deal-value">Valor estimado (R$) <span class="text-danger-500">*</span></label>
         <input id="deal-value" type="number" step="0.01" min="0" name="value" value="{{ old('value', $deal?->value ?? 0) }}" required class="c-input">
         @error('value') <p class="c-error">{{ $message }}</p> @enderror
     </div>

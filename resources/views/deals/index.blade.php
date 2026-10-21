@@ -57,7 +57,7 @@
                      :class="over === '{{ $stage->id }}' ? 'bg-brand-50 dark:bg-brand-950/40 ring-2 ring-brand-300 dark:ring-brand-700' : 'bg-surface-100/70 dark:bg-surface-900/60'">
                     @forelse($stageDeals as $deal)
                         <article draggable="true" @dragstart="dragging = '{{ $deal->id }}'" @dragend="dragging = null; over = null"
-                                 class="c-card p-3.5 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow {{ $deal->isOverdue() ? 'border-l-4 !border-l-red-400' : '' }}">
+                                 class="c-card p-3.5 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow {{ $deal->isOverdue() ? 'border-l-4 !border-l-danger-400' : '' }}">
                             <a href="{{ route('deals.show', $deal) }}" class="block">
                                 <h3 class="text-sm font-semibold text-surface-900 dark:text-white line-clamp-2">{{ $deal->title }}</h3>
                                 <p class="text-xs text-surface-500 dark:text-surface-400 mt-1 truncate"><i class="fa-solid fa-user mr-1"></i>{{ $deal->client?->name }}</p>
@@ -65,7 +65,7 @@
                             <div class="flex items-center justify-between mt-3">
                                 <span class="text-sm font-bold text-accent-700 dark:text-accent-400">@money($deal->value)</span>
                                 @if($deal->expected_close_date)
-                                    <span class="text-[11px] {{ $deal->isOverdue() ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-surface-400' }}" title="Previsão de fechamento">
+                                    <span class="text-[11px] {{ $deal->isOverdue() ? 'text-danger-600 dark:text-danger-400 font-semibold' : 'text-surface-400' }}" title="Previsão de fechamento">
                                         <i class="fa-regular fa-calendar mr-0.5"></i>{{ $deal->expected_close_date->format('d/m') }}
                                     </span>
                                 @endif

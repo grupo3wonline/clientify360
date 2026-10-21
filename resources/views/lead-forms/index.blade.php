@@ -48,7 +48,7 @@
                     <div class="flex-1 min-w-0">
                         @if($s->client)<a href="{{ route('clients.show', $s->client_id) }}" class="font-medium hover:underline">{{ $s->client->name }}</a>@else<span class="font-medium">{{ $s->data['name'] ?? $s->data['email'] ?? 'Lead' }}</span>@endif
                         <span class="text-xs text-surface-500">via {{ $s->form?->name }}</span>
-                        @if($s->note)<p class="text-xs text-amber-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $s->note }}</p>@endif
+                        @if($s->note)<p class="text-xs text-warning-700"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $s->note }}</p>@endif
                     </div>
                     <span class="text-xs text-surface-400 whitespace-nowrap">{{ $s->created_at->diffForHumans() }}</span>
                 </div>

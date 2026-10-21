@@ -8,7 +8,7 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/** Sem BelongsToUser: o isolamento vem do orçamento (Quote) ao qual o item pertence. */
+/** Sem BelongsToAccount: o isolamento por conta vem do orçamento (Quote) ao qual o item pertence. */
 class QuoteItem extends Model
 {
     use HasUuid;

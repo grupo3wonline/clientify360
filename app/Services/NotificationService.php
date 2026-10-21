@@ -44,7 +44,9 @@ final class NotificationService
         $this->pushLeads($notifications);
         $this->pushDeals($notifications);
 
-        $dismissed = DismissedNotification::pluck('notification_key')->all();
+        $dismissed = DismissedNotification::where('user_id', auth()->id())
+            ->pluck('notification_key')
+            ->all();
         if ($dismissed !== []) {
             $notifications = $notifications->reject(
                 fn (array $n): bool => in_array($n['id'], $dismissed, true)

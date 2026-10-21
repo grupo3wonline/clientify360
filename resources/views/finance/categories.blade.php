@@ -8,7 +8,7 @@
     <x-page-title title="Categorias financeiras" icon="fa-folder-tree" subtitle="Organize receitas e despesas para entender para onde vai o dinheiro." />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        @foreach(['income' => ['Receitas', 'fa-arrow-down text-accent-500'], 'expense' => ['Despesas', 'fa-arrow-up text-red-500']] as $type => [$label, $icon])
+        @foreach(['income' => ['Receitas', 'fa-arrow-down text-accent-500'], 'expense' => ['Despesas', 'fa-arrow-up text-danger-500']] as $type => [$label, $icon])
             <div class="c-card overflow-hidden h-fit">
                 <h3 class="px-5 py-4 text-sm font-semibold border-b border-surface-100 dark:border-surface-800"><i class="fa-solid {{ $icon }} mr-2"></i>{{ $label }}</h3>
                 @foreach($categories->where('type', $type) as $cat)

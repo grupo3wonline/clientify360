@@ -22,7 +22,7 @@
         <div class="flex items-center gap-1 bg-surface-100 dark:bg-surface-800 rounded-xl p-1 overflow-x-auto">
             <a href="{{ $q(['direction' => null]) }}" class="c-tab {{ !$direction ? 'c-tab-active' : '' }}">Todos</a>
             <a href="{{ $q(['direction' => 'receivable']) }}" class="c-tab {{ $direction === 'receivable' ? 'c-tab-active' : '' }}"><i class="fa-solid fa-arrow-down text-accent-500 mr-1.5 text-xs"></i>A receber</a>
-            <a href="{{ $q(['direction' => 'payable']) }}" class="c-tab {{ $direction === 'payable' ? 'c-tab-active' : '' }}"><i class="fa-solid fa-arrow-up text-red-500 mr-1.5 text-xs"></i>A pagar</a>
+            <a href="{{ $q(['direction' => 'payable']) }}" class="c-tab {{ $direction === 'payable' ? 'c-tab-active' : '' }}"><i class="fa-solid fa-arrow-up text-danger-500 mr-1.5 text-xs"></i>A pagar</a>
         </div>
         <div class="flex items-center gap-1 bg-surface-100 dark:bg-surface-800 rounded-xl p-1 overflow-x-auto">
             @foreach([null => 'Qualquer status', 'pending' => 'Pendentes', 'overdue' => 'Atrasados', 'paid' => 'Quitados', 'canceled' => 'Cancelados'] as $k => $label)
@@ -45,7 +45,7 @@
                 <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                     @forelse($entries as $e)
                         <tr class="hover:bg-surface-50 dark:hover:bg-surface-800/40">
-                            <td class="c-td whitespace-nowrap text-xs"><i class="fa-solid {{ $e->direction === 'receivable' ? 'fa-arrow-down text-accent-500' : 'fa-arrow-up text-red-500' }} mr-1.5"></i>{{ $e->due_date->format('d/m/Y') }}</td>
+                            <td class="c-td whitespace-nowrap text-xs"><i class="fa-solid {{ $e->direction === 'receivable' ? 'fa-arrow-down text-accent-500' : 'fa-arrow-up text-danger-500' }} mr-1.5"></i>{{ $e->due_date->format('d/m/Y') }}</td>
                             <td class="c-td">
                                 <p class="font-medium text-surface-900 dark:text-white">{{ $e->description }}</p>
                                 <p class="text-xs text-surface-500">
@@ -60,11 +60,11 @@
                             <td class="c-td text-right whitespace-nowrap">
                                 @if($e->status === 'pending')
                                     <button type="button" x-data @click="$dispatch('open-modal', 'settle-{{ $e->id }}')" class="text-xs font-semibold text-accent-700 dark:text-accent-400 hover:underline mr-2">{{ $e->direction === 'receivable' ? 'Receber' : 'Pagar' }}</button>
-                                    <x-confirm-delete :action="route('finance.cancel', $e)" method="POST" title="Cancelar lançamento?" text="Ele sai das previsões, mas fica no histórico." confirm="Cancelar lançamento" color="#64748b" class="p-1.5 text-surface-400 hover:text-amber-600" label="Cancelar"><i class="fa-solid fa-ban text-sm"></i></x-confirm-delete>
+                                    <x-confirm-delete :action="route('finance.cancel', $e)" method="POST" title="Cancelar lançamento?" text="Ele sai das previsões, mas fica no histórico." confirm="Cancelar lançamento" color="#64748b" class="p-1.5 text-surface-400 hover:text-warning-600" label="Cancelar"><i class="fa-solid fa-ban text-sm"></i></x-confirm-delete>
                                 @else
                                     <form action="{{ route('finance.reopen', $e) }}" method="POST" class="inline">@csrf<button class="p-1.5 text-surface-400 hover:text-brand-600" title="Reabrir"><i class="fa-solid fa-rotate-left text-sm"></i></button></form>
                                 @endif
-                                <x-confirm-delete :action="route('finance.destroy', $e)" title="Excluir lançamento?" class="p-1.5 text-surface-400 hover:text-red-600" />
+                                <x-confirm-delete :action="route('finance.destroy', $e)" title="Excluir lançamento?" class="p-1.5 text-surface-400 hover:text-danger-600" />
 
                                 @if($e->status === 'pending')
                                     <x-modal name="settle-{{ $e->id }}" maxWidth="sm">
@@ -90,7 +90,7 @@
                 @if($entries->isNotEmpty())
                     <tfoot class="bg-surface-50 dark:bg-surface-800/50 text-sm">
                         <tr>
-                            <td colspan="6" class="c-td text-right text-surface-500">Nesta página: a receber <strong class="text-accent-700 dark:text-accent-400">@money($entries->where('direction', 'receivable')->where('status', '!=', 'canceled')->sum('amount'))</strong> · a pagar <strong class="text-red-600">@money($entries->where('direction', 'payable')->where('status', '!=', 'canceled')->sum('amount'))</strong></td>
+                            <td colspan="6" class="c-td text-right text-surface-500">Nesta página: a receber <strong class="text-accent-700 dark:text-accent-400">@money($entries->where('direction', 'receivable')->where('status', '!=', 'canceled')->sum('amount'))</strong> · a pagar <strong class="text-danger-600">@money($entries->where('direction', 'payable')->where('status', '!=', 'canceled')->sum('amount'))</strong></td>
                         </tr>
                     </tfoot>
                 @endif
@@ -104,14 +104,14 @@
             @csrf
             <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Novo lançamento</h2>
             <div class="grid grid-cols-2 gap-2">
-                @foreach(['receivable' => ['A receber', 'fa-arrow-down', 'peer-checked:border-accent-500 peer-checked:bg-accent-50 dark:peer-checked:bg-accent-950/30'], 'payable' => ['A pagar', 'fa-arrow-up', 'peer-checked:border-red-400 peer-checked:bg-red-50 dark:peer-checked:bg-red-950/30']] as $k => [$label, $icon, $cls])
+                @foreach(['receivable' => ['A receber', 'fa-arrow-down', 'peer-checked:border-accent-500 peer-checked:bg-accent-50 dark:peer-checked:bg-accent-950/30'], 'payable' => ['A pagar', 'fa-arrow-up', 'peer-checked:border-danger-400 peer-checked:bg-danger-50 dark:peer-checked:bg-danger-950/30']] as $k => [$label, $icon, $cls])
                     <label class="cursor-pointer"><input type="radio" name="direction" value="{{ $k }}" x-model="dir" class="sr-only peer">
                         <span class="flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-surface-200 dark:border-surface-700 text-sm font-medium {{ $cls }}"><i class="fa-solid {{ $icon }}"></i>{{ $label }}</span></label>
                 @endforeach
             </div>
-            <div><label class="c-label">Descrição <span class="text-red-500">*</span></label><input name="description" required maxlength="255" value="{{ old('description') }}" class="c-input" placeholder="Ex.: Aluguel do escritório">@error('description')<p class="c-error">{{ $message }}</p>@enderror</div>
+            <div><label class="c-label">Descrição <span class="text-danger-500">*</span></label><input name="description" required maxlength="255" value="{{ old('description') }}" class="c-input" placeholder="Ex.: Aluguel do escritório">@error('description')<p class="c-error">{{ $message }}</p>@enderror</div>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div><label class="c-label">Valor total <span class="text-red-500">*</span></label><input type="number" step="0.01" min="0.01" name="amount" required value="{{ old('amount') }}" class="c-input">@error('amount')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label">Valor total <span class="text-danger-500">*</span></label><input type="number" step="0.01" min="0.01" name="amount" required value="{{ old('amount') }}" class="c-input">@error('amount')<p class="c-error">{{ $message }}</p>@enderror</div>
                 <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input type="date" name="due_date" required value="{{ old('due_date', now()->format('Y-m-d')) }}" class="c-input"></div>
                 <div><label class="c-label">Parcelas</label><input type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input"></div>
             </div>

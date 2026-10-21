@@ -33,7 +33,7 @@
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div class="flex items-center justify-between mb-2">
                 <i class="fa-solid fa-headset text-purple-500"></i>
-                <span class="text-[10px] font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-1.5 py-0.5 rounded">{{ $stats['open_interactions'] }} abertos</span>
+                <span class="text-[10px] font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-950/50 px-1.5 py-0.5 rounded">{{ $stats['open_interactions'] }} abertos</span>
             </div>
             <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ $stats['total_interactions'] }}</p>
             <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Atendimentos</p>
@@ -49,7 +49,7 @@
             <div class="flex items-center justify-between mb-2">
                 <i class="fa-solid fa-bell text-amber-500"></i>
                 @if($stats['overdue_reminders'] > 0)
-                <span class="text-[10px] font-medium text-red-600 bg-red-50 px-1.5 py-0.5 rounded">{{ $stats['overdue_reminders'] }} atrasados</span>
+                <span class="text-[10px] font-medium text-danger-600 bg-danger-50 px-1.5 py-0.5 rounded">{{ $stats['overdue_reminders'] }} atrasados</span>
                 @endif
             </div>
             <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ $stats['pending_reminders'] }}</p>
@@ -63,7 +63,7 @@
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div class="flex items-center justify-between mb-2">
                 <i class="fa-solid fa-trophy text-accent-500"></i>
-                <span class="text-[10px] font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-1.5 py-0.5 rounded">{{ $commercial['deals_lost'] }} perdidas</span>
+                <span class="text-[10px] font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-950/50 px-1.5 py-0.5 rounded">{{ $commercial['deals_lost'] }} perdidas</span>
             </div>
             <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ $commercial['deals_won'] }}</p>
             <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Oportunidades Ganhas</p>
@@ -78,7 +78,7 @@
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div class="flex items-center justify-between mb-2">
                 <i class="fa-solid fa-file-invoice-dollar text-teal-500"></i>
-                <span class="text-[10px] font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-1.5 py-0.5 rounded">{{ $commercial['quotes_waiting'] }} aguardando</span>
+                <span class="text-[10px] font-medium text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/50 px-1.5 py-0.5 rounded">{{ $commercial['quotes_waiting'] }} aguardando</span>
             </div>
             <p class="text-2xl font-bold text-surface-900 dark:text-white">{{ $commercial['quotes_approved'] }}</p>
             <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Orçamentos Aprovados</p>
@@ -98,16 +98,16 @@
             <p class="text-lg font-bold text-accent-700 dark:text-accent-300">@money($finance['received'])</p>
             <p class="text-[10px] text-accent-600 dark:text-accent-400 uppercase tracking-wider mt-1">Recebido no mês</p>
         </div>
-        <div class="bg-red-50 dark:bg-red-950/40 rounded-2xl border border-red-200 dark:border-red-900 p-5">
-            <p class="text-lg font-bold text-red-700 dark:text-red-300">@money($finance['paid'])</p>
-            <p class="text-[10px] text-red-600 dark:text-red-400 uppercase tracking-wider mt-1">Pago no mês</p>
+        <div class="bg-danger-50 dark:bg-danger-950/40 rounded-2xl border border-danger-200 dark:border-danger-900 p-5">
+            <p class="text-lg font-bold text-danger-700 dark:text-danger-300">@money($finance['paid'])</p>
+            <p class="text-[10px] text-danger-600 dark:text-danger-400 uppercase tracking-wider mt-1">Pago no mês</p>
         </div>
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
-            <p class="text-lg font-bold {{ $finance['balance'] >= 0 ? 'text-accent-600 dark:text-accent-400' : 'text-red-600 dark:text-red-400' }}">@money($finance['balance'])</p>
+            <p class="text-lg font-bold {{ $finance['balance'] >= 0 ? 'text-accent-600 dark:text-accent-400' : 'text-danger-600 dark:text-danger-400' }}">@money($finance['balance'])</p>
             <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">Saldo do mês</p>
         </div>
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
-            <p class="text-lg font-bold text-amber-600 dark:text-amber-400">@money($finance['to_receive'])</p>
+            <p class="text-lg font-bold text-warning-700 dark:text-warning-400">@money($finance['to_receive'])</p>
             <p class="text-[10px] text-surface-500 uppercase tracking-wider mt-1">A receber no mês</p>
         </div>
     </div>
@@ -141,7 +141,7 @@
         <!-- Motivos de perda -->
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-4 flex items-center">
-                <i class="fa-solid fa-circle-xmark text-red-500 mr-2"></i> Motivos de Perda
+                <i class="fa-solid fa-circle-xmark text-danger-500 mr-2"></i> Motivos de Perda
             </h3>
             @if(count($commercial['lost_reasons']) > 0)
             <div class="space-y-3">

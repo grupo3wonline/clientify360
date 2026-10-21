@@ -29,13 +29,14 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="sm:col-span-2">
-                        <label class="c-label" for="name">Nome <span class="text-red-500">*</span></label>
+                        <label class="c-label" for="name">Nome <span class="text-danger-500">*</span></label>
                         <input id="name" name="name" required maxlength="255" value="{{ old('name', $product->name) }}" class="c-input">
                         @error('name') <p class="c-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="c-label" for="sku">Código / SKU</label>
-                        <input id="sku" name="sku" maxlength="60" value="{{ old('sku', $product->sku) }}" class="c-input">
+                        <input id="sku" name="sku" maxlength="60" value="{{ old('sku', $product->sku) }}" class="c-input" placeholder="Ex.: CAM-AZ-M">
+                        <p class="c-hint">Código interno para localizar o item rapidamente.</p>
                     </div>
                 </div>
 
@@ -52,7 +53,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="c-label" for="price">Preço (R$) <span class="text-red-500">*</span></label>
+                        <label class="c-label" for="price">Preço (R$) <span class="text-danger-500">*</span></label>
                         <input id="price" type="number" step="0.01" min="0" name="price" x-model.number="price" required class="c-input">
                         @error('price') <p class="c-error">{{ $message }}</p> @enderror
                     </div>
@@ -60,11 +61,13 @@
                         <label class="c-label" for="promo_price">Promoção (R$)</label>
                         <input id="promo_price" type="number" step="0.01" min="0" name="promo_price" value="{{ old('promo_price', $product->promo_price) }}" class="c-input">
                         @error('promo_price') <p class="c-error">{{ $message }}</p> @enderror
+                        <p class="c-hint">Quando preenchido, substitui o preço no orçamento.</p>
                     </div>
                     <div>
                         <label class="c-label" for="cost">Custo (R$)</label>
                         <input id="cost" type="number" step="0.01" min="0" name="cost" x-model.number="cost" class="c-input">
-                        <p class="c-hint" x-show="price > 0 && cost > 0" x-text="'Margem: ' + (((price - cost) / price) * 100).toFixed(1).replace('.', ',') + '%'"></p>
+                        <p class="c-hint" x-show="!(price > 0 && cost > 0)">Usado para calcular sua margem de lucro.</p>
+                        <p class="c-hint" x-show="price > 0 && cost > 0" x-cloak x-text="'Margem: ' + (((price - cost) / price) * 100).toFixed(1).replace('.', ',') + '%'"></p>
                     </div>
                 </div>
 
@@ -78,6 +81,7 @@
                             <div>
                                 <label class="c-label" for="stock">Saldo inicial</label>
                                 <input id="stock" type="number" step="0.001" min="0" name="stock" value="{{ old('stock', 0) }}" class="c-input">
+                                <p class="c-hint">Quantidade em estoque hoje. Depois, use movimentações.</p>
                             </div>
                         @endunless
                         <div>
@@ -92,6 +96,7 @@
                         <div>
                             <label class="c-label" for="ncm">NCM</label>
                             <input id="ncm" name="ncm" maxlength="10" value="{{ old('ncm', $product->ncm) }}" class="c-input" placeholder="0000.00.00">
+                            <p class="c-hint">Código fiscal do produto (opcional).</p>
                         </div>
                     </div>
                     @if($editing)<p x-show="track" class="c-hint"><i class="fa-solid fa-circle-info mr-1"></i>O saldo muda apenas por movimentação (entrada/saída/ajuste) na página do produto, para manter o histórico auditável.</p>@endif

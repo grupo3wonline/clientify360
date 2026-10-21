@@ -62,7 +62,7 @@
                     </span>
                 </label>
                 @error('accept_terms')
-                    <p class="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center" role="alert">
+                    <p class="mt-2 text-xs text-danger-600 dark:text-danger-400 flex items-center" role="alert">
                         <i class="fa-solid fa-circle-exclamation mr-1" aria-hidden="true"></i>{{ $message }}
                     </p>
                 @enderror
@@ -86,7 +86,7 @@
         <div class="mt-4 text-center">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="text-sm text-surface-500 dark:text-surface-400 hover:text-red-600 dark:hover:text-red-400 transition">
+                <button type="submit" class="text-sm text-surface-500 dark:text-surface-400 hover:text-danger-600 dark:hover:text-danger-400 transition">
                     <i class="fa-solid fa-right-from-bracket mr-1" aria-hidden="true"></i> Sair da conta
                 </button>
             </form>

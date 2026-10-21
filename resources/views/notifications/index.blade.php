@@ -10,11 +10,11 @@
 
     @php
         $typeLabels = [
-            'overdue_reminder' => ['Lembrete atrasado', 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300'],
-            'upcoming_reminder' => ['Em breve', 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300'],
+            'overdue_reminder' => ['Lembrete atrasado', 'bg-danger-100 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300'],
+            'upcoming_reminder' => ['Em breve', 'bg-warning-100 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300'],
             'stale_interaction' => ['Atendimento pendente', 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300'],
-            'overdue_entry' => ['Financeiro vencido', 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300'],
-            'low_stock' => ['Estoque baixo', 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300'],
+            'overdue_entry' => ['Financeiro vencido', 'bg-danger-100 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300'],
+            'low_stock' => ['Estoque baixo', 'bg-warning-100 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300'],
             'new_lead' => ['Novo lead', 'bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300'],
             'stale_deal' => ['Oportunidade parada', 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300'],
         ];
@@ -28,7 +28,7 @@
             </div>
             <div class="flex items-center gap-3">
                 @if($notifications->count() > 0)
-                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-danger-100 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300 border border-danger-200 dark:border-danger-800">
                     {{ $notifications->count() }} {{ $notifications->count() === 1 ? 'alerta' : 'alertas' }}
                 </span>
                 <form method="POST" action="{{ route('notifications.markAllRead') }}" id="dismiss-all-form">
@@ -70,7 +70,7 @@
                     <form method="POST" action="{{ route('notifications.markRead', $notification['id']) }}" class="flex-shrink-0">
                         @csrf
                         <button type="submit" title="Dispensar notificação"
-                            class="w-8 h-8 rounded-lg flex items-center justify-center text-surface-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition">
+                            class="w-8 h-8 rounded-lg flex items-center justify-center text-surface-400 hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/40 transition">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </form>

@@ -31,7 +31,7 @@
         </div>
     </div>
     <div>
-        <label class="c-label" for="act-title">O que aconteceu? <span class="text-red-500">*</span></label>
+        <label class="c-label" for="act-title">O que aconteceu? <span class="text-danger-500">*</span></label>
         <input id="act-title" name="title" required maxlength="255" value="{{ old('title') }}" class="c-input" placeholder="Ex.: Ligação de apresentação">
         @error('title') <p class="c-error">{{ $message }}</p> @enderror
     </div>

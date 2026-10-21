@@ -9,7 +9,7 @@
         <x-slot name="actions">
             @if($deal->status === 'open')
                 <form action="{{ route('deals.win', $deal) }}" method="POST">@csrf<button class="c-btn-success"><i class="fa-solid fa-trophy mr-2 text-xs"></i> Ganhou</button></form>
-                <button type="button" x-data @click="$dispatch('open-modal', 'lose-deal')" class="c-btn-ghost text-red-600"><i class="fa-solid fa-thumbs-down mr-2 text-xs"></i> Perdeu</button>
+                <button type="button" x-data @click="$dispatch('open-modal', 'lose-deal')" class="c-btn-ghost text-danger-600"><i class="fa-solid fa-thumbs-down mr-2 text-xs"></i> Perdeu</button>
                 <a href="{{ route('quotes.create', ['deal_id' => $deal->id]) }}" class="c-btn-primary"><i class="fa-solid fa-file-invoice-dollar mr-2 text-xs"></i> Criar orçamento</a>
             @else
                 <form action="{{ route('deals.reopen', $deal) }}" method="POST">@csrf<button class="c-btn-ghost"><i class="fa-solid fa-rotate-left mr-2 text-xs"></i> Reabrir</button></form>
@@ -25,7 +25,7 @@
                 <div class="flex justify-between"><span class="text-surface-500">Valor</span><strong class="text-accent-700 dark:text-accent-400">@money($deal->value)</strong></div>
                 <div class="flex justify-between"><span class="text-surface-500">Probabilidade</span><span>{{ $deal->probability }}%</span></div>
                 <div class="flex justify-between"><span class="text-surface-500">Cliente</span><a href="{{ route('clients.show', $deal->client_id) }}" class="text-brand-600 dark:text-brand-400 hover:underline">{{ $deal->client?->name }}</a></div>
-                @if($deal->expected_close_date)<div class="flex justify-between"><span class="text-surface-500">Previsão</span><span class="{{ $deal->isOverdue() ? 'text-red-600 font-semibold' : '' }}">{{ $deal->expected_close_date->format('d/m/Y') }}</span></div>@endif
+                @if($deal->expected_close_date)<div class="flex justify-between"><span class="text-surface-500">Previsão</span><span class="{{ $deal->isOverdue() ? 'text-danger-600 font-semibold' : '' }}">{{ $deal->expected_close_date->format('d/m/Y') }}</span></div>@endif
                 @if($deal->source)<div class="flex justify-between"><span class="text-surface-500">Origem</span><span>{{ \App\Models\Client::SOURCES[$deal->source] ?? $deal->source }}</span></div>@endif
                 @if($deal->lost_reason)<div class="pt-2 border-t border-surface-100 dark:border-surface-800"><span class="text-surface-500 block mb-1">Motivo da perda</span>{{ $deal->lost_reason }}</div>@endif
                 @if($deal->status === 'open')

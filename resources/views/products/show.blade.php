@@ -26,7 +26,7 @@
             @if($product->track_stock)
                 <div class="c-card p-5">
                     <p class="text-xs text-surface-500">Saldo em estoque</p>
-                    <p class="text-3xl font-bold mt-1 {{ $product->isLowStock() ? 'text-amber-600' : 'text-surface-900 dark:text-white' }}">@qty($product->stock) <span class="text-base font-medium text-surface-400">{{ $product->unit }}</span></p>
+                    <p class="text-3xl font-bold mt-1 {{ $product->isLowStock() ? 'text-warning-700' : 'text-surface-900 dark:text-white' }}">@qty($product->stock) <span class="text-base font-medium text-surface-400">{{ $product->unit }}</span></p>
                     <p class="text-xs text-surface-500 mt-1">Mínimo: @qty($product->min_stock) {{ $product->unit }}</p>
 
                     <form action="{{ route('products.movement', $product) }}" method="POST" class="mt-5 pt-5 border-t border-surface-100 dark:border-surface-800 space-y-3" x-data="{ type: 'in' }">
@@ -69,7 +69,7 @@
                             @foreach($movements as $m)
                                 <tr>
                                     <td class="c-td text-xs whitespace-nowrap">{{ $m->created_at->format('d/m/Y H:i') }}</td>
-                                    <td class="c-td"><span class="c-badge {{ ['in' => 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300', 'out' => 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300', 'adjust' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'][$m->type] }}">{{ \App\Models\StockMovement::TYPES[$m->type] }}</span></td>
+                                    <td class="c-td"><span class="c-badge {{ ['in' => 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300', 'out' => 'bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300', 'adjust' => 'bg-info-100 text-info-700 dark:bg-info-900/40 dark:text-info-300'][$m->type] }}">{{ \App\Models\StockMovement::TYPES[$m->type] }}</span></td>
                                     <td class="c-td text-right">{{ $m->type === 'out' ? '−' : '+' }}@qty($m->quantity)</td>
                                     <td class="c-td text-right font-semibold">@qty($m->balance_after)</td>
                                     <td class="c-td text-xs">{{ $m->reason }} @if($m->document)<span class="text-surface-400">· NF {{ $m->document }}</span>@endif</td>
