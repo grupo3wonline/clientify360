@@ -255,4 +255,88 @@
             @endif
         </div>
     </div>
+
+    <!-- Estoque e Compras -->
+    <h2 class="text-sm font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider mb-3 mt-8">Estoque e compras</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Giro e valor de estoque -->
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 flex items-center">
+                    <i class="fa-solid fa-warehouse text-brand-500 mr-2"></i> Giro e valor de estoque
+                </h3>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-surface-900 dark:text-white">@money($stockReport['total_stock_value'])</p>
+                    <p class="text-[10px] text-surface-500 uppercase tracking-wider">Valor total em estoque</p>
+                </div>
+            </div>
+            @if(count($stockReport['products']) > 0)
+            <div class="space-y-3">
+                @foreach($stockReport['products'] as $product)
+                <div class="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-surface-800 dark:text-surface-200 truncate">{{ $product['name'] }}</p>
+                        <p class="text-xs text-surface-500 mt-0.5">
+                            <span>@qty($product['stock']) em estoque</span>
+                            @if($product['below_min'])
+                            <span class="ml-2 text-[10px] font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-950/50 px-1.5 py-0.5 rounded">Abaixo do mínimo</span>
+                            @endif
+                        </p>
+                    </div>
+                    <span class="text-sm font-semibold text-surface-700 dark:text-surface-300 flex-shrink-0 ml-3">@money($product['stock_value'])</span>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-xs text-surface-400 italic">Nenhum produto com controle de estoque cadastrado.</p>
+            @endif
+        </div>
+
+        <!-- Compras no período -->
+        <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 flex items-center">
+                    <i class="fa-solid fa-cart-shopping text-accent-500 mr-2"></i> Compras no período
+                </h3>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-surface-900 dark:text-white">@money($purchasesReport['total_purchased'])</p>
+                    <p class="text-[10px] text-surface-500 uppercase tracking-wider">Total comprado</p>
+                </div>
+            </div>
+
+            <h4 class="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider mb-2">Por fornecedor</h4>
+            @if(count($purchasesReport['by_supplier']) > 0)
+            <div class="space-y-2 mb-4">
+                @foreach($purchasesReport['by_supplier'] as $supplier)
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-surface-700 dark:text-surface-300 truncate">{{ $supplier['supplier'] }}</span>
+                    <span class="text-sm font-semibold text-surface-900 dark:text-white flex-shrink-0 ml-2">@money($supplier['total'])</span>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-xs text-surface-400 italic mb-4">Nenhuma compra confirmada no período.</p>
+            @endif
+
+            <h4 class="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider mb-2">Itens mais comprados</h4>
+            @if(count($purchasesReport['top_items']) > 0)
+            <div class="space-y-3">
+                @foreach($purchasesReport['top_items'] as $i => $item)
+                <div class="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <span class="w-6 h-6 rounded-full bg-accent-100 dark:bg-accent-900 text-accent-700 dark:text-accent-300 flex items-center justify-center text-xs font-bold flex-shrink-0">{{ $i + 1 }}</span>
+                        <span class="text-sm font-medium text-surface-800 dark:text-surface-200 truncate">{{ $item['name'] }}</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-xs text-surface-500 flex-shrink-0">
+                        <span>@qty($item['quantity']) un</span>
+                        <span class="font-semibold text-surface-700 dark:text-surface-300">@money($item['total'])</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-xs text-surface-400 italic">Nenhum item comprado no período.</p>
+            @endif
+        </div>
+    </div>
 </x-app-layout>

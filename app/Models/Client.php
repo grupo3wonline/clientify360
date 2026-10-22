@@ -41,6 +41,7 @@ class Client extends Model
         'email',
         'phone',
         'document',
+        'person_type',
         'address',
         'city',
         'state',
@@ -60,6 +61,12 @@ class Client extends Model
         'needs_social_media',
         'business_segment',
         'company_size',
+    ];
+
+    /** Tipos de pessoa: física (PF) e jurídica (PJ). */
+    public const PERSON_TYPES = [
+        'individual' => 'Pessoa Física',
+        'company' => 'Pessoa Jurídica',
     ];
 
     /** Origens de lead (crm-master: "Como chegou até nós"). */
@@ -124,5 +131,30 @@ class Client extends Model
     public function sourceLabel(): ?string
     {
         return $this->source ? (self::SOURCES[$this->source] ?? $this->source) : null;
+    }
+
+    public function personTypeLabel(): string
+    {
+        return self::PERSON_TYPES[$this->person_type] ?? (string) $this->person_type;
+    }
+
+    /** Aplica máscara de CPF/CNPJ conforme o tipo; retorna o documento cru se o tamanho não casar. */
+    public function formattedDocument(): ?string
+    {
+        if ($this->document === null || $this->document === '') {
+            return $this->document;
+        }
+
+        $digits = preg_replace('/\D/', '', $this->document) ?? '';
+
+        if ($this->person_type === 'company' && strlen($digits) === 14) {
+            return preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $digits);
+        }
+
+        if ($this->person_type !== 'company' && strlen($digits) === 11) {
+            return preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $digits);
+        }
+
+        return $this->document;
     }
 }

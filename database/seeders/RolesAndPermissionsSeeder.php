@@ -42,6 +42,7 @@ final class RolesAndPermissionsSeeder extends Seeder
             'leads.view', 'leads.manage',
             'appointments.view', 'appointments.manage',
             'service_orders.view', 'service_orders.manage',
+            'purchases.view', 'purchases.manage',
             'reports.view',
             // Administração da conta
             'account.settings', 'account.members', 'account.billing',
@@ -71,6 +72,7 @@ final class RolesAndPermissionsSeeder extends Seeder
             'leads.view', 'leads.manage',
             'appointments.view', 'appointments.manage',
             'service_orders.view', 'service_orders.manage',
+            'purchases.view', 'purchases.manage',
             'reports.view',
         ];
 

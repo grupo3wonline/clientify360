@@ -18,6 +18,7 @@ use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicLeadFormController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\ReportController;
@@ -87,22 +88,46 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->gro
 
     // Appointments / Calendário
     // create/store ANTES do resource: senão "appointments/{appointment}" captura "appointments/create".
-    Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-    Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-    Route::resource('appointments', AppointmentController::class)->except(['create', 'store']);
-    Route::patch('appointments/{appointment}/confirm', [AppointmentController::class, 'confirm'])->name('appointments.confirm');
-    Route::patch('appointments/{appointment}/done', [AppointmentController::class, 'done'])->name('appointments.done');
-    Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    // Escrita exige appointments.manage; leitura exige appointments.view.
+    Route::middleware('permission:appointments.manage')->group(function (): void {
+        Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+        Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+        Route::resource('appointments', AppointmentController::class)->only(['edit', 'update', 'destroy']);
+        Route::patch('appointments/{appointment}/confirm', [AppointmentController::class, 'confirm'])->name('appointments.confirm');
+        Route::patch('appointments/{appointment}/done', [AppointmentController::class, 'done'])->name('appointments.done');
+        Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    });
+    Route::middleware('permission:appointments.view')->group(function (): void {
+        Route::resource('appointments', AppointmentController::class)->only(['index', 'show']);
+    });
 
     // Service Orders / Ordens de Serviço
     // create/store ANTES do resource: senão "service-orders/{service_order}" captura "service-orders/create".
-    Route::get('service-orders/create', [ServiceOrderController::class, 'create'])->name('service-orders.create');
-    Route::post('service-orders', [ServiceOrderController::class, 'store'])->name('service-orders.store');
-    Route::resource('service-orders', ServiceOrderController::class)->except(['create', 'store']);
-    Route::patch('service-orders/{service_order}/start', [ServiceOrderController::class, 'start'])->name('service-orders.start');
-    Route::patch('service-orders/{service_order}/complete', [ServiceOrderController::class, 'complete'])->name('service-orders.complete');
-    Route::patch('service-orders/{service_order}/cancel', [ServiceOrderController::class, 'cancel'])->name('service-orders.cancel');
-    Route::patch('service-orders/{service_order}/billing', [ServiceOrderController::class, 'billing'])->name('service-orders.billing');
+    // Escrita exige service_orders.manage; leitura exige service_orders.view.
+    Route::middleware('permission:service_orders.manage')->group(function (): void {
+        Route::get('service-orders/create', [ServiceOrderController::class, 'create'])->name('service-orders.create');
+        Route::post('service-orders', [ServiceOrderController::class, 'store'])->name('service-orders.store');
+        Route::resource('service-orders', ServiceOrderController::class)->only(['edit', 'update', 'destroy']);
+        Route::patch('service-orders/{service_order}/start', [ServiceOrderController::class, 'start'])->name('service-orders.start');
+        Route::patch('service-orders/{service_order}/complete', [ServiceOrderController::class, 'complete'])->name('service-orders.complete');
+        Route::patch('service-orders/{service_order}/cancel', [ServiceOrderController::class, 'cancel'])->name('service-orders.cancel');
+        Route::patch('service-orders/{service_order}/billing', [ServiceOrderController::class, 'billing'])->name('service-orders.billing');
+    });
+    Route::middleware('permission:service_orders.view')->group(function (): void {
+        Route::resource('service-orders', ServiceOrderController::class)->only(['index', 'show']);
+    });
+
+    // Purchases / Compras (entrada de mercadoria + conta a pagar ao fornecedor)
+    // create/store ANTES do resource: senão "purchases/{purchase}" captura "purchases/create".
+    // Escrita exige purchases.manage; leitura exige purchases.view.
+    Route::middleware('permission:purchases.manage')->group(function (): void {
+        Route::get('purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::patch('purchases/{purchase}/confirm', [PurchaseController::class, 'confirm'])->name('purchases.confirm');
+    });
+    Route::middleware('permission:purchases.view')->group(function (): void {
+        Route::resource('purchases', PurchaseController::class)->only(['index', 'show']);
+    });
 
     // Interactions / Support
     Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');

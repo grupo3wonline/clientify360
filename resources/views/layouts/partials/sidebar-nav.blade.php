@@ -14,6 +14,7 @@
             ['quotes.index', 'quotes.*', 'fa-file-invoice-dollar', 'Orçamentos'],
             ['service-orders.index', 'service-orders.*', 'fa-screwdriver-wrench', 'Ordens de Serviço', 'service_orders.view', 'Gerencie ordens de serviço: status, execução e faturamento'],
             ['products.index', 'products.*', 'fa-boxes-stacked', 'Produtos e estoque'],
+            ['purchases.index', 'purchases.*', 'fa-cart-shopping', 'Compras', 'purchases.view', 'Entrada de mercadoria e contas a pagar ao fornecedor'],
             ['lead-forms.index', 'lead-forms.*', 'fa-magnet', 'Captação de leads'],
             ['tags.index', 'tags.*', 'fa-tags', 'Tags'],
         ],

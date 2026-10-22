@@ -78,10 +78,14 @@ final class ReportController extends Controller
         $commercial = $this->reports->commercial($startDate);
         $finance = $this->finance->monthSummary();
 
+        // Giro/valor de estoque e compras do período (FEAT-003).
+        $stockReport = $this->reports->stockTurnover();
+        $purchasesReport = $this->reports->purchases($startDate);
+
         return view('reports.index', compact(
             'stats', 'period', 'scoreDistribution', 'interactionsByType',
             'interactionsByChannel', 'topClients', 'servicesDemand',
-            'commercial', 'finance'
+            'commercial', 'finance', 'stockReport', 'purchasesReport'
         ));
     }
 }
