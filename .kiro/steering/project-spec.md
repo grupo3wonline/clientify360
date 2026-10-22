@@ -8,7 +8,7 @@ Aplicação web no formato **Micro SaaS** onde cada usuário acessa apenas seus 
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Backend | Laravel 13 (PHP 8.3+) |
+| Backend | Laravel 12 (PHP 8.2+) |
 | Banco de Dados | MySQL 8 |
 | Frontend | Alpine.js + Tailwind CSS + HTML5 + CSS3 |
 | Autenticação | Laravel Breeze |
@@ -157,7 +157,7 @@ app/
 
 ## Passos de Instalação
 
-1. Instalar Laravel 13 com Composer
+1. Instalar Laravel 12 com Composer
 2. Configurar `.env` (MySQL, timezone, locale)
 3. Instalar Laravel Breeze
 4. Instalar pacotes de tradução pt-BR

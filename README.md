@@ -1,12 +1,12 @@
 # Clientify360
 
-Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Laravel 13.
+Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Laravel 12.
 
 ## Stack Tecnológica
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Backend | Laravel 13 (PHP 8.3+) |
+| Backend | Laravel 12 (PHP 8.2+) |
 | Banco de Dados | MySQL 8 |
 | Frontend | Alpine.js + Tailwind CSS + HTML5 + CSS3 |
 | Autenticação | Laravel Breeze |
@@ -25,7 +25,7 @@ Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Larave
 
 ## Requisitos
 
-- PHP 8.3+
+- PHP 8.2+
 - Composer 2.x
 - MySQL 8.x
 - Node.js 20+ (para build de assets, opcional com CDN)
@@ -82,6 +82,23 @@ php artisan serve
 - ✅ Breadcrumbs em todas as páginas internas
 - ✅ UUID como chave primária
 - ✅ SoftDeletes em todos os models
+
+### Módulos comerciais (incorporados de `bkp-after_features`)
+
+- ✅ **Funil de vendas (Kanban)** — oportunidades por etapa, arrastar e soltar, previsão ponderada, taxa de conversão, motivo de perda
+- ✅ **Etapas do funil configuráveis** — nome, cor, ordem e probabilidade
+- ✅ **Histórico de relacionamento** — ligações, reuniões, WhatsApp… com **próximo passo** que vira lembrete na Agenda
+- ✅ **Tags de clientes** e **origem do lead** ("como chegou até você"), com filtro na lista
+- ✅ **Produtos e serviços** — preço, promoção, custo, margem, NCM, fornecedor
+- ✅ **Controle de estoque** — entradas (com nº da nota), saídas, ajuste de inventário, estoque mínimo e histórico auditável
+- ✅ **Orçamentos** — itens do catálogo ou livres, desconto, validade, numeração `ORC-AAAA-0001`, impressão/PDF, duplicar
+- ✅ **Aprovar orçamento = venda** — baixa estoque, gera contas a receber (parcelado), marca a oportunidade como ganha
+- ✅ **Financeiro** — contas a pagar/receber, parcelamento, baixa, categorias, fluxo de caixa (realizado × previsto)
+- ✅ **Captação de leads** — formulários públicos `/f/{slug}` com UTM, anti-spam e LGPD; cada envio vira cliente + oportunidade
+- ✅ **Notificações** — contas vencidas, estoque baixo, novos leads e oportunidades paradas
+- ✅ **Limites por plano** — `plan.limit:{recurso}` (clientes, produtos, orçamentos/mês, formulários)
+
+Detalhes das decisões de mesclagem: [`docs/MERGE-bkp-after_features.md`](docs/MERGE-bkp-after_features.md)
 
 ## Estrutura de Diretórios
 

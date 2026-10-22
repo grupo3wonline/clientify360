@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccountInvitation;
 use App\Models\User;
+use App\Services\AccountService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,11 +16,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
-class RegisteredUserController extends Controller
+final class RegisteredUserController extends Controller
 {
-    public function create(): View
+    public function __construct(
+        private readonly AccountService $accounts
+    ) {}
+
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        // Pré-carrega um convite válido (quando o cadastro vem de um link de convite).
+        $invitation = $this->resolveInvitation($request->query('invite'));
+
+        return view('auth.register', [
+            'invitation' => $invitation,
+            'inviteToken' => $invitation?->token,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -43,6 +55,8 @@ class RegisteredUserController extends Controller
             'lgpd_consent.accepted' => 'Você deve aceitar a Política de Privacidade.',
         ]);
 
+        $invitation = $this->resolveInvitation($request->input('invite_token'));
+
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
@@ -52,10 +66,33 @@ class RegisteredUserController extends Controller
             'lgpd_consent_at' => now(),
         ]);
 
+        if ($invitation !== null) {
+            // Cadastro via convite: entra na conta existente com o papel convidado.
+            $this->accounts->addMember($user, $invitation->account, $invitation->role);
+            $invitation->update(['accepted_at' => now()]);
+        } else {
+            // Cadastro normal: cria a própria conta e vira o dono.
+            $this->accounts->provisionForOwner($user);
+        }
+
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Usuário recém-criado ainda não verificou o e-mail: o painel exige
+        // verificação, então enviamos ao aviso de verificação do Breeze.
+        return redirect()->route('verification.notice');
+    }
+
+    /** Resolve um convite pendente e válido pelo token, se houver. */
+    private function resolveInvitation(?string $token): ?AccountInvitation
+    {
+        if ($token === null || $token === '') {
+            return null;
+        }
+
+        $invitation = AccountInvitation::with('account')->where('token', $token)->first();
+
+        return $invitation !== null && $invitation->isPending() ? $invitation : null;
     }
 }

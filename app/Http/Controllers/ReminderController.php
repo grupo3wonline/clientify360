@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Reminder;
+use App\Support\OwnedRule;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -42,7 +43,7 @@ final class ReminderController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'client_id' => ['nullable', 'string', 'exists:clients,id'],
+            'client_id' => ['nullable', 'string', OwnedRule::exists('clients')],
             'remind_at' => ['required', 'date', 'after:now'],
         ], [
             'title.required' => 'O título é obrigatório.',

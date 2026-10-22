@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'reset' => 'Sua senha foi redefinida com sucesso.',
     'sent' => 'Enviamos um link para redefinição de senha para o seu e-mail.',

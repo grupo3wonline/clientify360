@@ -26,14 +26,14 @@
                     Todos <span class="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-surface-200 dark:bg-surface-600">{{ $counts['all'] }}</span>
                 </a>
                 <a href="{{ route('interactions.index', ['status' => 'open']) }}"
-                   class="flex items-center px-3 py-2 rounded-lg text-xs font-medium transition {{ $status === 'open' ? 'bg-white dark:bg-surface-700 text-red-700 dark:text-red-300 shadow-sm' : 'text-surface-600 dark:text-surface-400' }}">
-                    <i class="fa-solid fa-circle text-[6px] text-red-500 mr-1.5"></i> Abertos
-                    @if($counts['open'] > 0)<span class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">{{ $counts['open'] }}</span>@endif
+                   class="flex items-center px-3 py-2 rounded-lg text-xs font-medium transition {{ $status === 'open' ? 'bg-white dark:bg-surface-700 text-danger-700 dark:text-danger-300 shadow-sm' : 'text-surface-600 dark:text-surface-400' }}">
+                    <i class="fa-solid fa-circle text-[6px] text-danger-500 mr-1.5"></i> Abertos
+                    @if($counts['open'] > 0)<span class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-danger-100 dark:bg-danger-900 text-danger-700 dark:text-danger-300">{{ $counts['open'] }}</span>@endif
                 </a>
                 <a href="{{ route('interactions.index', ['status' => 'in_progress']) }}"
-                   class="flex items-center px-3 py-2 rounded-lg text-xs font-medium transition {{ $status === 'in_progress' ? 'bg-white dark:bg-surface-700 text-amber-700 dark:text-amber-300 shadow-sm' : 'text-surface-600 dark:text-surface-400' }}">
-                    <i class="fa-solid fa-circle text-[6px] text-amber-500 mr-1.5"></i> Em Andamento
-                    @if($counts['in_progress'] > 0)<span class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">{{ $counts['in_progress'] }}</span>@endif
+                   class="flex items-center px-3 py-2 rounded-lg text-xs font-medium transition {{ $status === 'in_progress' ? 'bg-white dark:bg-surface-700 text-warning-700 dark:text-warning-300 shadow-sm' : 'text-surface-600 dark:text-surface-400' }}">
+                    <i class="fa-solid fa-circle text-[6px] text-warning-500 mr-1.5"></i> Em Andamento
+                    @if($counts['in_progress'] > 0)<span class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-warning-100 dark:bg-warning-900 text-warning-700 dark:text-warning-300">{{ $counts['in_progress'] }}</span>@endif
                 </a>
                 <a href="{{ route('interactions.index', ['status' => 'resolved']) }}"
                    class="flex items-center px-3 py-2 rounded-lg text-xs font-medium transition {{ $status === 'resolved' ? 'bg-white dark:bg-surface-700 text-accent-700 dark:text-accent-300 shadow-sm' : 'text-surface-600 dark:text-surface-400' }}">
@@ -50,8 +50,8 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center flex-wrap gap-2 mb-2">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                    {{ $interaction->status === 'open' ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300' : '' }}
-                                    {{ $interaction->status === 'in_progress' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : '' }}
+                                    {{ $interaction->status === 'open' ? 'bg-danger-100 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300' : '' }}
+                                    {{ $interaction->status === 'in_progress' ? 'bg-warning-100 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300' : '' }}
                                     {{ $interaction->status === 'resolved' ? 'bg-accent-100 dark:bg-accent-950/50 text-accent-700 dark:text-accent-300' : '' }}
                                     {{ $interaction->status === 'closed' ? 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400' : '' }}">
                                     {{ $interaction->status === 'open' ? 'Aberto' : ($interaction->status === 'in_progress' ? 'Em Andamento' : ($interaction->status === 'resolved' ? 'Resolvido' : 'Fechado')) }}
@@ -88,7 +88,7 @@
                             <form action="{{ route('interactions.updateStatus', $interaction) }}" method="POST" class="inline">
                                 @csrf @method('PATCH')
                                 <input type="hidden" name="status" value="in_progress">
-                                <button type="submit" class="px-3 py-1.5 text-xs font-medium bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 rounded-lg hover:bg-amber-200 transition">
+                                <button type="submit" class="px-3 py-1.5 text-xs font-medium bg-warning-100 dark:bg-warning-950/30 text-warning-700 dark:text-warning-300 rounded-lg hover:bg-warning-200 transition">
                                     <i class="fa-solid fa-spinner mr-1"></i> Em Andamento
                                 </button>
                             </form>
@@ -105,7 +105,7 @@
                             <form action="{{ route('interactions.destroy', $interaction) }}" method="POST" class="inline" x-data>
                                 @csrf @method('DELETE')
                                 <button type="button" @click="Swal.fire({ title: 'Excluir?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
-                                        class="px-3 py-1.5 text-xs font-medium bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 transition">
+                                        class="px-3 py-1.5 text-xs font-medium bg-danger-100 dark:bg-danger-950/30 text-danger-700 dark:text-danger-300 rounded-lg hover:bg-danger-200 transition">
                                     <i class="fa-solid fa-trash mr-1"></i> Excluir
                                 </button>
                             </form>
@@ -138,7 +138,7 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
-                            <label for="client_id" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Cliente <span class="text-red-500">*</span></label>
+                            <label for="client_id" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Cliente <span class="text-danger-500">*</span></label>
                             <select name="client_id" id="client_id" required autocomplete="off"
                                     class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 <option value="">Selecione</option>
@@ -146,10 +146,10 @@
                                     <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
                                 @endforeach
                             </select>
-                            @error('client_id')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            @error('client_id')<p class="mt-1 text-xs text-danger-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label for="type" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Tipo <span class="text-red-500">*</span></label>
+                            <label for="type" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Tipo <span class="text-danger-500">*</span></label>
                             <select name="type" id="type" required autocomplete="off"
                                     class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 <option value="">Selecione</option>
@@ -159,10 +159,10 @@
                                 <option value="complaint" {{ old('type') === 'complaint' ? 'selected' : '' }}>Reclamação</option>
                                 <option value="other" {{ old('type') === 'other' ? 'selected' : '' }}>Outro</option>
                             </select>
-                            @error('type')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            @error('type')<p class="mt-1 text-xs text-danger-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label for="channel" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Canal <span class="text-red-500">*</span></label>
+                            <label for="channel" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Canal <span class="text-danger-500">*</span></label>
                             <select name="channel" id="channel" required autocomplete="off"
                                     class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                                 <option value="phone" {{ old('channel', 'phone') === 'phone' ? 'selected' : '' }}>📞 Telefone</option>
@@ -173,11 +173,11 @@
                             </select>
                         </div>
                         <div>
-                            <label for="subject" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Assunto <span class="text-red-500">*</span></label>
+                            <label for="subject" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Assunto <span class="text-danger-500">*</span></label>
                             <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required autocomplete="off"
                                    placeholder="Resumo do atendimento"
                                    class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
-                            @error('subject')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            @error('subject')<p class="mt-1 text-xs text-danger-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="description" class="block text-xs font-medium text-surface-700 dark:text-surface-300 mb-1">Descrição</label>

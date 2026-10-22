@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Http;
 final class AiAnalysisService
 {
     private const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
     private const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
     private const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
     public function analyzeClient(User $user, Client $client, string $provider): ?string
@@ -74,7 +76,7 @@ Responda de forma objetiva e profissional, focando em oportunidades reais de ven
         try {
             $response = Http::withoutVerifying()
                 ->timeout(30)
-                ->post(self::GEMINI_URL . '?key=' . $apiKey, [
+                ->post(self::GEMINI_URL.'?key='.$apiKey, [
                     'contents' => [['parts' => [['text' => $prompt]]]],
                 ]);
 
@@ -93,7 +95,7 @@ Responda de forma objetiva e profissional, focando em oportunidades reais de ven
         try {
             $response = Http::withoutVerifying()
                 ->timeout(30)
-                ->withHeaders(['Authorization' => 'Bearer ' . $apiKey])
+                ->withHeaders(['Authorization' => 'Bearer '.$apiKey])
                 ->post(self::GROQ_URL, [
                     'model' => 'llama-3.3-70b-versatile',
                     'messages' => [['role' => 'user', 'content' => $prompt]],
@@ -115,7 +117,7 @@ Responda de forma objetiva e profissional, focando em oportunidades reais de ven
         try {
             $response = Http::withoutVerifying()
                 ->timeout(30)
-                ->withHeaders(['Authorization' => 'Bearer ' . $apiKey])
+                ->withHeaders(['Authorization' => 'Bearer '.$apiKey])
                 ->post(self::OPENROUTER_URL, [
                     'model' => 'google/gemma-3n-e2b-it:free',
                     'messages' => [['role' => 'user', 'content' => $prompt]],

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -15,11 +17,19 @@ return [
         'original_price' => 0,
         'limits' => [
             'clients' => 10,
+            'products' => 20,
+            'quotes_per_month' => 5,
+            'lead_forms' => 1,
         ],
         'features' => [
             'Até 10 clientes',
             'Cadastro básico de clientes',
-            'Busca e filtros',
+            'Busca, filtros e tags',
+            'Funil de vendas (Kanban) e histórico',
+            'Até 20 produtos/serviços',
+            'Até 5 orçamentos por mês',
+            'Contas a pagar e a receber',
+            '1 formulário de captação de leads',
             'Agenda e lembretes',
             'Tema claro/escuro',
         ],
@@ -35,9 +45,15 @@ return [
         'discount_percent' => 50,
         'limits' => [
             'clients' => -1,
+            'products' => -1,
+            'quotes_per_month' => -1,
+            'lead_forms' => -1,
         ],
         'features' => [
             'Clientes ilimitados',
+            'Produtos, orçamentos e formulários ilimitados',
+            'Controle de estoque com alerta de mínimo',
+            'Fluxo de caixa e parcelamento automático',
             'Score e classificação de clientes',
             'Análise detalhada de perfil (SWOT)',
             'Gestão de atendimentos',

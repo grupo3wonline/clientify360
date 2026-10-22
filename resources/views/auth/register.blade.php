@@ -1,6 +1,20 @@
 <x-guest-layout>
+    @isset($invitation)
+        @if($invitation)
+            <div class="mb-4 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 p-4 text-sm text-indigo-800 dark:text-indigo-200">
+                <i class="fa-solid fa-user-plus mr-1"></i>
+                Você foi convidado para a conta <strong>{{ $invitation->account->name }}</strong>
+                como <strong>{{ \App\Models\User::ROLE_LABELS[$invitation->role] ?? $invitation->role }}</strong>.
+                Complete o cadastro para entrar na equipe.
+            </div>
+        @endif
+    @endisset
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
+        @if(!empty($inviteToken))
+            <input type="hidden" name="invite_token" value="{{ $inviteToken }}">
+        @endif
 
         <!-- Name -->
         <div>

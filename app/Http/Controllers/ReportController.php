@@ -7,11 +7,18 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Interaction;
 use App\Models\Reminder;
+use App\Services\FinanceService;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 final class ReportController extends Controller
 {
+    public function __construct(
+        private readonly ReportService $reports,
+        private readonly FinanceService $finance,
+    ) {}
+
     public function index(Request $request): View
     {
         $period = $request->query('period', '30');
@@ -67,9 +74,18 @@ final class ReportController extends Controller
             'social_media' => Client::where('needs_social_media', true)->count(),
         ];
 
+        // Desempenho comercial e resumo financeiro do mês (módulos de vendas/financeiro).
+        $commercial = $this->reports->commercial($startDate);
+        $finance = $this->finance->monthSummary();
+
+        // Giro/valor de estoque e compras do período (FEAT-003).
+        $stockReport = $this->reports->stockTurnover();
+        $purchasesReport = $this->reports->purchases($startDate);
+
         return view('reports.index', compact(
             'stats', 'period', 'scoreDistribution', 'interactionsByType',
-            'interactionsByChannel', 'topClients', 'servicesDemand'
+            'interactionsByChannel', 'topClients', 'servicesDemand',
+            'commercial', 'finance', 'stockReport', 'purchasesReport'
         ));
     }
 }

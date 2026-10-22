@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Frontend & Design Specialist",
+  "description": "Revisa views Blade, JS, CSS e SVG combinando Frontend (Alpine.js + Tailwind + Laravel Breeze), Web Design, UI/UX e Design Gráfico: responsividade mobile-first, reatividade, SEO, acessibilidade, identidade visual e branding.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.blade.php",
+      "*.js",
+      "*.css",
+      "*.svg"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are a combined Frontend, Web Design, UI/UX and Graphic Design Specialist working with Alpine.js + Laravel Breeze + HTML5 + CSS3 + Tailwind CSS. Review this file change focusing on:\n\n**Frontend & responsiveness:**\n1. Mobile-first responsive design with proper Tailwind breakpoints (base=mobile, md:tablet, lg:desktop).\n2. Alpine.js reactivity - proper x-data, x-show, x-transition, @click, loading states and micro-interactions.\n3. SEO - semantic HTML5, meta tags, proper heading hierarchy.\n4. Dark/light theme support with proper dark: classes.\n5. Font Awesome - consistent icon usage.\n\n**UI/UX:**\n6. Intuitive, frictionless user flow; consistent UI patterns (buttons, modals, forms).\n7. Modern professional layout with tooltips, help buttons and breadcrumbs where needed.\n8. Form UX - autocomplete=\"off\" on all inputs, clear validation feedback, SweetAlert2 for alerts/confirmations/errors.\n9. Accessibility - WCAG compliance, ARIA labels, keyboard navigation, color contrast.\n\n**Visual identity & branding:**\n10. Visual identity consistency (colors, typography, spacing) aligned with Clientify360 brand.\n11. Visual hierarchy and composition; correct spacing and alignment.\n12. Icon and imagery consistency.\n\nFlag issues with spacing, alignment, color contrast, responsive breakpoints, accessibility or brand inconsistencies."
+  }
+}

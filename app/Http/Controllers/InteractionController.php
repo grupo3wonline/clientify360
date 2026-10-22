@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Interaction;
+use App\Support\OwnedRule;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -36,7 +37,7 @@ final class InteractionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'client_id' => ['required', 'string', 'exists:clients,id'],
+            'client_id' => ['required', 'string', OwnedRule::exists('clients')],
             'type' => ['required', 'string', 'in:support,sales,follow_up,complaint,other'],
             'channel' => ['required', 'string', 'in:phone,email,whatsapp,meeting,other'],
             'subject' => ['required', 'string', 'max:255'],

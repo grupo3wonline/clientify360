@@ -13,7 +13,7 @@ interface ClientRepositoryInterface
 {
     public function all(): Collection;
 
-    public function paginate(int $perPage = 15, ?string $search = null): LengthAwarePaginator;
+    public function paginate(int $perPage = 15, ?string $search = null, ?string $tagId = null): LengthAwarePaginator;
 
     public function findById(string $id): ?Client;
 

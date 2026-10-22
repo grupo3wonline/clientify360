@@ -4,43 +4,18 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Models\Client;
-use App\Models\User;
+use App\Policies\Concerns\AuthorizesWithinAccount;
 
+/**
+ * Autorização por CONTA + permissão (ACL por equipe). O isolamento de dados
+ * em si já é garantido pelo global scope por conta.
+ */
 final class ClientPolicy
 {
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
+    use AuthorizesWithinAccount;
 
-    public function view(User $user, Client $client): bool
+    protected function resource(): string
     {
-        return $user->id === $client->user_id;
-    }
-
-    public function create(User $user): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, Client $client): bool
-    {
-        return $user->id === $client->user_id;
-    }
-
-    public function delete(User $user, Client $client): bool
-    {
-        return $user->id === $client->user_id;
-    }
-
-    public function restore(User $user, Client $client): bool
-    {
-        return $user->id === $client->user_id;
-    }
-
-    public function forceDelete(User $user, Client $client): bool
-    {
-        return $user->id === $client->user_id;
+        return 'clients';
     }
 }

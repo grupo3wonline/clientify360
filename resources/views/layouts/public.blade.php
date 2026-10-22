@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#4f46e5">
+    <meta name="msapplication-TileColor" content="#4f46e5">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Clientify360">
+    <meta name="application-name" content="Clientify360">
+
+    {{-- Medição: Google Tag Manager + GA4 + Search Console --}}
+    <x-analytics />
 
     {{-- SEO / SEM / GEO / AEO --}}
     @hasSection('seo')
@@ -86,6 +96,8 @@
     @stack('styles')
 </head>
 <body class="min-h-screen bg-white dark:bg-surface-950 text-surface-800 dark:text-surface-200 font-sans antialiased">
+
+    <x-analytics-noscript />
 
     <!-- Header -->
     <header class="glass-nav sticky top-0 z-50 border-b border-surface-200/60 dark:border-surface-800/60" x-data="{ mobileMenu: false }">

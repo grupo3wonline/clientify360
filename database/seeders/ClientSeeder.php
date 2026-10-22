@@ -17,7 +17,10 @@ final class ClientSeeder extends Seeder
         $users->each(function (User $user): void {
             Client::factory()
                 ->count(10)
-                ->create(['user_id' => $user->id]);
+                ->create([
+                    'account_id' => $user->account_id,
+                    'user_id' => $user->id,
+                ]);
         });
     }
 }

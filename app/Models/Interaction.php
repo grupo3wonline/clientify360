@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\BelongsToUser;
+use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,13 +12,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Interaction extends Model
 {
-    use BelongsToUser, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, SoftDeletes;
 
     protected $keyType = 'string';
 
     public $incrementing = false;
 
     protected $fillable = [
+        'account_id',
         'user_id',
         'client_id',
         'type',

@@ -11,7 +11,10 @@ final class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create admin user for testing
+        // Catálogo de permissões (papéis por conta são criados pelo AccountService)
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        // Create admin user for testing (a factory provisiona a conta + papéis)
         User::factory()->create([
             'name' => 'Administrador',
             'username' => 'admin',

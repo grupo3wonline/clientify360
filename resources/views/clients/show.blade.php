@@ -29,6 +29,16 @@
                                     <i class="fa-solid fa-briefcase mr-1"></i> {{ $client->business_segment }}
                                 @endif
                             </p>
+                            @if($client->sourceLabel() || $client->tags->isNotEmpty())
+                                <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                    @if($client->sourceLabel())
+                                        <span class="c-badge bg-white/15 text-white border border-white/20"><i class="fa-solid fa-bullseye mr-1"></i>{{ $client->sourceLabel() }}</span>
+                                    @endif
+                                    @foreach($client->tags as $tag)
+                                        <a href="{{ route('clients.index', ['tag' => $tag->id]) }}" class="c-badge text-white" style="background: {{ $tag->color }}">{{ $tag->name }}</a>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -37,7 +47,7 @@
                         </a>
                         <form id="delete-form-{{ $client->id }}" action="{{ route('clients.destroy', $client) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                         <button onclick="Swal.fire({ title: 'Excluir cliente?', text: 'Esta ação não pode ser desfeita!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) document.getElementById('delete-form-{{ $client->id }}').submit() })"
-                                class="inline-flex items-center px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-white text-sm font-medium rounded-xl border border-red-400/30 transition">
+                                class="inline-flex items-center px-4 py-2 bg-danger-500/20 hover:bg-danger-500/30 text-white text-sm font-medium rounded-xl border border-danger-400/30 transition">
                             <i class="fa-solid fa-trash-can mr-2 text-xs"></i> Excluir
                         </button>
                     </div>
@@ -226,10 +236,10 @@
                         @foreach($clientReminders as $reminder)
                         <div class="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
                             <div class="flex items-center space-x-3">
-                                <i class="fa-regular fa-clock text-xs {{ $reminder->remind_at->isPast() ? 'text-red-500' : 'text-brand-500' }}"></i>
+                                <i class="fa-regular fa-clock text-xs {{ $reminder->remind_at->isPast() ? 'text-danger-500' : 'text-brand-500' }}"></i>
                                 <span class="text-sm text-surface-700 dark:text-surface-300">{{ $reminder->title }}</span>
                             </div>
-                            <span class="text-xs {{ $reminder->remind_at->isPast() ? 'text-red-600 dark:text-red-400' : 'text-surface-500' }}">{{ $reminder->remind_at->format('d/m H:i') }}</span>
+                            <span class="text-xs {{ $reminder->remind_at->isPast() ? 'text-danger-600 dark:text-danger-400' : 'text-surface-500' }}">{{ $reminder->remind_at->format('d/m H:i') }}</span>
                         </div>
                         @endforeach
                     </div>
@@ -237,6 +247,8 @@
                 @endif
             </div>
         </div>
+
+        @include('clients._commercial')
 
         <!-- Back Button -->
         <div class="mt-6">

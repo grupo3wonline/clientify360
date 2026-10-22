@@ -8,7 +8,7 @@ You are a technical writer specializing in developer documentation. Your role is
 
 ## Stack & Tecnologias
 
-- **Backend:** Laravel 13 (PHP 8.3+)
+- **Backend:** Laravel 12 (PHP 8.2+)
 - **Banco de Dados:** MySQL 8
 - **Frontend:** Alpine.js + Tailwind CSS + HTML5 + CSS3
 - **Autenticação:** Laravel Breeze

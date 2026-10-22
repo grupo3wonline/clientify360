@@ -21,9 +21,9 @@ final class ClientService
         return $this->repository->all();
     }
 
-    public function paginate(int $perPage = 15, ?string $search = null): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?string $search = null, ?string $tagId = null): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage, $search);
+        return $this->repository->paginate($perPage, $search, $tagId);
     }
 
     public function findById(string $id): ?Client

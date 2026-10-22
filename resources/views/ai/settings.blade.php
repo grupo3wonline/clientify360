@@ -12,20 +12,21 @@
         <div class="mb-6">
             <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Inteligência Artificial</h1>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Configure suas credenciais para análises com IA</p>
+            <p class="text-sm text-surface-600 dark:text-surface-300 mt-3">Conecte um provedor de IA para gerar resumos, insights e recomendações automáticas sobre seus clientes e atendimentos.</p>
         </div>
 
         @if(!$isProfessional)
-        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-6 mb-6">
+        <div class="bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800/50 rounded-2xl p-6 mb-6">
             <div class="flex items-start space-x-4">
-                <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/50 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <i class="fa-solid fa-lock text-amber-600 dark:text-amber-400"></i>
+                <div class="w-10 h-10 bg-warning-100 dark:bg-warning-900/50 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-lock text-warning-600 dark:text-warning-400"></i>
                 </div>
                 <div>
-                    <h3 class="text-sm font-semibold text-amber-800 dark:text-amber-200">Recurso Exclusivo — Plano Profissional</h3>
-                    <p class="text-xs text-amber-700 dark:text-amber-300 mt-1">A análise com IA está disponível apenas no plano Profissional. Faça upgrade para acessar.</p>
-                    <a href="{{ route('billing.index') }}" class="inline-flex items-center mt-3 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-xl transition">
-                        <i class="fa-solid fa-rocket mr-2"></i> Fazer Upgrade
-                    </a>
+                    <h3 class="text-sm font-semibold text-warning-800 dark:text-warning-200">Recurso Exclusivo — Plano Profissional</h3>
+                    <p class="text-xs text-warning-700 dark:text-warning-300 mt-1">Desbloqueie análises inteligentes dos seus clientes e tome decisões mais rápidas. Assine o plano Profissional para liberar este recurso.</p>
+                    <x-primary-button :href="route('billing.index')" class="mt-3 !px-4 !py-2 !text-xs">
+                        <i class="fa-solid fa-rocket mr-2"></i> Assinar o Profissional
+                    </x-primary-button>
                 </div>
             </div>
         </div>
@@ -46,6 +47,11 @@
         <form action="{{ route('ai.saveSettings') }}" method="POST">
             @csrf
             <div class="space-y-6">
+                <div class="flex items-start space-x-2.5 text-xs text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-800 rounded-xl px-4 py-3">
+                    <i class="fa-solid fa-shield-halved text-accent-600 dark:text-accent-400 mt-0.5"></i>
+                    <span>Suas chaves são armazenadas de forma criptografada e nunca são compartilhadas com terceiros.</span>
+                </div>
+
                 <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
                     <div class="flex items-center space-x-3 mb-4">
                         <div class="w-8 h-8 bg-blue-100 dark:bg-blue-950/50 rounded-lg flex items-center justify-center">
@@ -98,7 +104,8 @@
                 </div>
 
                 <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-                    <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-3">Provedor Preferido</h3>
+                    <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-1">Provedor Preferido</h3>
+                    <p class="text-xs text-surface-500 dark:text-surface-400 mb-3">Este será o provedor usado por padrão nas análises. Você pode cadastrar mais de um como alternativa.</p>
                     <select name="ai_preferred_provider" autocomplete="off"
                             class="w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition">
                         <option value="gemini" {{ $user->ai_preferred_provider === 'gemini' ? 'selected' : '' }}>Google Gemini 2.0 Flash</option>
