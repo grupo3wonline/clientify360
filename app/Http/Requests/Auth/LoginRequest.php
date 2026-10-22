@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\Recaptcha;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,10 @@ final class LoginRequest extends FormRequest
         return [
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
+            // Honeypot: only bots fill it. A present/non-empty value fails.
+            'website' => ['nullable', 'prohibited'],
+            // reCAPTCHA v3 token (passes silently when captcha is disabled).
+            'g-recaptcha-response' => [new Recaptcha('login')],
         ];
     }
 
@@ -31,6 +36,7 @@ final class LoginRequest extends FormRequest
         return [
             'login.required' => 'Informe seu e-mail ou nome de usuário.',
             'password.required' => 'A senha é obrigatória.',
+            'website.prohibited' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.',
         ];
     }
 

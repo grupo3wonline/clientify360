@@ -24,6 +24,10 @@ class SecurityHeadersTest extends TestCase
         $this->assertNotNull($csp);
         $this->assertStringContainsString("default-src 'self'", $csp);
         $this->assertStringContainsString("frame-ancestors 'self'", $csp);
+
+        // reCAPTCHA v3 (anti-bot) origins must be allowed in the CSP.
+        $this->assertStringContainsString('www.google.com', $csp);
+        $this->assertStringContainsString('www.gstatic.com', $csp);
     }
 
     public function test_csp_no_longer_allows_removed_cdns(): void

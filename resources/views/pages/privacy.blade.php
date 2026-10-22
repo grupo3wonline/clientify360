@@ -247,15 +247,44 @@
                         </li>
                     </ul>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed mt-4">
-                        Não utilizamos cookies de rastreamento ou publicidade de terceiros.
+                        Não utilizamos cookies de publicidade ou de rastreamento de terceiros para fins comerciais. O serviço de segurança Google reCAPTCHA pode definir cookies próprios, utilizados exclusivamente para distinguir acessos humanos de automatizados (consulte a seção a seguir).
                     </p>
+                </div>
+
+                <!-- reCAPTCHA / Anti-bot -->
+                <div class="mb-10">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                        <i class="fa-solid fa-robot text-primary-600 dark:text-primary-400 mr-2"></i>
+                        6. Proteção contra Robôs (Google reCAPTCHA)
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                        Para proteger nossos formulários (cadastro, login, recuperação de senha e captação de contatos) contra uso automatizado, spam e fraudes, utilizamos o serviço <strong>Google reCAPTCHA v3</strong>. Esse serviço opera de forma invisível, sem exigir interação adicional do usuário.
+                    </p>
+                    <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-dot text-primary-500 text-xs mt-2 mr-3 flex-shrink-0"></i>
+                            <span>O reCAPTCHA coleta dados de hardware e software (como endereço IP e interações com a página) e os envia ao Google para análise de comportamento.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-dot text-primary-500 text-xs mt-2 mr-3 flex-shrink-0"></i>
+                            <span>Esses dados são tratados pelo Google como operador independente, sendo utilizados exclusivamente para distinguir acessos humanos de acessos automatizados.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-dot text-primary-500 text-xs mt-2 mr-3 flex-shrink-0"></i>
+                            <span>O uso do serviço está sujeito à
+                                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="text-primary-600 dark:text-primary-400 underline hover:no-underline">Política de Privacidade</a>
+                                e aos
+                                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="text-primary-600 dark:text-primary-400 underline hover:no-underline">Termos de Serviço</a>
+                                do Google.</span>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Data Sharing -->
                 <div class="mb-10">
                     <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-4">
                         <i class="fa-solid fa-share-nodes text-primary-600 dark:text-primary-400 mr-2"></i>
-                        6. Compartilhamento de Dados
+                        7. Compartilhamento de Dados
                     </h2>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                         O Clientify360 <strong>não vende, aluga ou compartilha</strong> seus dados pessoais com terceiros para fins comerciais. Seus dados poderão ser compartilhados apenas nas seguintes situações:
@@ -273,6 +302,10 @@
                             <i class="fa-solid fa-circle-dot text-primary-500 text-xs mt-2 mr-3 flex-shrink-0"></i>
                             <span>Com prestadores de serviço essenciais (hospedagem, e-mail), sob contratos de confidencialidade.</span>
                         </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-dot text-primary-500 text-xs mt-2 mr-3 flex-shrink-0"></i>
+                            <span>Com o Google reCAPTCHA, para fins de segurança e prevenção a fraudes, conforme descrito na seção anterior.</span>
+                        </li>
                     </ul>
                 </div>
 
@@ -280,7 +313,7 @@
                 <div class="mb-10">
                     <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-4">
                         <i class="fa-solid fa-envelope-open-text text-primary-600 dark:text-primary-400 mr-2"></i>
-                        7. Contato para Solicitações de Dados
+                        8. Contato para Solicitações de Dados
                     </h2>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                         Para exercer qualquer um dos seus direitos previstos na LGPD, ou para esclarecer dúvidas sobre esta política, entre em contato conosco:
@@ -305,7 +338,7 @@
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-4">
                         <i class="fa-solid fa-rotate text-primary-600 dark:text-primary-400 mr-2"></i>
-                        8. Alterações nesta Política
+                        9. Alterações nesta Política
                     </h2>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
                         Esta Política de Privacidade pode ser atualizada periodicamente para refletir mudanças em nossas práticas ou em requisitos legais. Recomendamos que você revise esta página regularmente. Alterações significativas serão comunicadas por e-mail ou por aviso no sistema.

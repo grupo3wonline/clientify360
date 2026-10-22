@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\AccountInvitation;
 use App\Models\User;
+use App\Rules\Recaptcha;
 use App\Services\AccountService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -41,6 +42,10 @@ final class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'lgpd_consent' => ['required', 'accepted'],
+            // Honeypot: only bots fill it. A present/non-empty value fails.
+            'website' => ['nullable', 'prohibited'],
+            // reCAPTCHA v3 token (passes silently when captcha is disabled).
+            'g-recaptcha-response' => [new Recaptcha('register')],
         ], [
             'name.required' => 'O nome é obrigatório.',
             'username.required' => 'O nome de usuário é obrigatório.',
@@ -53,6 +58,7 @@ final class RegisteredUserController extends Controller
             'password.confirmed' => 'A confirmação de senha não confere.',
             'lgpd_consent.required' => 'Você deve aceitar a Política de Privacidade.',
             'lgpd_consent.accepted' => 'Você deve aceitar a Política de Privacidade.',
+            'website.prohibited' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.',
         ]);
 
         $invitation = $this->resolveInvitation($request->input('invite_token'));

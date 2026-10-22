@@ -10,6 +10,12 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
+        {{-- Honeypot anti-bot: invisível para pessoas, apenas robôs preenchem. --}}
+        <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+            <label for="website">Não preencha este campo</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
         <!-- Login (Email or Username) -->
         <div>
             <label for="login" class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">E-mail ou Nome de Usuário</label>
@@ -41,6 +47,8 @@
                 </a>
             @endif
         </div>
+
+        <x-recaptcha action="login" />
 
         <!-- Submit -->
         <div class="mt-6">

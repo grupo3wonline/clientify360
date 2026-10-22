@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Rules\Recaptcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -30,6 +31,12 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+            // Honeypot: only bots fill it. A present/non-empty value fails.
+            'website' => ['nullable', 'prohibited'],
+            // reCAPTCHA v3 token (passes silently when captcha is disabled).
+            'g-recaptcha-response' => [new Recaptcha('forgot')],
+        ], [
+            'website.prohibited' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.',
         ]);
 
         // We will send the password reset link to this user. Once we have attempted
