@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\UpdateTagRequest;
 use App\Models\Tag;
+use App\Services\TagService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 final class TagController extends Controller
 {
+    public function __construct(
+        private readonly TagService $service
+    ) {}
+
     public function index(): View
     {
         $tags = Tag::withCount('clients')->orderBy('name')->get();
@@ -19,37 +24,24 @@ final class TagController extends Controller
         return view('tags.index', compact('tags'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreTagRequest $request): RedirectResponse
     {
-        Tag::create($this->validated($request));
+        $this->service->create($request->validated());
 
         return back()->with('success', 'Tag criada!');
     }
 
-    public function update(Request $request, Tag $tag): RedirectResponse
+    public function update(UpdateTagRequest $request, Tag $tag): RedirectResponse
     {
-        $tag->update($this->validated($request, $tag));
+        $this->service->update($tag, $request->validated());
 
         return back()->with('success', 'Tag atualizada!');
     }
 
     public function destroy(Tag $tag): RedirectResponse
     {
-        $tag->clients()->detach();
-        $tag->delete();
+        $this->service->delete($tag);
 
         return back()->with('success', 'Tag excluída.');
-    }
-
-    private function validated(Request $request, ?Tag $tag = null): array
-    {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:50', Rule::unique('tags')->where('account_id', auth()->user()?->account_id)->ignore($tag?->id)],
-            'color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-        ], [
-            'name.required' => 'O nome da tag é obrigatório.',
-            'name.unique' => 'Já existe uma tag com esse nome nesta conta.',
-            'color.regex' => 'Informe uma cor em formato hexadecimal válido (ex.: #16A34A).',
-        ]);
     }
 }
