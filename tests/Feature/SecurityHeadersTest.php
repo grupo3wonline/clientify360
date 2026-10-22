@@ -26,6 +26,17 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString("frame-ancestors 'self'", $csp);
     }
 
+    public function test_csp_no_longer_allows_removed_cdns(): void
+    {
+        // Após a migração CDN -> Vite, os assets são self-hosted; o CSP não deve
+        // mais liberar as origens de CDN que ficaram sem uso.
+        $csp = $this->get('/')->headers->get('Content-Security-Policy');
+
+        $this->assertStringNotContainsString('cdn.tailwindcss.com', $csp);
+        $this->assertStringNotContainsString('cdn.jsdelivr.net', $csp);
+        $this->assertStringNotContainsString('cdnjs.cloudflare.com', $csp);
+    }
+
     public function test_csrf_protection_blocks_post_without_token(): void
     {
         // Em ambiente de teste o CSRF é desabilitado pelo framework; aqui validamos
