@@ -27,7 +27,7 @@
             <input type="hidden" name="_tags" value="1">
             @if($tags->isEmpty())
                 <p class="text-xs text-surface-500 dark:text-surface-400 mt-2">
-                    Nenhuma tag criada ainda. <a href="{{ route('tags.index') }}" class="text-brand-600 dark:text-brand-400 hover:underline" target="_blank">Criar tags</a>
+                    Nenhuma tag criada ainda. <a href="{{ route('tags.index') }}" class="text-brand-600 dark:text-brand-400 hover:underline" target="_blank" rel="noopener">Criar tags</a>
                 </p>
             @else
                 <div class="flex flex-wrap gap-2 mt-1" role="group" aria-labelledby="tags-label"
@@ -35,8 +35,8 @@
                     @foreach($tags as $tag)
                         <label x-data="{ on: {{ $selectedTags->contains($tag->id) ? 'true' : 'false' }} }"
                                class="cursor-pointer inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border transition focus-within:ring-2 focus-within:ring-brand-500"
-                               :class="on ? 'text-white border-transparent' : 'border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300'"
-                               :style="on ? 'background: {{ $tag->color }}' : ''">
+                               :class="on ? 'border-transparent' : 'border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300'"
+                               :style="on ? 'background: {{ $tag->color }}; color: {{ $tag->textColor() }}' : ''">
                             <input type="checkbox" name="tag_ids[]" value="{{ $tag->id }}" x-model="on" class="sr-only" @checked($selectedTags->contains($tag->id))>
                             <span class="w-2 h-2 rounded-full mr-1.5 ring-1 ring-white/60" style="background: {{ $tag->color }}"></span>{{ $tag->name }}
                         </label>

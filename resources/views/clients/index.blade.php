@@ -61,8 +61,8 @@
                 @foreach($tags as $tag)
                     @php $isOn = ($tagId ?? null) === $tag->id; @endphp
                     <a href="{{ route('clients.index', array_filter(['search' => $search, 'tag' => $isOn ? null : $tag->id])) }}"
-                       class="c-badge border transition {{ $isOn ? 'text-white border-transparent' : 'border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:border-surface-400' }}"
-                       @if($isOn) style="background: {{ $tag->color }}" aria-current="true" @endif>
+                       class="c-badge border transition {{ $isOn ? 'border-transparent' : 'border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:border-surface-400' }}"
+                       @if($isOn) style="background: {{ $tag->color }}; color: {{ $tag->textColor() }}" aria-current="true" @endif>
                         @unless($isOn)<span class="w-1.5 h-1.5 rounded-full mr-1" style="background: {{ $tag->color }}"></span>@endunless{{ $tag->name }}
                         @if($isOn)<i class="fa-solid fa-xmark ml-1"></i>@endif
                     </a>
@@ -107,7 +107,7 @@
                                             <p class="text-xs text-surface-500 dark:text-surface-400 md:hidden">{{ $client->email ?? '—' }}</p>
                                             @if($client->tags->isNotEmpty())
                                                 <div class="flex flex-wrap gap-1 mt-1">
-                                                    @foreach($client->tags as $tag)<span class="c-badge text-white text-[10px]" style="background: {{ $tag->color }}">{{ $tag->name }}</span>@endforeach
+                                                    @foreach($client->tags as $tag)<span class="c-badge text-[10px]" style="background: {{ $tag->color }}; color: {{ $tag->textColor() }}">{{ $tag->name }}</span>@endforeach
                                                 </div>
                                             @endif
                                         </div>
