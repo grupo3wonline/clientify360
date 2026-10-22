@@ -1,5 +1,13 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      x-data="{
+          darkMode: (() => { try { return localStorage.getItem('darkMode') === 'true'; } catch (e) { return false; } })(),
+          toggleTheme() {
+              this.darkMode = !this.darkMode;
+              try { localStorage.setItem('darkMode', this.darkMode); } catch (e) {}
+          }
+      }"
+      :class="{ 'dark': darkMode }">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,59 +24,19 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-        <!-- SweetAlert2 -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <!-- Tailwind CSS via CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
+        {{-- Aplica o tema escuro de forma síncrona para evitar flash de tema claro (FOUC) antes do Alpine iniciar. --}}
         <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        },
-                        colors: {
-                            brand: {
-                                50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
-                                400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
-                                800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
-                            },
-                            primary: {
-                                50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
-                                400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
-                                800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
-                            },
-                            accent: {
-                                50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
-                                400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
-                                800: '#065f46', 900: '#064e3b',
-                            },
-                            secondary: {
-                                50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
-                                400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
-                                800: '#065f46', 900: '#064e3b',
-                            },
-                            surface: {
-                                50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1',
-                                400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155',
-                                800: '#1e293b', 900: '#0f172a', 950: '#020617',
-                            }
-                        }
-                    }
+            try {
+                if (localStorage.getItem('darkMode') === 'true') {
+                    document.documentElement.classList.add('dark');
                 }
-            }
+            } catch (e) {}
         </script>
 
-        <!-- Alpine.js -->
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {{-- Front-end bundle (Tailwind, Alpine, SweetAlert2, Font Awesome) via Vite --}}
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
-            [x-cloak] { display: none !important; }
             .auth-pattern {
                 background-image: radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.08) 1px, transparent 0);
                 background-size: 32px 32px;
@@ -93,7 +61,7 @@
                     <!-- Logo -->
                     <div class="flex items-center space-x-3 mb-12">
                         <div class="w-12 h-12 bg-white/15 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
-                            <i class="fa-solid fa-chart-line text-xl"></i>
+                            <i class="fa-solid fa-chart-line text-xl" aria-hidden="true"></i>
                         </div>
                         <span class="text-2xl font-bold">Clientify360</span>
                     </div>
@@ -109,19 +77,19 @@
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                                <i class="fa-solid fa-shield-halved text-accent-300 text-sm"></i>
+                                <i class="fa-solid fa-shield-halved text-accent-300 text-sm" aria-hidden="true"></i>
                             </div>
                             <span class="text-brand-100">Dados 100% seguros e isolados</span>
                         </div>
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                                <i class="fa-solid fa-mobile-screen text-accent-300 text-sm"></i>
+                                <i class="fa-solid fa-mobile-screen text-accent-300 text-sm" aria-hidden="true"></i>
                             </div>
                             <span class="text-brand-100">Acesse de qualquer dispositivo</span>
                         </div>
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                                <i class="fa-solid fa-bolt text-accent-300 text-sm"></i>
+                                <i class="fa-solid fa-bolt text-accent-300 text-sm" aria-hidden="true"></i>
                             </div>
                             <span class="text-brand-100">Interface rápida e intuitiva</span>
                         </div>
@@ -135,7 +103,7 @@
                 <div class="lg:hidden mb-8">
                     <a href="{{ route('home') }}" class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/25">
-                            <i class="fa-solid fa-chart-line text-white"></i>
+                            <i class="fa-solid fa-chart-line text-white" aria-hidden="true"></i>
                         </div>
                         <span class="text-xl font-bold bg-gradient-to-r from-brand-600 to-brand-800 dark:from-brand-400 dark:to-brand-600 bg-clip-text text-transparent">Clientify360</span>
                     </a>
@@ -143,11 +111,14 @@
 
                 <!-- Dark mode toggle -->
                 <div class="absolute top-4 right-4">
-                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"
+                    <button @click="toggleTheme()"
                             class="p-2.5 rounded-xl text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 transition"
+                            type="button"
+                            :aria-pressed="darkMode"
+                            aria-label="Alternar tema claro ou escuro"
                             title="Alternar tema">
-                        <i x-show="!darkMode" class="fa-solid fa-moon"></i>
-                        <i x-show="darkMode" class="fa-solid fa-sun text-yellow-400"></i>
+                        <i x-show="!darkMode" class="fa-solid fa-moon" aria-hidden="true"></i>
+                        <i x-show="darkMode" class="fa-solid fa-sun text-yellow-400" aria-hidden="true"></i>
                     </button>
                 </div>
 
