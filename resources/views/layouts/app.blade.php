@@ -19,138 +19,18 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-        <!-- SweetAlert2 -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <!-- Tailwind CSS via CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
+        {{-- Aplica o tema escuro de forma síncrona para evitar flash de tema claro (FOUC) antes do Alpine iniciar. --}}
         <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        },
-                        colors: {
-                            brand: {
-                                50: '#eef2ff',
-                                100: '#e0e7ff',
-                                200: '#c7d2fe',
-                                300: '#a5b4fc',
-                                400: '#818cf8',
-                                500: '#6366f1',
-                                600: '#4f46e5',
-                                700: '#4338ca',
-                                800: '#3730a3',
-                                900: '#312e81',
-                                950: '#1e1b4b',
-                            },
-                            primary: {
-                                50: '#eef2ff',
-                                100: '#e0e7ff',
-                                200: '#c7d2fe',
-                                300: '#a5b4fc',
-                                400: '#818cf8',
-                                500: '#6366f1',
-                                600: '#4f46e5',
-                                700: '#4338ca',
-                                800: '#3730a3',
-                                900: '#312e81',
-                                950: '#1e1b4b',
-                            },
-                            secondary: {
-                                50: '#ecfdf5',
-                                100: '#d1fae5',
-                                200: '#a7f3d0',
-                                300: '#6ee7b7',
-                                400: '#34d399',
-                                500: '#10b981',
-                                600: '#059669',
-                                700: '#047857',
-                                800: '#065f46',
-                                900: '#064e3b',
-                            },
-                            accent: {
-                                50: '#ecfdf5',
-                                100: '#d1fae5',
-                                200: '#a7f3d0',
-                                300: '#6ee7b7',
-                                400: '#34d399',
-                                500: '#10b981',
-                                600: '#059669',
-                                700: '#047857',
-                                800: '#065f46',
-                                900: '#064e3b',
-                            },
-                            danger: {
-                                50: '#fef2f2',
-                                100: '#fee2e2',
-                                200: '#fecaca',
-                                300: '#fca5a5',
-                                400: '#f87171',
-                                500: '#ef4444',
-                                600: '#dc2626',
-                                700: '#b91c1c',
-                                800: '#991b1b',
-                                900: '#7f1d1d',
-                                950: '#450a0a',
-                            },
-                            surface: {
-                                50: '#f8fafc',
-                                100: '#f1f5f9',
-                                200: '#e2e8f0',
-                                300: '#cbd5e1',
-                                400: '#94a3b8',
-                                500: '#64748b',
-                                600: '#475569',
-                                700: '#334155',
-                                800: '#1e293b',
-                                900: '#0f172a',
-                                950: '#020617',
-                            }
-                        }
-                    }
-                }
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
             }
         </script>
 
-        <!-- Alpine.js -->
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {{-- Front-end bundle (Tailwind, Alpine, SweetAlert2, Font Awesome) via Vite --}}
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
-            [x-cloak] { display: none !important; }
             .sidebar-transition { transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
-            .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-            .dark .glass { background: rgba(30, 41, 59, 0.85); }
-            .scrollbar-thin::-webkit-scrollbar { width: 4px; }
-            .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-            .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.3); border-radius: 2px; }
-            .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.5); }
-        </style>
-
-        {{-- Componentes reutilizáveis das telas de CRM/Vendas/Financeiro (Tailwind @apply via CDN) --}}
-        <style type="text/tailwindcss">
-            @layer components {
-                .c-card { @apply bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800; }
-                .c-label { @apply block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5; }
-                .c-input { @apply w-full px-3.5 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition; }
-                .c-hint { @apply mt-1 text-xs text-surface-500 dark:text-surface-400; }
-                .c-error { @apply mt-1.5 text-xs text-danger-600 dark:text-danger-400; }
-                .c-btn { @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-xl transition disabled:opacity-50; }
-                .c-btn-primary { @apply c-btn bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/25; }
-                .c-btn-success { @apply c-btn bg-accent-600 hover:bg-accent-700 text-white shadow-sm shadow-accent-600/25; }
-                .c-btn-danger { @apply c-btn bg-danger-600 hover:bg-danger-700 text-white; }
-                .c-btn-ghost { @apply c-btn bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300; }
-                .c-badge { @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold; }
-                .c-th { @apply px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider; }
-                .c-td { @apply px-4 py-3 text-sm text-surface-700 dark:text-surface-300; }
-                .c-tab { @apply flex items-center px-3.5 py-2 rounded-lg text-sm font-medium transition text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 whitespace-nowrap; }
-                .c-tab-active { @apply bg-white dark:bg-surface-700 text-brand-700 dark:text-brand-300 shadow-sm; }
-            }
         </style>
 
         @stack('styles')

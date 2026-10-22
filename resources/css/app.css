@@ -1,3 +1,6 @@
+/* Font Awesome (icons) — bundled via Vite instead of the CDN. */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

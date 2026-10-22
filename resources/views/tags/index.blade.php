@@ -13,7 +13,7 @@
                 <div class="p-4 flex flex-wrap items-center gap-3" x-data="{ edit: false }">
                     <template x-if="!edit">
                         <div class="flex items-center gap-3 flex-1 min-w-0">
-                            <span class="c-badge text-white text-xs px-3 py-1" style="background: {{ $tag->color }}">{{ $tag->name }}</span>
+                            <span class="c-badge text-xs px-3 py-1" style="background: {{ $tag->color }}; color: {{ $tag->textColor() }}">{{ $tag->name }}</span>
                             <a href="{{ route('clients.index', ['tag' => $tag->id]) }}" class="text-xs text-surface-500 hover:text-brand-600">{{ $tag->clients_count }} cliente(s) →</a>
                         </div>
                     </template>

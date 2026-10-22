@@ -35,7 +35,7 @@
                                         <span class="c-badge bg-white/15 text-white border border-white/20"><i class="fa-solid fa-bullseye mr-1"></i>{{ $client->sourceLabel() }}</span>
                                     @endif
                                     @foreach($client->tags as $tag)
-                                        <a href="{{ route('clients.index', ['tag' => $tag->id]) }}" class="c-badge text-white" style="background: {{ $tag->color }}">{{ $tag->name }}</a>
+                                        <a href="{{ route('clients.index', ['tag' => $tag->id]) }}" class="c-badge" style="background: {{ $tag->color }}; color: {{ $tag->textColor() }}">{{ $tag->name }}</a>
                                     @endforeach
                                 </div>
                             @endif

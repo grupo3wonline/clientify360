@@ -44,11 +44,12 @@ final class TagController extends Controller
     private function validated(Request $request, ?Tag $tag = null): array
     {
         return $request->validate([
-            'name' => ['required', 'string', 'max:50', Rule::unique('tags')->where('user_id', auth()->id())->ignore($tag?->id)],
+            'name' => ['required', 'string', 'max:50', Rule::unique('tags')->where('account_id', auth()->user()?->account_id)->ignore($tag?->id)],
             'color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ], [
             'name.required' => 'O nome da tag é obrigatório.',
-            'name.unique' => 'Você já tem uma tag com esse nome.',
+            'name.unique' => 'Já existe uma tag com esse nome nesta conta.',
+            'color.regex' => 'Informe uma cor em formato hexadecimal válido (ex.: #16A34A).',
         ]);
     }
 }
