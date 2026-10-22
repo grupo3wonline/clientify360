@@ -95,6 +95,29 @@ class Client extends Model
 }
 ```
 
+#### SoftDeletes — exceções justificadas
+
+A regra geral é **SoftDeletes em todos os models**. Existem, porém, exceções
+conscientes para tabelas filhas/itens, movimentos imutáveis, estados efêmeros,
+convites, submissões públicas e rótulos. Nesses casos o soft delete não agrega
+valor (ou atrapalha a integridade/cascata), então o model usa hard delete.
+
+Os 7 models isentos (confirmados por leitura do código) e a justificativa de
+cada um:
+
+| Model | Justificativa |
+|-------|---------------|
+| `QuoteItem` | Linha de documento — segue o ciclo do `Quote` pai; é removido em cascata (hard delete) junto com o orçamento. |
+| `StockMovement` | Movimento imutável de estoque — trilha contábil; nunca é editado nem apagado logicamente. |
+| `DismissedNotification` | Estado efêmero de notificação dispensada; não há histórico a preservar. |
+| `AccountInvitation` | Convite — expira ou é aceito; hard delete é aceitável após o ciclo de vida. |
+| `LeadFormSubmission` | Submissão de formulário público — registro de evento pontual. |
+| `PipelineStage` | Etapa de funil — hard delete controlado pelo próprio fluxo do funil. |
+| `Tag` | Rótulo leve com pivô `clients`; remoção direta sem lixeira. |
+
+Ao criar um novo model, o padrão continua sendo usar `SoftDeletes`. Só abrir
+exceção quando se encaixar em uma das categorias acima, documentando o motivo.
+
 ### Controllers
 
 ```php
