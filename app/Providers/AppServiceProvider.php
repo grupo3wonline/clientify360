@@ -9,6 +9,7 @@ use App\Models\Account;
 use App\Repositories\ClientRepository;
 use App\Services\NotificationService;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Make visible the silent reCAPTCHA fail-open: an empty secret in production disables anti-bot.
+        if ($this->app->environment('production') && blank(config('services.recaptcha.secret_key'))) {
+            Log::error('reCAPTCHA secret key is empty in production: anti-bot protection is disabled (fail-open).');
+        }
+
         // A assinatura é da conta (tenant), não do usuário: a conta é o Billable do Cashier.
         Cashier::useCustomerModel(Account::class);
 
