@@ -16,6 +16,12 @@
             <input type="hidden" name="invite_token" value="{{ $inviteToken }}">
         @endif
 
+        {{-- Honeypot anti-bot: invisível para pessoas, apenas robôs preenchem. --}}
+        <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+            <label for="website">Não preencha este campo</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
         <!-- Name -->
         <div>
             <x-input-label for="name" value="Nome Completo" />
@@ -61,6 +67,8 @@
             </label>
             <x-input-error :messages="$errors->get('lgpd_consent')" class="mt-2" />
         </div>
+
+        <x-recaptcha action="register" />
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">

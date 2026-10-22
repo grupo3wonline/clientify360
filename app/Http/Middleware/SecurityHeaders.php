@@ -39,19 +39,20 @@ final class SecurityHeaders
      * Front-end assets (Tailwind, Alpine, SweetAlert2, Font Awesome) are now
      * bundled via Vite and served from 'self' — no more CDN origins. The only
      * remaining external origins are Google Fonts (Inter webfont), Google Tag
-     * Manager/Analytics, and Stripe (billing checkout). 'unsafe-inline'/'eval'
-     * stay for Filament and the inline theme bootstrap.
+     * Manager/Analytics, Stripe (billing checkout) and Google reCAPTCHA v3
+     * (anti-bot on auth and lead forms — www.google.com / www.gstatic.com).
+     * 'unsafe-inline'/'eval' stay for Filament and the inline theme bootstrap.
      */
     private function contentSecurityPolicy(): string
     {
         $directives = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com data:",
             "img-src 'self' data: https: https://www.googletagmanager.com https://www.google-analytics.com",
             "connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com",
-            "frame-src 'self' https://js.stripe.com https://www.googletagmanager.com",
+            "frame-src 'self' https://js.stripe.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com",
             "base-uri 'self'",
             "form-action 'self'",
             "frame-ancestors 'self'",

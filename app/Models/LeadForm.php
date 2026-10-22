@@ -63,6 +63,21 @@ class LeadForm extends Model
         return route('lead-forms.public', $this->slug);
     }
 
+    /**
+     * Readable foreground color (black or white) for text placed over the form
+     * accent color, so a light brand color never gets unreadable white text.
+     */
+    public function buttonTextColor(): string
+    {
+        $luminance = Tag::relativeLuminance((string) $this->color);
+
+        if ($luminance === null) {
+            return '#ffffff';
+        }
+
+        return $luminance > 0.179 ? '#111827' : '#ffffff';
+    }
+
     /** Slug curto e não-sequencial: evita que alguém "adivinhe" formulários de outros clientes. */
     public static function generateSlug(string $name): string
     {
