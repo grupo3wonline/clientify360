@@ -46,6 +46,22 @@ final class AccountService
     }
 
     /**
+     * Garante que o usuário tenha uma conta (idempotente).
+     *
+     * Reaproveita provisionForOwner() apenas quando account_id está nulo,
+     * servindo de salvaguarda para usuários órfãos (seeds antigos, dados
+     * migrados) sem recriar contas de quem já tem uma.
+     */
+    public function ensureProvisioned(User $user): Account
+    {
+        if ($user->account_id !== null) {
+            return $user->account()->firstOrFail();
+        }
+
+        return $this->provisionForOwner($user);
+    }
+
+    /**
      * Garante que os 3 papéis existam para a conta, com as permissões corretas.
      */
     public function ensureRoles(Account $account): void
