@@ -8,10 +8,22 @@ use App\Traits\BelongsToAccount;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class LeadFormSubmission extends Model
 {
-    use BelongsToAccount, HasUuid;
+    use BelongsToAccount, HasUuid, LogsActivity;
+
+    /** Auditoria LGPD: registra alterações em dados sensíveis da submissão de formulário. */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['data', 'note'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('lead_form_submission');
+    }
 
     protected $keyType = 'string';
 
