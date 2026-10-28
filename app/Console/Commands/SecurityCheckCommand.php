@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Support\PhpExtensions;
 use Illuminate\Console\Command;
 
 final class SecurityCheckCommand extends Command
 {
     protected $signature = 'security:check';
 
-    protected $description = 'Verify security-critical configuration for production (debug, key, HTTPS, webhook, session, reCAPTCHA)';
+    protected $description = 'Verify security-critical configuration for production (debug, key, HTTPS, webhook, session, reCAPTCHA, PHP extensions, proc_open)';
 
-    public function handle(): int
+    public function handle(PhpExtensions $php): int
     {
         if (!$this->getLaravel()->environment('production')) {
             $this->info('Security check skipped: not running in production.');
@@ -20,7 +21,7 @@ final class SecurityCheckCommand extends Command
             return self::SUCCESS;
         }
 
-        $failures = array_filter($this->checks(), fn (array $check): bool => $check[0]);
+        $failures = array_filter([...$this->checks(), ...$this->runtimeChecks($php)], fn (array $check): bool => $check[0]);
 
         foreach ($failures as [, $message]) {
             $this->error($message);
@@ -51,5 +52,22 @@ final class SecurityCheckCommand extends Command
             // RecaptchaService treats an empty secret as fail-open (anti-bot off).
             [blank(config('services.recaptcha.secret_key')), 'reCAPTCHA secret key is empty in production: anti-bot protection is disabled (fail-open).'],
         ];
+    }
+
+    /**
+     * Server checks (HostGator): required extensions and proc_open for the scheduler.
+     *
+     * @return list<array{0: bool, 1: string}>
+     */
+    private function runtimeChecks(PhpExtensions $php): array
+    {
+        $checks = array_map(
+            fn (string $name): array => [true, "Extensão PHP ausente: {$name}"],
+            $php->missing(PhpExtensions::REQUIRED),
+        );
+
+        $checks[] = [$php->procOpenDisabled(), 'Função PHP `proc_open` desabilitada: o agendador não executa comandos'];
+
+        return $checks;
     }
 }

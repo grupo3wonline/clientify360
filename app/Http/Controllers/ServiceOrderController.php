@@ -9,12 +9,14 @@ use App\Http\Requests\UpdateServiceOrderRequest;
 use App\Models\Client;
 use App\Models\Quote;
 use App\Models\ServiceOrder;
+use App\Services\PdfService;
 use App\Services\ServiceOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 
 /** Ordens de Serviço — acompanhamento de execução pós-venda. */
 final class ServiceOrderController extends Controller
@@ -63,6 +65,14 @@ final class ServiceOrderController extends Controller
         $serviceOrder->load(['client', 'quote']);
 
         return view('service-orders.show', ['order' => $serviceOrder]);
+    }
+
+    /** Plano Profissional (plan.feature:pdf). */
+    public function pdf(Request $request, ServiceOrder $serviceOrder, PdfService $pdf): Response
+    {
+        $this->authorize('view', $serviceOrder);
+
+        return $pdf->serviceOrder($serviceOrder, $request->user());
     }
 
     public function edit(ServiceOrder $serviceOrder): View

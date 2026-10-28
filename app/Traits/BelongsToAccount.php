@@ -6,6 +6,7 @@ namespace App\Traits;
 
 use App\Models\Account;
 use App\Models\User;
+use App\Support\AccountCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -61,6 +62,21 @@ trait BelongsToAccount
                 $model->user_id = $user->id;
             }
         });
+
+        // Any write invalidates the account's derived data (dashboard, reports,
+        // finance summaries, notification counts). AccountCache never throws.
+        $bump = static function ($model): void {
+            if (!empty($model->account_id)) {
+                app(AccountCache::class)->bump((string) $model->account_id);
+            }
+        };
+
+        static::saved($bump);
+        static::deleted($bump);
+
+        if (method_exists(static::class, 'restored')) {
+            static::restored($bump);
+        }
     }
 
     /** @return BelongsTo<Account, $this> */

@@ -24,6 +24,14 @@
                    title="Exportar clientes em CSV">
                     <i class="fa-solid fa-file-csv mr-2 text-xs"></i> Exportar
                 </a>
+                <form method="POST" action="{{ route('export.clients.xlsx') }}" autocomplete="off" class="inline">
+                    @csrf
+                    <button type="submit" data-loading-text="Gerando planilha..."
+                            class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-medium rounded-xl transition"
+                            title="Gerar planilha Excel (XLSX): o link de download chega por e-mail">
+                        <i class="fa-solid fa-file-excel mr-2 text-xs" aria-hidden="true"></i> Excel
+                    </button>
+                </form>
             @endif
             <a href="{{ route('clients.create') }}"
                class="inline-flex items-center px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition shadow-sm shadow-brand-600/25">

@@ -250,6 +250,8 @@
 
         @include('clients._commercial')
 
+        @include('clients._attachments')
+
         <!-- Back Button -->
         <div class="mt-6">
             <a href="{{ route('clients.index') }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-sm font-medium rounded-xl transition">

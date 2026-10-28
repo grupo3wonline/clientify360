@@ -11,6 +11,9 @@
             </div>
             <p class="text-7xl md:text-9xl font-bold text-danger-500 dark:text-danger-400 mb-4" aria-hidden="true">403</p>
             <h1 class="text-2xl md:text-3xl font-bold text-surface-800 dark:text-white mb-4">Acesso negado</h1>
+            @if(isset($exception) && $exception->getMessage() !== '')
+                <p class="text-surface-800 dark:text-surface-100 font-medium mb-4">{{ __($exception->getMessage()) }}</p>
+            @endif
             <p class="text-surface-600 dark:text-surface-300 mb-8 leading-relaxed">
                 Você não tem permissão para acessar esta página ou recurso. Se acredita que isso é um erro, entre em contato com o suporte.
             </p>

@@ -8,7 +8,8 @@
     <x-page-title :title="$quote->number . ' · ' . $quote->title" icon="fa-file-invoice-dollar">
         <x-slot name="actions">
             <span class="c-badge text-xs px-3 py-1 {{ $quote->statusColor() }}">{{ $quote->statusLabel() }}</span>
-            <a href="{{ route('quotes.print', $quote) }}" target="_blank" class="c-btn-ghost"><i class="fa-solid fa-print mr-2 text-xs"></i> Imprimir / PDF</a>
+            <a href="{{ route('quotes.print', $quote) }}" target="_blank" class="c-btn-ghost"><i class="fa-solid fa-print mr-2 text-xs"></i> Imprimir</a>
+            <x-pdf-button :href="route('quotes.pdf', $quote)" />
             @if($quote->isEditable())
                 <a href="{{ route('quotes.edit', $quote) }}" class="c-btn-ghost"><i class="fa-solid fa-pen mr-2 text-xs"></i> Editar</a>
             @endif

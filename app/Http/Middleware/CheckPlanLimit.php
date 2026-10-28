@@ -35,6 +35,12 @@ final class CheckPlanLimit
             return $next($request);
         }
 
+        // A blocked upload goes back to the client's "Anexos" card.
+        if ($resource === 'client_attachments') {
+            return back()->withFragment('anexos')
+                ->with('error', $this->subscriptionService->limitMessage($user, $resource));
+        }
+
         return redirect()->route(self::REDIRECT_ROUTES[$resource] ?? 'dashboard')
             ->with('error', $this->subscriptionService->limitMessage($user, $resource));
     }

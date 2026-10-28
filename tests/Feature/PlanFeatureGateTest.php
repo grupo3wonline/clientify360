@@ -11,7 +11,7 @@ it('blocks CSV and XLSX export on Básico with the pt-BR message', function (): 
     $this->actingAs(Personas::owner());
 
     $this->get(route('export.clients'))->assertForbidden();
-    $this->get(route('export.clients.xlsx'))->assertForbidden();
+    $this->post(route('export.clients.xlsx'))->assertForbidden();
 
     $this->getJson(route('export.clients'))
         ->assertForbidden()

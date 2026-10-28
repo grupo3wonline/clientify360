@@ -6,10 +6,12 @@ namespace App\Http\Requests;
 
 use App\Models\Client;
 use App\Rules\CpfCnpj;
+use App\Support\OwnedRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class UpdateClientRequest extends FormRequest
+/** Not final: the API v1 request extends it to reuse rules() and messages(). */
+class UpdateClientRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -30,7 +32,9 @@ final class UpdateClientRequest extends FormRequest
         // person_type é NOT NULL: quando ausente, mantém o valor atual do cliente
         // (ou o default 'individual'), para não quebrar atualizações parciais.
         if (!$this->filled('person_type')) {
-            $current = Client::find($this->route('client'))?->person_type;
+            // Web routes pass the id; API routes bind the model.
+            $route = $this->route('client');
+            $current = ($route instanceof Client ? $route : Client::find($route))?->person_type;
             $this->merge(['person_type' => $current ?? 'individual']);
         }
     }
@@ -50,7 +54,7 @@ final class UpdateClientRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'],
             'source' => ['nullable', 'string', Rule::in(array_keys(Client::SOURCES))],
             'tag_ids' => ['nullable', 'array'],
-            'tag_ids.*' => ['string', Rule::exists('tags', 'id')->where('user_id', $this->user()?->id)],
+            'tag_ids.*' => ['string', OwnedRule::exists('tags', false)],
             'score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'score_label' => ['nullable', 'string', 'max:20'],
             'strengths' => ['nullable', 'string', 'max:2000'],

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\ApiTokenService;
 use App\Services\PersonalDataExportService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +24,15 @@ final class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request, ApiTokenService $tokens, SubscriptionService $plans): View
     {
+        $user = $request->user();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'apiTokens' => $tokens->list($user),
+            'canCreateTokens' => $plans->hasFeature($user, 'api'),
+            'account' => $user->account,
         ]);
     }
 
@@ -67,6 +74,11 @@ final class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        // The owner's account logo is account data: it goes with the owner.
+        if ($user->isOwner()) {
+            $user->account?->clearMediaCollection('logo');
+        }
 
         Auth::logout();
 

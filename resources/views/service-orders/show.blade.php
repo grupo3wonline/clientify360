@@ -20,7 +20,8 @@
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium {{ $order->statusColor() }}">{{ $order->statusLabel() }}</span>
                 </p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <x-pdf-button :href="route('service-orders.pdf', $order)" />
                 <a href="{{ route('service-orders.edit', $order) }}" class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition">
                     <i class="fa-solid fa-pen mr-2 text-xs"></i> Editar
                 </a>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Clients\Pages;
 
 use App\Filament\Resources\Clients\ClientResource;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -17,6 +18,11 @@ class EditClient extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('anexos')
+                ->label('Anexos')
+                ->icon('heroicon-m-paper-clip')
+                ->color('gray')
+                ->url(fn (): string => route('clients.show', $this->getRecord()).'#anexos'),
             DeleteAction::make(),
             ForceDeleteAction::make(),
             RestoreAction::make(),

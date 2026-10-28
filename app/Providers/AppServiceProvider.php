@@ -12,6 +12,7 @@ use App\Repositories\ClientRepository;
 use App\Services\NotificationService;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
@@ -49,6 +50,9 @@ class AppServiceProvider extends ServiceProvider
         Cashier::useCustomerModel(Account::class);
 
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        // N+1 guard: lazy loading throws in local/testing; production stays permissive.
+        Model::preventLazyLoading(!$this->app->isProduction());
 
         $this->configurePasswordPolicy();
         $this->configureRateLimiters();

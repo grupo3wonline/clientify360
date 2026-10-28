@@ -11,5 +11,10 @@
     "Whoops!": "Ops!",
     "Regards,": "Atenciosamente,",
     "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Se você estiver com problemas para clicar no botão \":actionText\", copie e cole a URL abaixo\nno seu navegador:",
-    "All rights reserved.": "Todos os direitos reservados."
+    "All rights reserved.": "Todos os direitos reservados.",
+    "User does not have the right permissions.": "Você não tem permissão para esta ação.",
+    "User does not have the right roles.": "Você não tem permissão para esta ação.",
+    "User does not have any of the necessary access rights.": "Você não tem permissão para esta ação.",
+    "This action is unauthorized.": "Você não tem permissão para esta ação.",
+    "Invalid signature.": "Este link expirou ou é inválido. Gere uma nova exportação."
 }

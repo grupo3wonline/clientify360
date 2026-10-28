@@ -26,6 +26,20 @@
                 </div>
             </div>
 
+            @can('account.settings')
+                <div class="p-4 sm:p-8 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 shadow-sm sm:rounded-2xl">
+                    <div class="max-w-xl">
+                        @include('profile.partials.account-logo')
+                    </div>
+                </div>
+            @endcan
+
+            <div class="p-4 sm:p-8 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 shadow-sm sm:rounded-2xl">
+                <div class="max-w-xl">
+                    @include('profile.partials.api-tokens')
+                </div>
+            </div>
+
             <div class="p-4 sm:p-8 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 shadow-sm sm:rounded-2xl">
                 <div class="max-w-xl">
                     @include('profile.partials.export-personal-data')

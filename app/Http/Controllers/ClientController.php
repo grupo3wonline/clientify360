@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateClientAction;
 use App\DTOs\ClientDTO;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Tag;
+use App\Services\ClientAttachmentService;
 use App\Services\ClientService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -34,16 +37,15 @@ final class ClientController extends Controller
         return view('clients.create', ['tags' => Tag::orderBy('name')->get()]);
     }
 
-    public function store(StoreClientRequest $request): RedirectResponse
+    public function store(StoreClientRequest $request, CreateClientAction $create): RedirectResponse
     {
-        $dto = ClientDTO::fromArray($request->validated());
-        $this->service->create($dto);
+        $create->execute(ClientDTO::fromArray($request->validated()));
 
         return redirect()->route('clients.index')
             ->with('success', 'Cliente cadastrado com sucesso!');
     }
 
-    public function show(string $id): View
+    public function show(string $id, ClientAttachmentService $attachments, SubscriptionService $plans): View
     {
         $client = $this->service->findById($id);
 
@@ -63,7 +65,15 @@ final class ClientController extends Controller
             'received' => (float) $client->financialEntries()->receivable()->where('status', 'paid')->sum('paid_amount'),
         ];
 
-        return view('clients.show', compact('client', 'finance'));
+        $user = auth()->user();
+
+        return view('clients.show', [
+            'client' => $client,
+            'finance' => $finance,
+            'attachments' => $attachments->list($client),
+            'attachmentLimit' => $plans->getLimit($user, 'client_attachments'),
+            'attachmentUsage' => $plans->getUsage($user, 'client_attachments'),
+        ]);
     }
 
     public function edit(string $id): View

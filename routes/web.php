@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AccountLogoController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\ClientAttachmentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\ExportController;
@@ -59,6 +62,17 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Tokens de API: só a criação depende do plano; revogar funciona em qualquer plano.
+    Route::post('/profile/api-tokens', [ApiTokenController::class, 'store'])->middleware('plan.feature:api')->name('profile.tokens.store');
+    Route::delete('/profile/api-tokens/{tokenId}', [ApiTokenController::class, 'destroy'])->name('profile.tokens.destroy');
+
+    // Logotipo da conta (usado nos PDFs)
+    Route::get('/profile/account-logo', [AccountLogoController::class, 'show'])->name('account.logo.show');
+    Route::middleware('permission:account.settings')->group(function (): void {
+        Route::post('/profile/account-logo', [AccountLogoController::class, 'update'])->name('account.logo.update');
+        Route::delete('/profile/account-logo', [AccountLogoController::class, 'destroy'])->name('account.logo.destroy');
+    });
+
     // Equipe / Colaboradores (ACL: permissão account.members)
     Route::middleware('permission:account.members')->group(function (): void {
         Route::get('/equipe', [TeamController::class, 'index'])->name('team.index');
@@ -84,6 +98,8 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
         Route::get('clients/create', [ClientController::class, 'create'])->middleware('plan.limit')->name('clients.create');
         Route::post('clients', [ClientController::class, 'store'])->middleware('plan.limit')->name('clients.store');
         Route::resource('clients', ClientController::class)->only(['edit', 'update', 'destroy']);
+        Route::post('clients/{client}/attachments', [ClientAttachmentController::class, 'store'])->middleware('plan.limit:client_attachments')->name('clients.attachments.store');
+        Route::delete('clients/{client}/attachments/{media}', [ClientAttachmentController::class, 'destroy'])->name('clients.attachments.destroy');
 
         Route::post('reminders', [ReminderController::class, 'store'])->name('reminders.store');
         Route::patch('reminders/{reminder}/complete', [ReminderController::class, 'complete'])->name('reminders.complete');
@@ -99,6 +115,7 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
     });
     Route::middleware('permission:clients.view')->group(function (): void {
         Route::resource('clients', ClientController::class)->only(['index', 'show']);
+        Route::get('clients/{client}/attachments/{media}', [ClientAttachmentController::class, 'show'])->name('clients.attachments.show');
         Route::get('reminders', [ReminderController::class, 'index'])->name('reminders.index');
         Route::get('interactions', [InteractionController::class, 'index'])->name('interactions.index');
         Route::get('tags', [TagController::class, 'index'])->name('tags.index');
@@ -133,6 +150,7 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
     });
     Route::middleware('permission:service_orders.view')->group(function (): void {
         Route::resource('service-orders', ServiceOrderController::class)->only(['index', 'show']);
+        Route::get('service-orders/{service_order}/pdf', [ServiceOrderController::class, 'pdf'])->middleware('plan.feature:pdf')->name('service-orders.pdf');
     });
 
     // Purchases / Compras (entrada de mercadoria + conta a pagar ao fornecedor)
@@ -164,8 +182,12 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
         // Export (Professional plan only)
         Route::middleware('plan.feature:export')->group(function (): void {
             Route::get('/export/clients', [ExportController::class, 'clients'])->name('export.clients');
-            Route::get('/export/clients/xlsx', [ExportController::class, 'clientsExcel'])->name('export.clients.xlsx');
+            // Queues a job and sends an e-mail: a state change, so POST + CSRF.
+            Route::post('/export/clients/xlsx', [ExportController::class, 'clientsExcel'])->middleware('throttle:3,1')->name('export.clients.xlsx');
         });
+
+        // Signed link sent by e-mail when the queued XLSX is ready.
+        Route::get('/export/downloads', [ExportController::class, 'download'])->middleware('signed')->name('export.download');
     });
 
     // ===== CRM comercial (CrmPlus + crm-master) =====
@@ -218,6 +240,7 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
     Route::middleware('permission:quotes.view')->group(function (): void {
         Route::resource('quotes', QuoteController::class)->only(['index', 'show']);
         Route::get('quotes/{quote}/print', [QuoteController::class, 'print'])->name('quotes.print');
+        Route::get('quotes/{quote}/pdf', [QuoteController::class, 'pdf'])->middleware('plan.feature:pdf')->name('quotes.pdf');
     });
 
     // ===== Financeiro: contas a pagar/receber e fluxo de caixa =====

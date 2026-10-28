@@ -12,7 +12,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Clientify360 API — Documentação',
             ],
 
             'routes' => [
@@ -51,7 +51,7 @@ return [
                  * Absolute paths to directory containing the swagger annotations are stored.
                  */
                 'annotations' => [
-                    base_path('app'),
+                    app_path('Http/Controllers/Api'),
                 ],
             ],
         ],
@@ -76,10 +76,11 @@ return [
              * to restrict access, e.g.:
              *   'api' => ['auth:sanctum'],
              */
+            // Protected in every environment: logged in, verified and on the Profissional plan.
             'middleware' => [
-                'api' => [],
+                'api' => ['web', 'auth', 'verified', 'plan.feature:api'],
                 'asset' => [],
-                'docs' => [],
+                'docs' => ['web', 'auth', 'verified', 'plan.feature:api'],
                 'oauth2_callback' => [],
             ],
 
