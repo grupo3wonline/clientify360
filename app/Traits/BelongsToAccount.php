@@ -27,21 +27,31 @@ trait BelongsToAccount
     protected static function bootBelongsToAccount(): void
     {
         static::addGlobalScope('owned', function (Builder $query): void {
-            $accountId = auth()->user()?->account_id;
+            $user = auth()->user();
 
-            if ($accountId !== null) {
-                $query->where($query->getModel()->getTable().'.account_id', $accountId);
+            if ($user === null) {
+                return; // guest/console/queue: callers filter explicitly
             }
+
+            $table = $query->getModel()->getTable();
+
+            // Fail closed: an authenticated user without an account sees nothing.
+            $user->account_id !== null
+                ? $query->where($table.'.account_id', $user->account_id)
+                : $query->whereRaw('1 = 0');
         });
 
         static::creating(function ($model): void {
             $user = auth()->user();
 
             if ($user === null) {
-                return;
+                return; // guest/console/queue: the caller sets account_id from trusted data
             }
 
-            if (empty($model->account_id)) {
+            // Model-owned invariant: a record is always created in the actor's account,
+            // whatever account_id came from the input. A user without an account keeps
+            // an explicit value (it is never overwritten with null).
+            if ($user->account_id !== null) {
                 $model->account_id = $user->account_id;
             }
 

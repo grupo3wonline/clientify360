@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\AccountInvitation;
 use App\Models\User;
+use App\Notifications\AccountInvitationNotification;
 use App\Services\AccountService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
@@ -103,5 +107,55 @@ class TeamManagementTest extends TestCase
             ->assertRedirect(route('team.index'));
 
         $this->assertNull($collaborator->fresh()->account_id);
+    }
+
+    public function test_removing_a_member_deletes_their_api_tokens(): void
+    {
+        $owner = User::factory()->create();
+        $collaborator = User::factory()->withoutAccount()->create();
+        app(AccountService::class)->addMember($collaborator, $owner->account, User::ROLE_COLLABORATOR);
+        $collaborator->createToken('integração', ['clients:read']);
+        $this->assertSame(1, $collaborator->tokens()->count());
+
+        $this->actingAs($owner);
+        $this->delete(route('team.removeMember', $collaborator))->assertRedirect(route('team.index'));
+
+        $this->assertSame(0, $collaborator->tokens()->count());
+    }
+
+    public function test_collaborator_cannot_open_the_team_page(): void
+    {
+        $owner = User::factory()->create();
+        $collaborator = User::factory()->withoutAccount()->create();
+        app(AccountService::class)->addMember($collaborator, $owner->account, User::ROLE_COLLABORATOR);
+
+        $this->actingAs($collaborator->fresh())->get(route('team.index'))->assertForbidden();
+    }
+
+    public function test_invite_sends_the_invitation_email(): void
+    {
+        Notification::fake();
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)
+            ->post(route('team.invite'), ['email' => 'Novo@Ex.com', 'role' => User::ROLE_MANAGER])
+            ->assertSessionHas('success', 'Convite enviado para Novo@Ex.com.');
+
+        $token = AccountInvitation::where('email', 'novo@ex.com')->value('token');
+
+        Notification::assertSentOnDemand(
+            AccountInvitationNotification::class,
+            function (AccountInvitationNotification $notification, array $channels, object $notifiable) use ($owner, $token): bool {
+                $mail = $notification->toMail($notifiable);
+                $body = implode(' ', $mail->introLines).' '.implode(' ', $mail->outroLines);
+
+                return $notifiable->routes['mail'] === 'novo@ex.com'
+                    && $notification instanceof ShouldQueue
+                    && $mail->actionText === 'Aceitar convite'
+                    && $mail->actionUrl === route('register', ['invite' => $token])
+                    && str_contains($body, "convidou você para a conta {$owner->account->name} no Clientify360 como Gestor.")
+                    && str_contains($body, 'O convite expira em 7 dias.');
+            },
+        );
     }
 }

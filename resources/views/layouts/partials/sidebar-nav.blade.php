@@ -3,20 +3,20 @@
     $groups = [
         'Principal' => [
             ['dashboard', 'dashboard', 'fa-gauge-high', 'Dashboard'],
-            ['clients.index', 'clients.*', 'fa-users', 'Clientes'],
-            ['reminders.index', 'reminders.*', 'fa-calendar-check', 'Agenda'],
+            ['clients.index', 'clients.*', 'fa-users', 'Clientes', 'clients.view'],
+            ['reminders.index', 'reminders.*', 'fa-calendar-check', 'Agenda', 'clients.view'],
             ['appointments.index', 'appointments.*', 'fa-calendar-days', 'Agendamentos', 'appointments.view'],
-            ['interactions.index', 'interactions.*', 'fa-headset', 'Atendimentos'],
+            ['interactions.index', 'interactions.*', 'fa-headset', 'Atendimentos', 'clients.view'],
         ],
         'Comercial' => [
-            ['deals.index', ['deals.*', 'stages.*'], 'fa-filter-circle-dollar', 'Funil de vendas'],
-            ['activities.index', 'activities.*', 'fa-timeline', 'Histórico'],
-            ['quotes.index', 'quotes.*', 'fa-file-invoice-dollar', 'Orçamentos'],
+            ['deals.index', ['deals.*', 'stages.*'], 'fa-filter-circle-dollar', 'Funil de vendas', 'deals.view'],
+            ['activities.index', 'activities.*', 'fa-timeline', 'Histórico', 'deals.view'],
+            ['quotes.index', 'quotes.*', 'fa-file-invoice-dollar', 'Orçamentos', 'quotes.view'],
             ['service-orders.index', 'service-orders.*', 'fa-screwdriver-wrench', 'Ordens de Serviço', 'service_orders.view', 'Gerencie ordens de serviço: status, execução e faturamento'],
-            ['products.index', 'products.*', 'fa-boxes-stacked', 'Produtos e estoque'],
+            ['products.index', 'products.*', 'fa-boxes-stacked', 'Produtos e estoque', 'products.view'],
             ['purchases.index', 'purchases.*', 'fa-cart-shopping', 'Compras', 'purchases.view', 'Entrada de mercadoria e contas a pagar ao fornecedor'],
-            ['lead-forms.index', 'lead-forms.*', 'fa-magnet', 'Captação de leads'],
-            ['tags.index', 'tags.*', 'fa-tags', 'Tags'],
+            ['lead-forms.index', 'lead-forms.*', 'fa-magnet', 'Captação de leads', 'leads.view'],
+            ['tags.index', 'tags.*', 'fa-tags', 'Tags', 'clients.view'],
         ],
         'Financeiro' => [
             ['finance.index', 'finance.index', 'fa-chart-pie', 'Visão geral', 'finance.view', 'Resumo do mês e fluxo de caixa'],
@@ -25,9 +25,9 @@
             ['billing.invoices', 'billing.invoices', 'fa-receipt', 'Histórico de pagamentos', 'account.billing', 'Faturas da assinatura com PDF e recibo'],
         ],
         'Análise' => [
-            ['reports.index', 'reports.*', 'fa-chart-bar', 'Relatórios'],
+            ['reports.index', 'reports.*', 'fa-chart-bar', 'Relatórios', 'reports.view'],
             ['notifications.index', 'notifications.*', 'fa-bell', 'Notificações'],
-            ['ai.settings', 'ai.*', 'fa-wand-magic-sparkles', 'IA / Análise'],
+            ['ai.settings', 'ai.*', 'fa-wand-magic-sparkles', 'IA / Análise', 'clients.view'],
         ],
         'Conta' => [
             ['profile.edit', 'profile.*', 'fa-user-gear', 'Meu perfil', null, 'Edite seus dados pessoais, e-mail e senha'],

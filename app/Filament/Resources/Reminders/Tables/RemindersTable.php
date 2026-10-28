@@ -35,6 +35,8 @@ class RemindersTable
                     ->icon('heroicon-m-check')
                     ->color('success')
                     ->visible(fn (Reminder $r): bool => !$r->is_completed)
+                    // Custom actions do not consult the policy by themselves.
+                    ->authorize('update')
                     ->action(fn (Reminder $r) => $r->update(['is_completed' => true, 'completed_at' => now()])),
                 EditAction::make(),
             ])
