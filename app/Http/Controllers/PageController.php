@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Data\PlanData;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 
@@ -14,8 +15,11 @@ final class PageController extends Controller
      */
     public function home(): View
     {
+        $plans = PlanData::catalog();
+
         return view('pages.home', [
-            'faqs' => $this->faqs(),
+            'plans' => $plans,
+            'faqs' => $this->faqs($plans['professional']),
         ]);
     }
 
@@ -81,7 +85,7 @@ final class PageController extends Controller
      *
      * @return array<int, array{question: string, answer: string}>
      */
-    private function faqs(): array
+    private function faqs(PlanData $professional): array
     {
         return [
             [
@@ -106,7 +110,7 @@ final class PageController extends Controller
             ],
             [
                 'question' => 'Quanto custa o plano Profissional?',
-                'answer' => 'Em promoção por tempo limitado, o plano Profissional sai de R$ 79,90 por R$ 39,90 por mês (50% de desconto), com clientes ilimitados, IA, relatórios avançados, exportação de dados e suporte prioritário.',
+                'answer' => 'O plano Profissional custa '.$professional->formattedPrice().' por mês (preço promocional; valor de referência '.$professional->formattedOriginalPrice().'), com clientes ilimitados, IA, exportação, PDFs e API.',
             ],
         ];
     }

@@ -19,8 +19,10 @@
             ['tags.index', 'tags.*', 'fa-tags', 'Tags'],
         ],
         'Financeiro' => [
-            ['finance.index', 'finance.index', 'fa-chart-pie', 'Visão geral'],
-            ['finance.entries', ['finance.entries', 'finance.categories'], 'fa-money-bill-transfer', 'Contas a pagar/receber'],
+            ['finance.index', 'finance.index', 'fa-chart-pie', 'Visão geral', 'finance.view', 'Resumo do mês e fluxo de caixa'],
+            ['finance.entries', ['finance.entries', 'finance.categories'], 'fa-money-bill-transfer', 'Contas a pagar/receber', 'finance.view', 'Lançamentos a pagar e a receber'],
+            ['billing.index', 'billing.index', 'fa-credit-card', 'Minha assinatura', 'account.billing', 'Plano atual, vigência, renovação e troca de plano'],
+            ['billing.invoices', 'billing.invoices', 'fa-receipt', 'Histórico de pagamentos', 'account.billing', 'Faturas da assinatura com PDF e recibo'],
         ],
         'Análise' => [
             ['reports.index', 'reports.*', 'fa-chart-bar', 'Relatórios'],
@@ -30,21 +32,20 @@
         'Conta' => [
             ['profile.edit', 'profile.*', 'fa-user-gear', 'Meu perfil', null, 'Edite seus dados pessoais, e-mail e senha'],
             ['team.index', 'team.*', 'fa-users-gear', 'Equipe', 'account.members', 'Convide membros e defina suas permissões de acesso'],
-            ['billing.index', 'billing.*', 'fa-credit-card', 'Assinatura', 'account.billing', 'Gerencie seu plano, pagamentos e faturas'],
         ],
     ];
 @endphp
 
 <nav class="flex-1 px-4 py-5 space-y-5 overflow-y-auto scrollbar-thin" aria-label="Menu principal">
     @foreach($groups as $groupLabel => $items)
+        @php($items = array_filter($items, fn (array $item): bool => ($item[4] ?? null) === null || (auth()->user()?->can($item[4]) ?? false)))
+        @continue($items === [])
         <div>
             <p class="px-3 mb-2 text-[11px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">{{ $groupLabel }}</p>
             <div class="space-y-0.5">
                 @foreach($items as $item)
                     @php([$route, $pattern, $icon, $label] = $item)
-                    @php($permission = $item[4] ?? null)
                     @php($description = $item[5] ?? null)
-                    @continue($permission !== null && ! auth()->user()?->can($permission))
                     @php($active = request()->routeIs(...(array) $pattern))
                     <a href="{{ route($route) }}" @if($active) aria-current="page" @endif @if($description) title="{{ $description }}" @endif
                        class="flex items-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ $active ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 shadow-sm' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200' }}">

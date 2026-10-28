@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\CheckPlanLimit;
+use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\EnsureTermsAccepted;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetSpatieTeam;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'plan.limit' => CheckPlanLimit::class,
+            'plan.feature' => EnsurePlanFeature::class,
             'terms.accepted' => EnsureTermsAccepted::class,
             // ACL por conta (Spatie Permission)
             'role' => RoleMiddleware::class,

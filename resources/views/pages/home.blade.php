@@ -1,7 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'CRM com IA Integrada')
-@section('meta_description', 'Clientify360 - CRM com IA integrada para gestão de clientes. Score, análises, atendimentos e relatórios. De R$79,90 por R$39,90/mês. Comece grátis.')
+@php($pro = $plans['professional'])
+@section('meta_description', 'Clientify360 - CRM com IA integrada para gestão de clientes. Score, análises, atendimentos e relatórios. De '.$plans['professional']->formattedOriginalPrice().' por '.$plans['professional']->formattedPrice().'/mês. Comece grátis.')
 
 @section('content')
     {{-- ============================================================= --}}
@@ -17,7 +18,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                     <div class="inline-flex items-center px-3 py-1.5 bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-full text-sm text-red-200 mb-6 animate-pulse">
-                        <i class="fa-solid fa-fire mr-2 text-red-300"></i> Oferta por tempo limitado — 50% OFF
+                        <i class="fa-solid fa-fire mr-2 text-red-300"></i> Preço promocional — {{ $pro->discountPercent() }}% OFF
                     </div>
 
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
@@ -28,9 +29,9 @@
                     </p>
 
                     <div class="flex items-center space-x-3 mb-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-5 py-3 w-fit">
-                        <span class="text-brand-300 line-through text-lg">R$ 79,90</span>
-                        <span class="text-3xl font-bold text-white">R$ 39,90<span class="text-sm font-normal text-brand-200">/mês</span></span>
-                        <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">-50%</span>
+                        <s class="text-brand-300 text-lg">{{ $pro->formattedOriginalPrice() }}</s>
+                        <span class="text-3xl font-bold text-white">{{ $pro->formattedPrice() }}<span class="text-sm font-normal text-brand-200">/mês</span></span>
+                        <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">-{{ $pro->discountPercent() }}%</span>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-4">
@@ -95,7 +96,7 @@
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-white text-sm font-medium">
                 <i class="fa-solid fa-clock mr-2 animate-pulse"></i>
-                <strong>OFERTA LIMITADA:</strong> Plano Profissional de <span class="line-through">R$ 79,90</span> por apenas <strong>R$ 39,90/mês</strong> — Economize R$ 480/ano!
+                <strong>Preço promocional:</strong> Profissional de <s>{{ $pro->formattedOriginalPrice() }}</s> por <strong>{{ $pro->formattedPrice() }}/mês</strong> — economize {{ $pro->formattedYearlySaving() }} por ano.
                 <a href="{{ route('register') }}" class="ml-3 underline font-bold hover:no-underline">Aproveitar →</a>
             </p>
         </div>
@@ -420,7 +421,7 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <div class="inline-flex items-center px-3 py-1.5 bg-red-100 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-full text-sm text-red-700 dark:text-red-300 mb-4 animate-pulse">
-                    <i class="fa-solid fa-fire mr-2"></i> Promoção por tempo limitado — 50% de desconto
+                    <i class="fa-solid fa-fire mr-2"></i> Preço promocional — {{ $pro->discountPercent() }}% de desconto
                 </div>
                 <h2 class="text-3xl md:text-4xl font-bold text-surface-900 dark:text-white mb-4">Escolha seu plano</h2>
                 <p class="text-surface-500 dark:text-surface-400 text-lg">Comece grátis e faça upgrade quando quiser.</p>
@@ -430,13 +431,13 @@
                 {{-- Básico --}}
                 <div class="bg-surface-50 dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-700 p-8">
                     <h3 class="text-xl font-bold text-surface-900 dark:text-white">Básico</h3>
-                    <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">{{ config('plans.basic.description') }}</p>
+                    <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">{{ $plans['basic']->description }}</p>
                     <div class="mt-6 mb-8">
                         <span class="text-4xl font-bold text-surface-900 dark:text-white">Grátis</span>
                         <span class="text-surface-400 text-sm ml-1">para sempre</span>
                     </div>
                     <ul class="space-y-3 mb-8">
-                        @foreach(config('plans.basic.features') as $feature)
+                        @foreach($plans['basic']->features as $feature)
                         <li class="flex items-center text-sm text-surface-600 dark:text-surface-400">
                             <i class="fa-solid fa-check text-accent-500 mr-2.5"></i> {{ $feature }}
                         </li>
@@ -450,27 +451,27 @@
                 {{-- Profissional --}}
                 <div class="bg-surface-50 dark:bg-surface-900 rounded-2xl border-2 border-brand-500 p-8 relative shadow-xl shadow-brand-500/10">
                     <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-red-500 text-white text-xs font-bold rounded-full whitespace-nowrap">
-                        🔥 MAIS POPULAR — 50% OFF
+                        🔥 MAIS POPULAR — {{ $pro->discountPercent() }}% OFF
                     </div>
                     <h3 class="text-xl font-bold text-surface-900 dark:text-white">Profissional</h3>
-                    <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">{{ config('plans.professional.description') }}</p>
+                    <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">{{ $pro->description }}</p>
                     <div class="mt-6 mb-2">
-                        <span class="text-lg text-surface-400 line-through">R$ 79,90</span>
+                        <s class="text-lg text-surface-400">{{ $pro->formattedOriginalPrice() }}</s>
                     </div>
                     <div class="mb-8 flex items-baseline flex-wrap gap-2">
-                        <span class="text-4xl font-bold text-surface-900 dark:text-white">R$ 39,90</span>
+                        <span class="text-4xl font-bold text-surface-900 dark:text-white">{{ $pro->formattedPrice() }}</span>
                         <span class="text-surface-400 text-sm">/mês</span>
-                        <span class="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">ECONOMIZE R$ 480/ANO</span>
+                        <span class="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">ECONOMIZE {{ $pro->formattedYearlySaving() }}/ANO</span>
                     </div>
                     <ul class="space-y-3 mb-8">
-                        @foreach(config('plans.professional.features') as $feature)
+                        @foreach($pro->features as $feature)
                         <li class="flex items-center text-sm text-surface-600 dark:text-surface-400">
                             <i class="fa-solid fa-check text-brand-500 mr-2.5"></i> {{ $feature }}
                         </li>
                         @endforeach
                     </ul>
                     <a href="{{ route('register') }}" class="block w-full text-center px-5 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition shadow-lg shadow-brand-600/25">
-                        <i class="fa-solid fa-rocket mr-2"></i> Começar Agora — 50% OFF
+                        <i class="fa-solid fa-rocket mr-2"></i> Começar Agora — {{ $pro->discountPercent() }}% OFF
                     </a>
                     <p class="text-center text-[10px] text-surface-400 mt-3">Cancele a qualquer momento. Sem fidelidade.</p>
                 </div>
@@ -551,7 +552,7 @@
                 <div class="p-6 bg-brand-50 dark:bg-brand-950/30 rounded-2xl border border-brand-200 dark:border-brand-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
                     <div>
                         <p class="text-sm font-semibold text-brand-800 dark:text-brand-200 mb-1"><i class="fa-solid fa-tag mr-1"></i> Oferta Especial</p>
-                        <p class="text-sm text-brand-700 dark:text-brand-300">Plano Profissional com 50% OFF — de <span class="line-through">R$ 79,90</span> por <strong>R$ 39,90/mês</strong></p>
+                        <p class="text-sm text-brand-700 dark:text-brand-300">Plano Profissional com {{ $pro->discountPercent() }}% OFF — de <s>{{ $pro->formattedOriginalPrice() }}</s> por <strong>{{ $pro->formattedPrice() }}/mês</strong></p>
                     </div>
                     <a href="{{ route('register') }}" class="inline-flex items-center px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition shadow-lg shadow-brand-600/25 whitespace-nowrap">
                         <i class="fa-solid fa-rocket mr-1.5"></i> Aproveitar Desconto
@@ -570,13 +571,13 @@
         </div>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <div class="inline-flex items-center px-4 py-2 bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-full text-sm text-red-200 mb-6">
-                <i class="fa-solid fa-hourglass-half mr-2 animate-pulse"></i> Vagas limitadas com desconto de 50%
+                <i class="fa-solid fa-hourglass-half mr-2 animate-pulse"></i> Preço promocional com {{ $pro->discountPercent() }}% de desconto
             </div>
             <h2 class="text-3xl md:text-4xl font-bold mb-5">Não perca essa oportunidade</h2>
-            <p class="text-lg text-brand-200 mb-4">De <span class="line-through">R$ 79,90</span> por apenas <strong class="text-white text-2xl">R$ 39,90/mês</strong></p>
-            <p class="text-brand-300 mb-10 max-w-2xl mx-auto">CRM completo com IA integrada, score de clientes, gestão de atendimentos e relatórios avançados. Tudo por menos de R$ 1,33/dia.</p>
+            <p class="text-lg text-brand-200 mb-4">De <s>{{ $pro->formattedOriginalPrice() }}</s> por apenas <strong class="text-white text-2xl">{{ $pro->formattedPrice() }}/mês</strong></p>
+            <p class="text-brand-300 mb-10 max-w-2xl mx-auto">CRM completo com IA integrada, score de clientes, gestão de atendimentos e relatórios avançados. Tudo por cerca de {{ \App\Support\Format::money($pro->price / 30) }} por dia.</p>
             <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 bg-white text-brand-700 font-bold rounded-xl hover:bg-brand-50 transition shadow-xl text-lg">
-                <i class="fa-solid fa-rocket mr-2"></i> Garantir Meu Desconto de 50%
+                <i class="fa-solid fa-rocket mr-2"></i> Garantir Meu Desconto de {{ $pro->discountPercent() }}%
             </a>
             <p class="mt-6 text-sm text-brand-300">
                 <i class="fa-solid fa-building mr-1"></i>

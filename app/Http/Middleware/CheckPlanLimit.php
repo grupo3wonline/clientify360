@@ -35,11 +35,7 @@ final class CheckPlanLimit
             return $next($request);
         }
 
-        $limit = $this->subscriptionService->getLimit($user, $resource);
-        $label = SubscriptionService::RESOURCE_LABELS[$resource] ?? $resource;
-        $plan = $this->subscriptionService->getCurrentPlan($user)['name'];
-
         return redirect()->route(self::REDIRECT_ROUTES[$resource] ?? 'dashboard')
-            ->with('error', "Você atingiu o limite de {$limit} {$label} do plano {$plan}. Faça upgrade para o plano Profissional para liberar o uso ilimitado.");
+            ->with('error', $this->subscriptionService->limitMessage($user, $resource));
     }
 }

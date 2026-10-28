@@ -74,6 +74,30 @@ Depois do deploy, cadastre um usuário de teste e confirme que o e-mail de verif
 
 `php artisan security:check` falha (código de saída 1) em produção quando: `APP_DEBUG` está ligado, `APP_KEY` está vazia, `APP_URL` não usa `https://`, `STRIPE_WEBHOOK_SECRET` está vazio, o cookie de sessão não é `secure` ou a chave secreta do reCAPTCHA está vazia. Para testar webhooks localmente use `stripe listen --forward-to http://clientify360.test/stripe/webhook` e copie o `whsec_...` exibido para `STRIPE_WEBHOOK_SECRET` no `.env`.
 
+## Planos e assinatura (Stripe)
+
+| Plano | Preço | Limites | Recursos exclusivos |
+|---|---|---|---|
+| Básico | Grátis | 10 clientes, 20 produtos/serviços, 5 orçamentos/mês, 1 formulário de leads, 10 anexos | — |
+| Profissional | R$ 29,90/mês (referência ~~R$ 79,90~~) | Ilimitado (anexos: 1.000) | IA, exportação CSV/Excel, PDF, API |
+
+A matriz fica em `config/plans.php` (`limits` e `features_enabled`). Os limites valem nas rotas Blade (middleware `plan.limit`), nas telas de criação do Filament (`EnforcesPlanLimit`) e na captação pública de leads; os recursos exclusivos usam o middleware `plan.feature:{ai|export|pdf|api}`. Quando a assinatura termina (ou um pagamento falha), a conta volta aos limites do Básico: nada é apagado, os registros continuam visíveis e editáveis, mas novos cadastros acima do limite ficam bloqueados.
+
+O menu **Financeiro** reúne "Visão geral", "Contas a pagar/receber" (módulo `/finance`), "Minha assinatura" (`/billing`: plano, vigência, contagem regressiva, troca de plano) e "Histórico de pagamentos" (`/billing/invoices`: faturas do Stripe com PDF e recibo). As duas últimas exigem a permissão `account.billing` (Dono).
+
+**Preço no Stripe.** `php artisan stripe:setup` cria, uma única vez, o preço mensal de R$ 29,90 (BRL, `lookup_key` `clientify360_professional_monthly_2990`) no produto do Profissional; ao rodar de novo ele só mostra o preço existente. Use `--dry-run` para ver as chamadas sem executá-las. Copie o `STRIPE_PROFESSIONAL_PRICE_ID=price_...` exibido para o `.env` e rode `php artisan config:clear`. Preços antigos não são arquivados: assinaturas já existentes continuam valendo.
+
+**Webhook.** A rota `POST /stripe/webhook` verifica a assinatura do Stripe sempre que `STRIPE_WEBHOOK_SECRET` estiver preenchido (em produção, sem o segredo, ela responde 503). O `.env` local vem com `STRIPE_WEBHOOK_SECRET=` vazio. Para testar localmente:
+
+```bash
+php artisan serve                       # http://127.0.0.1:8000
+stripe listen --forward-to 127.0.0.1:8000/stripe/webhook
+# copie o whsec_... exibido para STRIPE_WEBHOOK_SECRET no .env
+php artisan config:clear
+```
+
+Em produção, crie o endpoint no painel do Stripe com os eventos `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `customer.updated`, `customer.deleted`, `invoice.payment_succeeded` e `invoice.payment_action_required`. Cada evento recebido limpa o cache de assinatura e faturas da conta. Cartão de teste: `4242 4242 4242 4242`, qualquer data futura e qualquer CVC.
+
 ## Arquitetura
 
 - **Service Layer** — Lógica de negócio isolada.

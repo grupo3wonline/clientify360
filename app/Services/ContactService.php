@@ -24,7 +24,7 @@ final class ContactService
             ],
             [
                 'question' => 'Quanto custa o Clientify360?',
-                'answer' => 'O plano Profissional está em promoção: de R$ 79,90 por R$ 39,90 por mês. Há também um plano Básico gratuito com as funcionalidades essenciais de cadastro de clientes, agenda e lembretes.',
+                'answer' => 'O plano Profissional está em promoção: de R$ 79,90 por R$ 29,90 por mês. Há também um plano Básico gratuito com as funcionalidades essenciais de cadastro de clientes, agenda e lembretes.',
             ],
             [
                 'question' => 'Preciso pagar para usar a inteligência artificial?',

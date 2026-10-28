@@ -6,35 +6,25 @@ namespace App\Http\Controllers;
 
 use App\Exports\ClientsExport;
 use App\Services\ClientService;
-use App\Services\SubscriptionService;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/** Plano Profissional: o acesso é garantido pelo middleware plan.feature:export. */
 final class ExportController extends Controller
 {
     public function __construct(
         private readonly ClientService $clientService,
-        private readonly SubscriptionService $subscriptionService
     ) {}
 
-    /** Exporta clientes em XLSX (Laravel Excel), plano Profissional. */
-    public function clientsExcel(Request $request): BinaryFileResponse
+    /** Exporta clientes em XLSX (Laravel Excel). */
+    public function clientsExcel(): BinaryFileResponse
     {
-        abort_unless($this->subscriptionService->isProfessional($request->user()), 403, 'Exportação disponível apenas no plano Profissional.');
-
         return Excel::download(new ClientsExport, 'clientes_'.now()->format('Y-m-d').'.xlsx');
     }
 
-    public function clients(Request $request): StreamedResponse
+    public function clients(): StreamedResponse
     {
-        $user = $request->user();
-
-        if (!$this->subscriptionService->isProfessional($user)) {
-            abort(403, 'Exportação disponível apenas no plano Profissional.');
-        }
-
         $clients = $this->clientService->findAll();
 
         $headers = [

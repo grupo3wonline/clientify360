@@ -69,6 +69,7 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
     // Billing / Subscription (apenas quem tem permissão de cobrança — Dono)
     Route::middleware('permission:account.billing')->group(function (): void {
         Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+        Route::get('/billing/invoices', [BillingController::class, 'invoices'])->name('billing.invoices');
         Route::post('/billing/subscribe', [BillingController::class, 'subscribe'])->name('billing.subscribe');
         Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
         Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
@@ -150,8 +151,10 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
     Route::post('ai/analyze/{client}', [AiController::class, 'analyze'])->name('ai.analyze');
 
     // Export (Professional plan only)
-    Route::get('/export/clients', [ExportController::class, 'clients'])->name('export.clients');
-    Route::get('/export/clients/xlsx', [ExportController::class, 'clientsExcel'])->name('export.clients.xlsx');
+    Route::middleware('plan.feature:export')->group(function (): void {
+        Route::get('/export/clients', [ExportController::class, 'clients'])->name('export.clients');
+        Route::get('/export/clients/xlsx', [ExportController::class, 'clientsExcel'])->name('export.clients.xlsx');
+    });
 
     // ===== CRM comercial (CrmPlus + crm-master) =====
     Route::get('pipeline', [DealController::class, 'index'])->name('deals.index');

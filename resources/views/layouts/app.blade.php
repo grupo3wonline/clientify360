@@ -154,9 +154,11 @@
                                     <a href="{{ route('profile.edit') }}" role="menuitem" title="Atualize seus dados, senha e preferências da conta" class="flex items-center px-4 py-2.5 text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition focus:outline-none focus-visible:bg-surface-50 dark:focus-visible:bg-surface-700">
                                         <i class="fa-solid fa-user-gear w-5 mr-3 text-surface-400" aria-hidden="true"></i> Meu Perfil
                                     </a>
-                                    <a href="{{ route('billing.index') }}" role="menuitem" title="Gerencie seu plano, pagamentos e faturas" class="flex items-center px-4 py-2.5 text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition focus:outline-none focus-visible:bg-surface-50 dark:focus-visible:bg-surface-700">
-                                        <i class="fa-solid fa-credit-card w-5 mr-3 text-surface-400" aria-hidden="true"></i> Assinatura
+                                    @can('account.billing')
+                                    <a href="{{ route('billing.index') }}" role="menuitem" title="Veja seu plano, a vigência e gerencie a assinatura" class="flex items-center px-4 py-2.5 text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition focus:outline-none focus-visible:bg-surface-50 dark:focus-visible:bg-surface-700">
+                                        <i class="fa-solid fa-credit-card w-5 mr-3 text-surface-400" aria-hidden="true"></i> Minha assinatura
                                     </a>
+                                    @endcan
                                     <hr class="my-2 border-surface-200 dark:border-surface-700">
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -192,6 +194,21 @@
                     title: 'Tudo certo',
                     text: @js(session('success')),
                     icon: 'success',
+                    confirmButtonText: 'Entendi',
+                    confirmButtonColor: '#4f46e5',
+                    customClass: { popup: 'rounded-2xl' }
+                });
+            });
+        </script>
+        @endif
+
+        @if(session('info'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Informação',
+                    text: @js(session('info')),
+                    icon: 'info',
                     confirmButtonText: 'Entendi',
                     confirmButtonColor: '#4f46e5',
                     customClass: { popup: 'rounded-2xl' }

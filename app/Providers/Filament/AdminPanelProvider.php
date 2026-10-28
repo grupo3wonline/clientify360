@@ -70,11 +70,24 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Conta')
                     ->sort(1)
                     ->visible(fn (): bool => auth()->user()?->can('account.members') ?? false),
-                NavigationItem::make('Assinatura')
+                // Financeiro: Blade overview + FinancialEntryResource (sort 1) + subscription pages.
+                NavigationItem::make('Visão geral financeira')
+                    ->url(fn (): string => route('finance.index'))
+                    ->icon('heroicon-o-chart-pie')
+                    ->group('Financeiro')
+                    ->sort(0)
+                    ->visible(fn (): bool => auth()->user()?->can('finance.view') ?? false),
+                NavigationItem::make('Minha assinatura')
                     ->url(fn (): string => route('billing.index'))
                     ->icon('heroicon-o-credit-card')
-                    ->group('Conta')
+                    ->group('Financeiro')
                     ->sort(2)
+                    ->visible(fn (): bool => auth()->user()?->can('account.billing') ?? false),
+                NavigationItem::make('Histórico de pagamentos')
+                    ->url(fn (): string => route('billing.invoices'))
+                    ->icon('heroicon-o-receipt-percent')
+                    ->group('Financeiro')
+                    ->sort(3)
                     ->visible(fn (): bool => auth()->user()?->can('account.billing') ?? false),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

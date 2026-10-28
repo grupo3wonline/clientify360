@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Models\Account;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Maatwebsite\Excel\Facades\Excel;
+use Tests\Support\Subscriptions;
 use Tests\TestCase;
 
 class ExportTest extends TestCase
@@ -42,16 +42,7 @@ class ExportTest extends TestCase
     private function mockProfessional(User $user): void
     {
         // Cria uma assinatura ativa para a conta (Cashier Billable = Account).
-        /** @var Account $account */
-        $account = $user->account;
-        $account->update(['stripe_id' => 'cus_test_'.$account->id]);
-        $account->subscriptions()->create([
-            'type' => 'default',
-            'stripe_id' => 'sub_test_'.$account->id,
-            'stripe_status' => 'active',
-            'stripe_price' => 'price_test',
-            'quantity' => 1,
-        ]);
+        Subscriptions::makeProfessional($user->account);
 
         Client::create(['name' => 'Cliente Export', 'email' => 'exp@ex.com']);
     }
