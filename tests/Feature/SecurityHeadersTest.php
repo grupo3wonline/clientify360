@@ -30,6 +30,34 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString('www.gstatic.com', $csp);
     }
 
+    public function test_csp_allows_stripe_redirects_and_blocks_plugins(): void
+    {
+        $response = $this->get('/');
+        $csp = (string) $response->headers->get('Content-Security-Policy');
+
+        $this->assertStringContainsString("form-action 'self' https://checkout.stripe.com https://billing.stripe.com", $csp);
+        $this->assertStringContainsString("object-src 'none'", $csp);
+        // Fonts are local and Stripe.js is not used.
+        $this->assertStringNotContainsString('fonts.googleapis.com', $csp);
+        $this->assertStringNotContainsString('fonts.gstatic.com', $csp);
+        $this->assertStringNotContainsString('js.stripe.com', $csp);
+        $this->assertStringNotContainsString('api.stripe.com', $csp);
+        // Local HTTP is not upgraded and gets no HSTS.
+        $this->assertStringNotContainsString('upgrade-insecure-requests', $csp);
+        $this->assertFalse($response->headers->has('Strict-Transport-Security'));
+
+        $response->assertHeader('X-XSS-Protection', '0');
+        $this->assertStringContainsString('payment=()', (string) $response->headers->get('Permissions-Policy'));
+    }
+
+    public function test_https_requests_get_hsts_and_upgrade_insecure_requests(): void
+    {
+        $response = $this->get('https://localhost/');
+
+        $response->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        $this->assertStringContainsString('upgrade-insecure-requests', (string) $response->headers->get('Content-Security-Policy'));
+    }
+
     public function test_csp_no_longer_allows_removed_cdns(): void
     {
         // Após a migração CDN -> Vite, os assets são self-hosted; o CSP não deve

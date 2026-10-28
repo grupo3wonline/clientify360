@@ -16,6 +16,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -32,7 +33,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('app')
             ->path('app')
             ->brandName('Clientify360')
-            ->login()
+            // No panel login page: guests are redirected to the Breeze /login,
+            // the single implementation of the username + e-mail + password rule.
             ->colors([
                 'primary' => Color::Indigo,
                 'gray' => Color::Slate,
@@ -101,6 +103,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Unverified users are redirected to /verify-email (not a 403).
+                EnsureEmailIsVerified::class,
                 EnsureTermsAccepted::class,
             ]);
     }

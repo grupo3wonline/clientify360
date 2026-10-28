@@ -24,7 +24,8 @@ class OrphanUserLoginTest extends TestCase
         $this->assertNull($user->account_id);
 
         $response = $this->post('/login', [
-            'login' => $user->email,
+            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
         ]);
 
@@ -44,7 +45,8 @@ class OrphanUserLoginTest extends TestCase
         $this->assertFalse($user->canAccessPanel(app(Panel::class)));
 
         $this->post('/login', [
-            'login' => $user->email,
+            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
         ]);
 
@@ -63,7 +65,8 @@ class OrphanUserLoginTest extends TestCase
         $this->assertNotNull($originalAccountId);
 
         $this->post('/login', [
-            'login' => $user->email,
+            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
         ]);
 

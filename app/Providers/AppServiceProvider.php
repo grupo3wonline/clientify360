@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Http\Responses\FilamentLogoutResponse;
 use App\Interfaces\ClientRepositoryInterface;
 use App\Models\Account;
+use App\Models\PersonalAccessToken;
 use App\Repositories\ClientRepository;
 use App\Services\NotificationService;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 use Laravel\Cashier\Cashier;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +30,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Singleton: a contagem (badge do menu) e a página reaproveitam o mesmo cálculo no request.
         $this->app->singleton(NotificationService::class);
+
+        // The app registers its own guarded /stripe/webhook route (routes/web.php).
+        Cashier::ignoreRoutes();
+
+        // The panel has no login page: logging out of /app goes to the home page.
+        $this->app->bind(LogoutResponse::class, FilamentLogoutResponse::class);
     }
 
     public function boot(): void
@@ -34,6 +48,11 @@ class AppServiceProvider extends ServiceProvider
         // A assinatura é da conta (tenant), não do usuário: a conta é o Billable do Cashier.
         Cashier::useCustomerModel(Account::class);
 
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        $this->configurePasswordPolicy();
+        $this->configureRateLimiters();
+
         // @money($valor) → R$ 1.234,56   |   @qty($quantidade) → 1.500 / 2,5
         Blade::directive('money', fn (string $expr): string => "<?php echo e(\\App\\Support\\Format::money({$expr})); ?>");
         Blade::directive('qty', fn (string $expr): string => "<?php echo e(\\App\\Support\\Format::qty({$expr})); ?>");
@@ -43,5 +62,43 @@ class AppServiceProvider extends ServiceProvider
             $count = auth()->check() ? app(NotificationService::class)->count() : 0;
             $view->with('notificationCount', $count);
         });
+    }
+
+    /**
+     * Production requires 10+ characters with mixed case, numbers and a HIBP
+     * check (fail-open if the API is unreachable). Elsewhere: 8+ characters.
+     */
+    private function configurePasswordPolicy(): void
+    {
+        Password::defaults(fn (): Password => $this->app->isProduction()
+            ? Password::min(10)->mixedCase()->numbers()->uncompromised()
+            : Password::min(8));
+    }
+
+    /**
+     * Named limiters. Limits come from config so only the disposable load-test
+     * environment can raise them.
+     */
+    private function configureRateLimiters(): void
+    {
+        // Per-IP cap on login POSTs, on top of LoginRequest's 5 attempts per credential tuple.
+        RateLimiter::for('login', fn (Request $request): Limit => Limit::perMinute(20)->by($request->ip()));
+
+        RateLimiter::for('public', fn (Request $request): Limit => Limit::perMinute(
+            (int) config('services.rate_limits.public', 60)
+        )->by($request->ip()));
+
+        RateLimiter::for('app', fn (Request $request): Limit => Limit::perMinute(
+            (int) config('services.rate_limits.app', 120)
+        )->by($request->user()?->id ?: $request->ip()));
+
+        RateLimiter::for('api', fn (Request $request): Limit => Limit::perMinute(
+            (int) config('services.rate_limits.api', 60)
+        )->by($request->user()?->id ?: $request->ip())
+            ->response(fn (Request $request, array $headers) => response()->json(
+                ['message' => 'Muitas requisições. Tente novamente em instantes.'],
+                429,
+                $headers,
+            )));
     }
 }

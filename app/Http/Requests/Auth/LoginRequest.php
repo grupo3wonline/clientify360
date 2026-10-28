@@ -14,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 
 final class LoginRequest extends FormRequest
 {
+    private const MAX_ATTEMPTS = 5;
+
     public function authorize(): bool
     {
         return true;
@@ -22,7 +24,8 @@ final class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login' => ['required', 'string'],
+            'username' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string'],
             // Honeypot: only bots fill it. A present/non-empty value fails.
             'website' => ['nullable', 'prohibited'],
@@ -34,32 +37,33 @@ final class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'login.required' => 'Informe seu e-mail ou nome de usuário.',
+            'username.required' => 'Informe seu nome de usuário.',
+            'email.required' => 'Informe seu e-mail.',
+            'email.email' => 'Informe um e-mail válido.',
             'password.required' => 'A senha é obrigatória.',
             'website.prohibited' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.',
         ];
     }
 
     /**
-     * Attempt to authenticate using email or username.
+     * Authenticate with username + e-mail + password together. The Eloquent
+     * provider ANDs the non-password keys, so both must belong to the same user.
      */
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
 
-        $login = $this->input('login');
-        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
         $credentials = [
-            $field => $login,
-            'password' => $this->input('password'),
+            'username' => $this->username(),
+            'email' => $this->email(),
+            'password' => (string) $this->input('password'),
         ];
 
         if (!Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'login' => trans('auth.failed'),
+                'email' => trans('auth.failed'),
             ]);
         }
 
@@ -68,7 +72,7 @@ final class LoginRequest extends FormRequest
 
     public function ensureIsNotRateLimited(): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), self::MAX_ATTEMPTS)) {
             return;
         }
 
@@ -77,15 +81,26 @@ final class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'login' => trans('auth.throttle', [
+            'email' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
         ]);
     }
 
+    /** 5 attempts per credential tuple (username|email) and IP. */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('login')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->username().'|'.$this->email()).'|'.$this->ip());
+    }
+
+    private function username(): string
+    {
+        return (string) $this->string('username')->trim();
+    }
+
+    private function email(): string
+    {
+        return Str::lower((string) $this->string('email')->trim());
     }
 }

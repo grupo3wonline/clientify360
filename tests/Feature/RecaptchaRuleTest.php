@@ -33,7 +33,8 @@ class RecaptchaRuleTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', [
-            'login' => $user->email,
+            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
             'g-recaptcha-response' => 'bad-token',
         ])->assertSessionHasErrors('g-recaptcha-response');
@@ -70,7 +71,8 @@ class RecaptchaRuleTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', [
-            'login' => $user->email,
+            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
         ])->assertSessionHasNoErrors();
 
@@ -82,7 +84,8 @@ class RecaptchaRuleTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', [
-            'login' => $user->email,
+            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
             'website' => 'http://spam.example',
         ])->assertSessionHasErrors('website');

@@ -5,6 +5,9 @@ includes:
 parameters:
     level: 5
 
+    # Production runs PHP 8.2 (HostGator); report 8.3+ syntax/functions.
+    phpVersion: 80200
+
     paths:
         - app
         - database

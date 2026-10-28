@@ -62,7 +62,7 @@
             <label class="flex items-start">
                 <input type="checkbox" name="lgpd_consent" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1" required>
                 <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                    Li e concordo com a <a href="{{ route('privacy') }}" target="_blank" class="text-indigo-600 hover:underline">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais conforme a LGPD.
+                    Li e concordo com a <a href="{{ route('privacy') }}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">Política de Privacidade</a> e com os <a href="{{ route('terms.show') }}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">Termos de Uso</a>, e autorizo o tratamento dos meus dados pessoais conforme a LGPD.
                 </span>
             </label>
             <x-input-error :messages="$errors->get('lgpd_consent')" class="mt-2" />

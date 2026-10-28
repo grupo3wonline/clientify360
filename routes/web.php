@@ -26,11 +26,12 @@ use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TermsController;
+use App\Http\Middleware\EnsureStripeWebhookIsConfigured;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 
 // Public page (Landing / Hotsite — página única de vendas)
-Route::middleware('throttle:60,1')->group(function (): void {
+Route::middleware('throttle:public')->group(function (): void {
     Route::get('/', [PageController::class, 'home'])->name('home');
 
     Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('privacy');
@@ -48,10 +49,10 @@ Route::middleware('throttle:60,1')->group(function (): void {
 // Dashboard → painel Filament (/app) é a home autenticada. A rota é mantida
 // porque o Breeze (verificação de e-mail etc.) e vários links apontam para ela.
 Route::get('/dashboard', fn () => redirect('/app'))
-    ->middleware(['auth', 'throttle:120,1'])->name('dashboard');
+    ->middleware(['auth', 'throttle:app'])->name('dashboard');
 
 // Authenticated routes
-Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:120,1'])->group(function (): void {
+Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group(function (): void {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/exportar-dados', [ProfileController::class, 'exportPersonalData'])->name('profile.export');
@@ -226,6 +227,8 @@ Route::middleware(['auth'])->group(function (): void {
 
 require __DIR__.'/auth.php';
 
-// Stripe Webhook (no CSRF, no auth)
+// Stripe Webhook (no CSRF, no auth). Cashier verifies the signature whenever the
+// secret is set; the guard rejects (503) in production when it is missing.
 Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
+    ->middleware(EnsureStripeWebhookIsConfigured::class)
     ->name('cashier.webhook');

@@ -7,12 +7,72 @@ Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Larave
 | Camada | Tecnologia |
 |--------|-----------|
 | Backend | Laravel 12 (PHP 8.2+) |
-| Banco de Dados | MySQL 8 |
+| Banco de Dados | MySQL 5.7+ (compatível com MySQL 8.4 LTS) |
 | Frontend | Alpine.js + Tailwind CSS + HTML5 + CSS3 |
 | Autenticação | Laravel Breeze |
 | Alertas | SweetAlert2 |
 | Ícones | Font Awesome 6 |
 | Padrão CSS | Mobile First |
+
+## Decisões de stack
+
+Cada tecnologia da lista pedida foi avaliada pelo ganho real para este micro SaaS hospedado na HostGator (hospedagem compartilhada, PHP 8.2, sem Node/Chrome no servidor). Os pacotes novos foram instalados respeitando `config.platform.php = 8.2.33` do Composer.
+
+| Tecnologia | Decisão | Onde/por quê |
+|---|---|---|
+| Laravel 12 | Adotado (12.70) | Base da aplicação. |
+| MySQL 8.4 LTS | Compatível; servidor atual é **5.7.44-48** | Versão conferida com `php artisan db:show` no banco do `.env` (HostGator). O código não usa CTEs, window functions nem `JSON_TABLE`, então roda em 5.7 e em 8.4. Recomendação: atualizar o servidor para 8.4 LTS quando o plano de hospedagem permitir. Testes usam SQLite em memória. |
+| Laravel Sanctum | Adotado (4.3) | Tokens da API REST versionada `/api/v1`, com abilities e expiração por token, isolados por conta. Tabela `personal_access_tokens` com chave UUID. |
+| Laravel API Resources | Adotado (nativo) | Respostas JSON da API v1. |
+| OpenAPI/Swagger (L5 Swagger) | Adotado (darkaonline/l5-swagger 11.2) | Documentação da API v1; geração manual (`L5_SWAGGER_GENERATE_ALWAYS=false`) e acesso protegido. |
+| Livewire 3 | **Livewire 4** | O Filament 5 exige Livewire 4; usar Livewire 3 obrigaria rebaixar o Filament. |
+| FilamentPHP | Adotado (5.10) | Painel autenticado em `/app`. |
+| Alpine.js | Adotado | Interatividade das páginas Blade (tema, tooltips, contagens). |
+| Tailwind CSS | Adotado (3.4) | Estilos mobile first, build via Vite. |
+| TanStack Table | Não adotado | As tabelas do Filament já fazem ordenação, filtros e paginação no servidor. |
+| Zod | Não adotado | Validação no servidor com Form Requests, mais validação HTML5/Alpine no navegador. |
+| Axios | Não adotado | Livewire e `fetch` do navegador cobrem as poucas chamadas assíncronas. O `resources/js/bootstrap.js` vazio foi removido. |
+| Laravel Storage | Adotado | Disco privado `media` (`storage/app/private/media`) para anexos, sem exposição em `public/storage`. |
+| Spatie Permission | Adotado (6.25) | ACL por conta (papéis Dono, Gestor, Colaborador). |
+| Spatie Media Library | Adotado (11.23) | Anexos de clientes e logotipo da conta, no disco privado `media`. Tabela `media` com chave UUID. |
+| Spatie Activitylog | Adotado (4.12) | Trilha de auditoria (LGPD). |
+| Laravel Queue | Adotado (driver `database`) | E-mails de autenticação e exportações em fila. Tabelas `jobs`/`failed_jobs` já existem. |
+| Laravel Cache | Adotado (driver `database`) | Cache de consultas pesadas por conta. |
+| Laravel Scout | Adotado (10.25, driver `database`) | Busca global de clientes e produtos sem serviço externo. |
+| Browsershot | Não adotado | Exige Node e Chrome, indisponíveis na hospedagem compartilhada. PDFs usam **barryvdh/laravel-dompdf 3.1**. |
+| Laravel Excel (Maatwebsite) | Adotado (3.1) | Exportação XLSX. |
+| Laravel Data | Adotado (spatie/laravel-data 4.23) | Apenas para DTOs novos nas fronteiras de serviço/API; os DTOs existentes continuam como estão. |
+| Laravel Breeze | Adotado (2.4) | Cadastro, login (usuário + e-mail + senha), verificação de e-mail e redefinição de senha. |
+| Pest / PHPUnit | Adotado (Pest 3.8 / PHPUnit 11.5) | Testes automatizados; testes de carga com pestphp/pest-plugin-stressless 3.1 (k6 v0.47) fora do `composer test`. |
+| Laravel Pint | Adotado | Padronização de código (`composer lint:test`). |
+| PHPStan / Larastan | Adotado (Larastan 3.12, nível 5) | `phpVersion: 80200`, para acusar sintaxe/funções de PHP 8.3+ que quebrariam na HostGator. |
+| Rector | Adotado (2.6, só dry-run) | Conjuntos `php82` / `UP_TO_PHP_82`. |
+
+### Login do painel Filament
+
+O painel `/app` não tem tela de login própria. Visitantes são redirecionados para o login do Breeze (`/login`), que exige **nome de usuário + e-mail + senha** do mesmo usuário, com limite de tentativas, reCAPTCHA v3 e honeypot. Assim existe uma única implementação da regra. Usuários com e-mail não verificado são enviados para `/verify-email`, e o "Sair" do painel volta para a página inicial.
+
+### Agendador e filas na HostGator (cron)
+
+Os e-mails de verificação e de redefinição de senha são enviados pela fila (`QUEUE_CONNECTION=database`). Sem o cron, nenhum desses e-mails sai. No cPanel, crie uma tarefa cron a cada minuto usando o binário do PHP 8.2 (MultiPHP), não `/usr/local/bin/php`, que segue a versão padrão do servidor:
+
+```bash
+* * * * * cd /home/USUARIO/clientify360 && /opt/cpanel/ea-php82/root/usr/bin/php artisan schedule:run >> storage/logs/cron.log 2>&1
+```
+
+Confirme o caminho com `ls /opt/cpanel/` e `/opt/cpanel/ea-php82/root/usr/bin/php -v`. Mantenha a saída em `storage/logs/cron.log` até validar o funcionamento; depois troque por `/dev/null`.
+
+O agendador (`routes/console.php`) executa `queue:work --stop-when-empty --max-time=50 --tries=3` a cada minuto: processa os jobs pendentes e encerra, adequado para hospedagem compartilhada. Se a função `proc_open` estiver desabilitada na hospedagem, o agendador não consegue executar comandos; nesse caso adicione uma segunda linha de cron que rode a fila diretamente:
+
+```bash
+* * * * * cd /home/USUARIO/clientify360 && /opt/cpanel/ea-php82/root/usr/bin/php artisan queue:work --stop-when-empty --max-time=50 --tries=3 >> storage/logs/cron.log 2>&1
+```
+
+Depois do deploy, cadastre um usuário de teste e confirme que o e-mail de verificação chega em até 2 minutos. Se não chegar, veja `storage/logs/cron.log` e `php artisan queue:failed` (`php artisan queue:retry all` reenvia os que falharam).
+
+### Verificação de segurança em produção
+
+`php artisan security:check` falha (código de saída 1) em produção quando: `APP_DEBUG` está ligado, `APP_KEY` está vazia, `APP_URL` não usa `https://`, `STRIPE_WEBHOOK_SECRET` está vazio, o cookie de sessão não é `secure` ou a chave secreta do reCAPTCHA está vazia. Para testar webhooks localmente use `stripe listen --forward-to http://clientify360.test/stripe/webhook` e copie o `whsec_...` exibido para `STRIPE_WEBHOOK_SECRET` no `.env`.
 
 ## Arquitetura
 
@@ -27,7 +87,7 @@ Sistema de gestão de clientes no formato **Micro SaaS** desenvolvido com Larave
 
 - PHP 8.2+
 - Composer 2.x
-- MySQL 8.x
+- MySQL 5.7+ ou 8.x (o código é compatível com MySQL 8.4 LTS)
 - Node.js 20+ (para build de assets, opcional com CDN)
 
 ## Instalação
@@ -62,8 +122,11 @@ php artisan serve
 
 ## Credenciais de Teste
 
+O login exige os três dados juntos: nome de usuário, e-mail e senha.
+
 | Campo | Valor |
 |-------|-------|
+| Nome de usuário | admin |
 | E-mail | admin@clientify360.test |
 | Senha | password |
 

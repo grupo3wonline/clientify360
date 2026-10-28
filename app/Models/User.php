@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
@@ -15,12 +17,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, HasUuid, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, HasUuid, Notifiable, SoftDeletes;
 
     /** Papéis dentro de uma conta. */
     public const ROLE_OWNER = 'owner';
@@ -58,6 +61,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'ai_gemini_key',
+        'ai_groq_key',
+        'ai_openrouter_key',
     ];
 
     protected function casts(): array
@@ -106,9 +112,23 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->account !== null && $this->account->subscribed('default');
     }
 
-    /** Acesso ao painel: precisa ter uma conta associada e e-mail verificado. */
+    /**
+     * Panel access requires an account. E-mail verification is enforced by the
+     * panel auth middleware (redirect to /verify-email instead of a 403).
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->account_id !== null && $this->hasVerifiedEmail();
+        return $this->account_id !== null;
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    /** @param  string  $token */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

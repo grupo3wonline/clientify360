@@ -45,4 +45,12 @@ return [
         'min_score' => (float) env('RECAPTCHA_MIN_SCORE', 0.5),
     ],
 
+    // Requests per minute for the named rate limiters (AppServiceProvider).
+    // Only the disposable load-test environment raises them.
+    'rate_limits' => [
+        'public' => (int) env('PUBLIC_RATE_LIMIT', 60),
+        'app' => (int) env('APP_RATE_LIMIT', 120),
+        'api' => (int) env('API_RATE_LIMIT', 60),
+    ],
+
 ];
