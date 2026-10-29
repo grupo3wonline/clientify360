@@ -112,7 +112,7 @@ Em produção, crie o endpoint no painel do Stripe com os eventos `customer.subs
 - PHP 8.2+
 - Composer 2.x
 - MySQL 5.7+ ou 8.x (o código é compatível com MySQL 8.4 LTS)
-- Node.js 20+ (para build de assets, opcional com CDN)
+- Node.js 20+ (build dos assets com Vite; obrigatório, não há CDN)
 
 ## Instalação
 
@@ -121,28 +121,43 @@ Em produção, crie o endpoint no painel do Stripe com os eventos `customer.subs
 git clone <repo-url> Clientify360
 cd Clientify360
 
-# 2. Instale dependências PHP
+# 2. Instale dependências PHP e publique os assets do Filament
 composer install
+php artisan filament:assets
 
-# 3. Configure o ambiente
+# 3. Instale dependências JS e gere os assets (Vite)
+npm ci
+npm run build
+
+# 4. Configure o ambiente
 cp .env.example .env
 php artisan key:generate
 
-# 4. Configure o banco de dados no .env
-# DB_CONNECTION=mysql
-# DB_DATABASE=clientify360
-# DB_USERNAME=root
-# DB_PASSWORD=
+# 5. Configure no .env o banco (DB_*), o e-mail (MAIL_*), o Stripe (STRIPE_KEY,
+#    STRIPE_SECRET, STRIPE_PROFESSIONAL_PRICE_ID, STRIPE_WEBHOOK_SECRET) e o reCAPTCHA
 
-# 5. Execute as migrations e seeders
+# 6. Execute as migrations e seeders
 php artisan migrate --seed
 
-# 6. Crie o link de storage
-php artisan storage:link
-
-# 7. Inicie o servidor
+# 7. Inicie o servidor e a fila
 php artisan serve
+php artisan queue:work   # em outro terminal (e-mails e exportações)
 ```
+
+`php artisan storage:link` não é necessário: anexos, logotipos e exportações ficam em discos privados (`media` e `local`) e são servidos por rotas autenticadas.
+
+## Comandos de qualidade
+
+```bash
+composer test        # Pest/PHPUnit (SQLite em memória)
+composer lint:test   # Pint
+composer stan        # PHPStan/Larastan
+composer rector:dry  # Rector (somente simulação)
+```
+
+## API REST
+
+A API versionada fica em `/api/v1` (tokens Sanctum criados em Perfil → Tokens de API, plano Profissional). A documentação OpenAPI/Swagger fica em `/api/documentation` (usuário autenticado, e-mail verificado e plano Profissional). O arquivo `storage/api-docs/api-docs.json` é versionado; ao alterar as anotações em `app/Http/Controllers/Api/V1`, rode `php artisan l5-swagger:generate` e faça commit do arquivo.
 
 ## Credenciais de Teste
 
@@ -163,12 +178,17 @@ O login exige os três dados juntos: nome de usuário, e-mail e senha.
 - ✅ CRUD completo de clientes
 - ✅ Tema claro/escuro com persistência
 - ✅ Interface responsiva (Mobile First)
-- ✅ Páginas públicas (Home, Sobre, Serviços, Ferramentas, Contato, Privacidade)
-- ✅ Páginas de erro personalizadas (404, 403, 500, 419, 429)
-- ✅ SweetAlert2 para feedback ao usuário
+- ✅ Landing page (hotsite) única com benefícios, funcionalidades, como usar, dicas, planos, FAQ, sobre, serviços, ferramentas e contato (WhatsApp e e-mail do Grupo 3W Online); `/sobre`, `/servicos`, `/ferramentas` e `/contato` redirecionam (301) para as seções
+- ✅ Política de Privacidade e Termos de Uso; banner de cookies com consentimento registrado (LGPD, GDPR, CCPA, POPIA)
+- ✅ SEO: meta tags, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt` e `llms.txt`
+- ✅ Páginas de erro personalizadas (401, 403, 404, 419, 429, 500, 503)
+- ✅ Planos Básico (grátis) e Profissional (R$ 29,90/mês) com Stripe, menu Financeiro e histórico de pagamentos
+- ✅ ACL por conta (Dono, Gestor, Colaborador) com Spatie Permission
+- ✅ API REST `/api/v1` com Sanctum e documentação OpenAPI
+- ✅ SweetAlert2 para feedback ao usuário e overlay de carregamento
 - ✅ Breadcrumbs em todas as páginas internas
 - ✅ UUID como chave primária
-- ✅ SoftDeletes em todos os models
+- ✅ SoftDeletes em todos os models, exceto as 10 exceções documentadas em `.kiro/steering/style-guide.md`
 
 ### Módulos comerciais (incorporados de `bkp-after_features`)
 
@@ -192,17 +212,32 @@ Detalhes das decisões de mesclagem: [`docs/MERGE-bkp-after_features.md`](docs/M
 ```
 app/
 ├── Actions/          # Ações isoladas
+├── Console/Commands/ # accounts:backfill, security:check, stripe:setup
+├── Data/             # Objetos Laravel Data (planos, assinatura, faturas, listagens)
 ├── DTOs/             # Data Transfer Objects
 ├── Entities/         # Entidades com getters/setters
+├── Exports/          # Planilhas (Laravel Excel)
+├── Filament/         # Painel /app (resources e widgets)
 ├── Http/
-│   ├── Controllers/  # Controllers (HTTP only)
-│   └── Requests/     # Form Requests (validação)
+│   ├── Controllers/  # Controllers (HTTP only) e Api/V1
+│   ├── Middleware/   # Plano, termos, cabeçalhos de segurança, equipe
+│   ├── Requests/     # Form Requests (validação)
+│   └── Resources/    # API Resources (V1)
 ├── Interfaces/       # Contratos (interfaces)
+├── Jobs/             # Jobs de fila (exportação)
+├── Listeners/        # Webhook do Stripe
 ├── Models/           # Eloquent Models
+├── Notifications/    # E-mails (verificação, senha, convites, exportação)
+├── Policies/         # Autorização por conta
 ├── Repositories/     # Repositórios (DB operations)
 ├── Services/         # Serviços (business logic)
-├── Traits/           # Traits compartilhados
+├── Support/          # Utilitários (cache por conta, SEO, CTA, privacidade)
+├── Traits/           # Traits compartilhados (UUID, conta)
 └── Providers/        # Service Providers
+resources/
+├── brand/tokens.json # Cores e tokens da identidade visual
+├── css/, js/, fonts/ # Assets compilados pelo Vite
+└── views/            # Blade (layouts, componentes, páginas, PDFs)
 ```
 
 ## Desenvolvedor

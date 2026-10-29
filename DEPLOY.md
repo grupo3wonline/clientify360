@@ -50,7 +50,8 @@ estão no `.gitignore`. Escolha uma das opções:
   `vendor/`, os assets compilados e os do Filament.
 
 A documentação da API (`storage/api-docs/api-docs.json`) vai versionada no repositório: não é preciso
-rodar `l5-swagger:generate` em produção.
+rodar `l5-swagger:generate` em produção. Quando as anotações OpenAPI em `app/Http/Controllers/Api/V1`
+mudarem, rode `php artisan l5-swagger:generate` localmente e faça commit do arquivo gerado.
 
 ## 4. Passos pós-deploy (via Terminal do cPanel ou SSH)
 
@@ -66,9 +67,23 @@ php artisan migrate --force
 php artisan filament:assets      # sem efeito quando os arquivos já foram enviados
 php artisan optimize             # caches de config, rotas, views e eventos
 php artisan filament:optimize
-php artisan storage:link
 php artisan security:check       # deve terminar sem erros
 ```
+
+`php artisan storage:link` não é necessário: anexos, logotipos e exportações ficam em discos privados
+(`storage/app/private`) e são entregues por rotas autenticadas.
+
+**Logs.** A Política de Privacidade informa retenção de até 90 dias para logs técnicos. Em produção use
+`LOG_STACK=daily` e `LOG_DAILY_DAYS=90` no `.env` (o padrão do Laravel é `single`, sem rotação).
+
+## 4.1 Webhook do Stripe
+
+No painel do Stripe (Developers → Webhooks), crie o endpoint `https://seudominio.com.br/stripe/webhook`
+com os eventos `customer.subscription.created`, `customer.subscription.updated`,
+`customer.subscription.deleted`, `customer.updated`, `customer.deleted`, `invoice.payment_succeeded` e
+`invoice.payment_action_required`. Copie o segredo `whsec_...` para `STRIPE_WEBHOOK_SECRET` e rode
+`php artisan optimize`. Sem o segredo, em produção a rota responde 503. Localmente, use
+`stripe listen --forward-to 127.0.0.1:8000/stripe/webhook`.
 
 ## 5. Agendador e filas (cron)
 
@@ -85,8 +100,9 @@ Confirme o caminho com `ls /opt/cpanel/` e `/opt/cpanel/ea-php82/root/usr/bin/ph
 `storage/logs/cron.log` até validar o funcionamento; depois troque por `/dev/null`.
 
 O agendador (`routes/console.php`) roda a cada minuto `queue:work --stop-when-empty --max-time=50 --tries=3`
-e, uma vez por dia, `sanctum:prune-expired --hours=24` (tokens de API vencidos), `model:prune` e a limpeza
-das planilhas exportadas com mais de 2 dias.
+e, uma vez por dia, `sanctum:prune-expired --hours=24` (tokens de API vencidos), `model:prune`,
+`activitylog:clean --force` (trilha de auditoria com mais de 365 dias) e a limpeza das planilhas
+exportadas com mais de 2 dias.
 
 **Se `proc_open` estiver desabilitado** (o `security:check` avisa com "Função PHP `proc_open` desabilitada:
 o agendador não executa comandos"), troque as entradas por
