@@ -65,6 +65,11 @@
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"
         ],
+        "test:load:prepare": "@php tests/Load/prepare.php",
+        "test:load": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php vendor/bin/pest tests/Load --colors=always"
+        ],
         "lint": "pint",
         "lint:test": "pint --test",
         "stan": "phpstan analyse --memory-limit=512M",

@@ -145,6 +145,39 @@ it('renders header, footer, 3W CTA and autocomplete="off" on the public lead for
         ->and($cta->getAttribute('rel'))->toContain('noopener');
 });
 
+it('gives every image an alt text and never shows the old 39,90 price', function (): void {
+    $owner = Personas::owner();
+    $urls = ['/', '/politica-de-privacidade', '/termos-de-uso', '/login', '/register', '/forgot-password'];
+    $appUrls = [route('clients.index'), route('products.index'), route('quotes.index'), route('billing.index'), route('profile.edit'), '/app', '/app/clients'];
+    $failures = [];
+
+    $check = function (string $url) use (&$failures): void {
+        $response = $this->get($url)->assertOk();
+        foreach (guardDom($response)->getElementsByTagName('img') as $img) {
+            /** @var DOMElement $img */
+            if (!$img->hasAttribute('alt')) {
+                $failures[] = "{$url}: <img src=\"{$img->getAttribute('src')}\"> without alt";
+            }
+        }
+        if (str_contains((string) $response->getContent(), '39,90')) {
+            $failures[] = "{$url}: shows 39,90";
+        }
+    };
+
+    array_map($check, $urls);
+    $this->actingAs($owner);
+    array_map($check, $appUrls);
+
+    expect($failures)->toBe([]);
+});
+
+it('renders the shared layout contracts on the terms page', function (): void {
+    $response = $this->get('/termos-de-uso')->assertOk();
+
+    assertSharedLayout($response, '/termos-de-uso');
+    assertSingleH1($response, '/termos-de-uso');
+});
+
 it('marks download links so the loading overlay ignores them', function (): void {
     /** @var User $owner */
     $owner = Personas::owner('professional');

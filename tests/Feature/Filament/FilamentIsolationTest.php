@@ -60,6 +60,17 @@ it('returns 404 when opening another account record in the panel', function (str
     $this->get($resource::getUrl('edit', ['record' => $foreign->getKey()]))->assertNotFound();
 })->with('editable resources');
 
+it('covers every panel resource that has an edit page', function (): void {
+    Filament::setCurrentPanel('app');
+    $withEdit = collect(Filament::getPanel('app')->getResources())
+        ->filter(fn (string $resource): bool => array_key_exists('edit', $resource::getPages()))
+        ->values()->sort()->values()->all();
+    $covered = collect([ClientResource::class, DealResource::class, FinancialEntryResource::class, InteractionResource::class,
+        ProductResource::class, ReminderResource::class, TagResource::class])->sort()->values()->all();
+
+    expect($withEdit)->toBe($covered);
+});
+
 it('opens the edit page of an own-account record', function (string $resource, Closure $make): void {
     $owner = Personas::owner();
     $own = $make($owner->account_id);
