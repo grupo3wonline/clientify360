@@ -1,68 +1,21 @@
-name: 🚀 Deploy to HostGator (FTP)
-
 on:
   push:
     branches:
       - main
       - master
-  workflow_dispatch:
-
-# Evita deploys concorrentes sobrescrevendo o servidor
-concurrency:
-  group: deploy-hostgator
-  cancel-in-progress: false
-
+  pull_request:
+    branches:
+      - main
+      - master
+name: 🚀 Deploy website to FTP Server Hostgator
 jobs:
-  build-and-deploy:
+  web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
-
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      # ─── PHP / Composer (dependências de produção) ───────────────
-      # A HostGator (hospedagem compartilhada) não roda Composer, por isso
-      # instalamos vendor/ aqui e enviamos pronto. PHP 8.2 = runtime da HostGator.
-      - name: 🐘 Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, bcmath, pdo_mysql, gd, zip, intl
-          tools: composer:v2
-          coverage: none
-
-      - name: 📦 Cache Composer
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-
-
-      - name: 📦 Install Composer dependencies (production)
-        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
-
-      # ─── Node / Vite (build do front-end) ────────────────────────
-      # A HostGator (hospedagem compartilhada) não roda Node, por isso
-      # compilamos os assets aqui e enviamos public/build/ pronto via FTP.
-      - name: 🟩 Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: 📦 Install npm dependencies
-        run: npm ci
-
-      - name: 🏗️ Build front-end assets (Vite)
-        run: npm run build
-
-      # ── Envio via FTP ────────────────────────────────────────────────────
-      # Envia o projeto já com vendor/ instalado e public/build/ compilado
-      # (os assets do Vite PRECISAM ir ao servidor — não estão no exclude).
-      # Sync incremental: apenas arquivos alterados são transferidos (o action
-      # mantém um manifesto). Os fontes de build (package*.json, *.config.js)
-      # continuam excluídos, pois não são usados em runtime na HostGator.
       - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -71,43 +24,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
-          local-dir: ./
+          log-level: verbose
           server-dir: clientify360/
-          log-level: standard
-          # Estratégia para storage/:
-          #   - Enviamos a ESTRUTURA de pastas (os .gitignore de cada pasta
-          #     garantem que os diretórios sejam criados no servidor).
-          #   - Excluímos apenas o CONTEÚDO volátil (dados de cache/sessões/
-          #     views compiladas/logs), que é gerado em runtime no servidor.
-          # Assim, na primeira publicação as pastas existem e o Laravel não
-          # quebra por falta de storage/framework/*, sem sobrescrever dados.
-          #
-          # Também preserva no servidor: .env de produção e o manifesto de sync.
-          exclude: |
-            **/.git
-            **/.git/**
-            **/.github/**
-            **/node_modules/**
-            **/tests/**
-            .env
-            .env.*
-            .editorconfig
-            .gitattributes
-            .npmrc
-            .styleci.yml
-            .phpunit.result.cache
-            phpunit.xml
-            package.json
-            package-lock.json
-            postcss.config.js
-            tailwind.config.js
-            vite.config.js
-            **/*.md
-            storage/app/private/**
-            storage/app/public/**
-            storage/framework/cache/data/**
-            storage/framework/sessions/*
-            storage/framework/testing/**
-            storage/framework/views/*
-            storage/logs/*
-            storage/*.sqlite
