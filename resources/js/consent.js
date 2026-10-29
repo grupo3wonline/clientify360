@@ -219,6 +219,8 @@ async function doNotSell(link) {
 }
 
 function bindDocument() {
+    // Capture phase: preventDefault() must run before the loading overlay's bubble
+    // listener, otherwise it shows "Carregando..." over the banner (no navigation follows).
     document.addEventListener('click', (event) => {
         const preferences = event.target.closest('[data-cookie-preferences]');
         if (preferences) {
@@ -236,7 +238,7 @@ function bindDocument() {
         if (cta && event.target.closest('a') && current && (current.analytics || current.marketing)) {
             window.dataLayer.push({ event: 'cta_click', placement: cta.dataset.cta });
         }
-    });
+    }, { capture: true });
 
     window.addEventListener('open-cookie-preferences', () => {
         reopened = true;

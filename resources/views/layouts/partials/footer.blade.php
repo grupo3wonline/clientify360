@@ -43,8 +43,8 @@
             <a href="{{ url('/') }}" class="hover:text-brand-600 dark:hover:text-brand-400">Início</a>
             <a href="{{ $privacyUrl }}" class="hover:text-brand-600 dark:hover:text-brand-400">Política de Privacidade</a>
             <a href="{{ url('/termos-de-uso') }}" class="hover:text-brand-600 dark:hover:text-brand-400">Termos de Uso</a>
-            <a href="{{ $privacyUrl }}#cookies" data-cookie-preferences class="hover:text-brand-600 dark:hover:text-brand-400">Preferências de cookies</a>
-            <a href="{{ $privacyUrl }}#nao-vender" data-do-not-sell class="hover:text-brand-600 dark:hover:text-brand-400">Não vender ou compartilhar minhas informações pessoais</a>
+            <a href="{{ $privacyUrl }}#cookies" data-cookie-preferences data-no-loading class="hover:text-brand-600 dark:hover:text-brand-400">Preferências de cookies</a>
+            <a href="{{ $privacyUrl }}#nao-vender" data-do-not-sell data-no-loading class="hover:text-brand-600 dark:hover:text-brand-400">Não vender ou compartilhar minhas informações pessoais</a>
         </nav>
         <p class="c360-footer__credits flex flex-col sm:flex-row gap-1 sm:gap-3">
             <span>&copy; {{ date('Y') }} Clientify360</span>

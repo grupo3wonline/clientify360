@@ -62,8 +62,9 @@ it('has the interactive cookie-preferences and do-not-sell links in the Blade an
     $pages[] = (string) $this->get('/app')->getContent();
 
     foreach ($pages as $html) {
-        expect($html)->toContain('href="'.$privacy.'#cookies" data-cookie-preferences')
-            ->toContain('href="'.$privacy.'#nao-vender" data-do-not-sell')
+        // data-no-loading: the loading overlay must not cover the banner or the opt-out dialog.
+        expect($html)->toContain('href="'.$privacy.'#cookies" data-cookie-preferences data-no-loading')
+            ->toContain('href="'.$privacy.'#nao-vender" data-do-not-sell data-no-loading')
             ->toContain('Preferências de cookies')
             ->toContain('Não vender ou compartilhar minhas informações pessoais');
     }
@@ -83,5 +84,15 @@ it('loads the consent module from the Blade and panel bundles', function (): voi
         ->and(file_get_contents(resource_path('js/consent.js')))
         ->toContain('if (consent.analytics || consent.marketing)')
         ->toContain("'https://www.googletagmanager.com/gtm.js?id='")
-        ->toContain('globalPrivacyControl');
+        ->toContain('globalPrivacyControl')
+        // The preferences/opt-out handler runs before the loading overlay's bubble listener.
+        ->toContain('}, { capture: true });');
+});
+
+it('keeps the privacy page consent buttons out of the loading overlay', function (): void {
+    $privacy = route('privacy');
+
+    $this->get($privacy)
+        ->assertSee('href="'.$privacy.'#cookies" data-cookie-preferences data-no-loading', false)
+        ->assertSee('href="'.$privacy.'#nao-vender" data-do-not-sell data-no-loading', false);
 });

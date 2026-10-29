@@ -146,7 +146,7 @@
                 </div>
                 <p class="mt-4 {{ $p }}">A preferência de tema claro/escuro fica no armazenamento local do navegador (não é um cookie) e não sai do seu dispositivo.</p>
                 <p class="mt-4">
-                    <a href="{{ route('privacy') }}#cookies" data-cookie-preferences class="c-btn-primary">
+                    <a href="{{ route('privacy') }}#cookies" data-cookie-preferences data-no-loading class="c-btn-primary">
                         <i class="fa-solid fa-sliders" aria-hidden="true"></i> Preferências de cookies
                     </a>
                 </p>
@@ -195,7 +195,7 @@
                         <p class="mt-3 text-sm font-semibold text-surface-900 dark:text-white">Não vendemos informações pessoais.</p>
                         <p class="mt-1 text-sm {{ $p }}">Cookies de marketing podem ser considerados "compartilhamento" para publicidade. Você pode recusá-los a qualquer momento; também respeitamos o sinal <em>Global Privacy Control</em> (GPC) do navegador.</p>
                         <p class="mt-4">
-                            <a href="{{ route('privacy') }}#nao-vender" data-do-not-sell class="c-btn-primary">
+                            <a href="{{ route('privacy') }}#nao-vender" data-do-not-sell data-no-loading class="c-btn-primary">
                                 <i class="fa-solid fa-user-shield" aria-hidden="true"></i> Não vender ou compartilhar minhas informações pessoais
                             </a>
                         </p>
