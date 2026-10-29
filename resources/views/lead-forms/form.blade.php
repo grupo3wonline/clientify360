@@ -8,7 +8,7 @@
 
     <x-page-title :title="$editing ? 'Editar formulário' : 'Novo formulário de captação'" icon="fa-magnet" />
 
-    <form action="{{ $editing ? route('lead-forms.update', $form) : route('lead-forms.store') }}" method="POST"
+    <form autocomplete="off" action="{{ $editing ? route('lead-forms.update', $form) : route('lead-forms.store') }}" method="POST"
           x-data="leadFormBuilder(@js(array_values(old('fields', $form->fields ?? []))), @js(old('color', $form->color)), @js(old('title', $form->title)), @js(old('button_text', $form->button_text)))"
           class="grid grid-cols-1 xl:grid-cols-5 gap-6">
         @csrf
@@ -18,30 +18,30 @@
             <div class="c-card p-5 space-y-4">
                 <h3 class="text-sm font-semibold"><i class="fa-solid fa-sliders text-brand-500 mr-2"></i>Configuração</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div><label class="c-label">Nome interno <span class="text-danger-500">*</span></label><input name="name" required maxlength="100" value="{{ old('name', $form->name) }}" class="c-input" placeholder="Ex.: Bio do Instagram">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
+                    <div><label class="c-label">Nome interno <span class="text-danger-500">*</span></label><input autocomplete="off" name="name" required maxlength="100" value="{{ old('name', $form->name) }}" class="c-input" placeholder="Ex.: Bio do Instagram">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
                     <div><label class="c-label">Origem registrada no cliente</label>
-                        <select name="default_source" class="c-input">@foreach($sources as $k => $label)<option value="{{ $k }}" @selected(old('default_source', $form->default_source) === $k)>{{ $label }}</option>@endforeach</select></div>
+                        <select autocomplete="off" name="default_source" class="c-input">@foreach($sources as $k => $label)<option value="{{ $k }}" @selected(old('default_source', $form->default_source) === $k)>{{ $label }}</option>@endforeach</select></div>
                 </div>
-                <div><label class="c-label">Título público <span class="text-danger-500">*</span></label><input name="title" x-model="title" required maxlength="200" class="c-input">@error('title')<p class="c-error">{{ $message }}</p>@enderror</div>
-                <div><label class="c-label">Texto de apoio</label><textarea name="description" rows="2" maxlength="1000" class="c-input resize-none" placeholder="Ex.: Receba um diagnóstico gratuito do seu site em 24h.">{{ old('description', $form->description) }}</textarea></div>
+                <div><label class="c-label">Título público <span class="text-danger-500">*</span></label><input autocomplete="off" name="title" x-model="title" required maxlength="200" class="c-input">@error('title')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label">Texto de apoio</label><textarea autocomplete="off" name="description" rows="2" maxlength="1000" class="c-input resize-none" placeholder="Ex.: Receba um diagnóstico gratuito do seu site em 24h.">{{ old('description', $form->description) }}</textarea></div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <div><label class="c-label">Texto do botão</label><input name="button_text" x-model="button" required maxlength="50" class="c-input"></div>
-                    <div><label class="c-label">Cor</label><input type="color" name="color" x-model="color" class="h-10 w-full rounded-lg border border-surface-200 dark:border-surface-700"></div>
+                    <div><label class="c-label">Texto do botão</label><input autocomplete="off" name="button_text" x-model="button" required maxlength="50" class="c-input"></div>
+                    <div><label class="c-label">Cor</label><input autocomplete="off" type="color" name="color" x-model="color" class="h-10 w-full rounded-lg border border-surface-200 dark:border-surface-700"></div>
                 </div>
-                <div><label class="c-label">Mensagem de sucesso</label><input name="success_message" maxlength="500" value="{{ old('success_message', $form->success_message) }}" class="c-input"></div>
-                <div><label class="c-label">Redirecionar após envio (opcional)</label><input type="url" name="redirect_url" maxlength="500" value="{{ old('redirect_url', $form->redirect_url) }}" class="c-input" placeholder="https://seusite.com.br/obrigado">@error('redirect_url')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label">Mensagem de sucesso</label><input autocomplete="off" name="success_message" maxlength="500" value="{{ old('success_message', $form->success_message) }}" class="c-input"></div>
+                <div><label class="c-label">Redirecionar após envio (opcional)</label><input autocomplete="off" type="url" name="redirect_url" maxlength="500" value="{{ old('redirect_url', $form->redirect_url) }}" class="c-input" placeholder="https://seusite.com.br/obrigado">@error('redirect_url')<p class="c-error">{{ $message }}</p>@enderror</div>
             </div>
 
             <div class="c-card p-5 space-y-4">
                 <h3 class="text-sm font-semibold"><i class="fa-solid fa-diagram-project text-brand-500 mr-2"></i>Automação</h3>
                 <label class="flex items-start gap-2 text-sm cursor-pointer">
-                    <input type="checkbox" name="create_deal" value="1" @checked(old('create_deal', $form->create_deal)) class="mt-0.5 rounded border-surface-300 text-brand-600">
+                    <input autocomplete="off" type="checkbox" name="create_deal" value="1" @checked(old('create_deal', $form->create_deal)) class="mt-0.5 rounded border-surface-300 text-brand-600">
                     <span>Criar oportunidade no funil para cada lead<span class="block text-xs text-surface-500">Leads com e-mail já cadastrado são vinculados ao cliente existente (sem duplicar).</span></span>
                 </label>
                 <div><label class="c-label">Etapa inicial</label>
-                    <select name="pipeline_stage_id" class="c-input"><option value="">Primeira etapa do funil</option>@foreach($stages as $s)<option value="{{ $s->id }}" @selected(old('pipeline_stage_id', $form->pipeline_stage_id) === $s->id)>{{ $s->name }}</option>@endforeach</select></div>
+                    <select autocomplete="off" name="pipeline_stage_id" class="c-input"><option value="">Primeira etapa do funil</option>@foreach($stages as $s)<option value="{{ $s->id }}" @selected(old('pipeline_stage_id', $form->pipeline_stage_id) === $s->id)>{{ $s->name }}</option>@endforeach</select></div>
                 <label class="flex items-center gap-2 text-sm cursor-pointer">
-                    <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $form->is_active)) class="rounded border-surface-300 text-brand-600"> Formulário ativo (aceitando envios)
+                    <input autocomplete="off" type="checkbox" name="is_active" value="1" @checked(old('is_active', $form->is_active)) class="rounded border-surface-300 text-brand-600"> Formulário ativo (aceitando envios)
                 </label>
             </div>
 
@@ -60,12 +60,12 @@
                 <div class="space-y-2">
                     <template x-for="(f, i) in fields" :key="f.key">
                         <div class="grid grid-cols-12 gap-2 items-center p-2 rounded-xl bg-surface-50 dark:bg-surface-800/50">
-                            <input :name="`fields[${i}][label]`" x-model="f.label" required maxlength="80" placeholder="Rótulo" class="c-input py-1.5 col-span-12 sm:col-span-4">
-                            <input :name="`fields[${i}][name]`" x-model="f.name" required maxlength="40" placeholder="identificador" pattern="[a-z][a-z0-9_]*" title="Letras minúsculas, números e _" class="c-input py-1.5 font-mono text-xs col-span-5 sm:col-span-3">
-                            <select :name="`fields[${i}][type]`" x-model="f.type" class="c-input py-1.5 col-span-4 sm:col-span-2">
+                            <input autocomplete="off" :name="`fields[${i}][label]`" x-model="f.label" required maxlength="80" placeholder="Rótulo" class="c-input py-1.5 col-span-12 sm:col-span-4">
+                            <input autocomplete="off" :name="`fields[${i}][name]`" x-model="f.name" required maxlength="40" placeholder="identificador" pattern="[a-z][a-z0-9_]*" title="Letras minúsculas, números e _" class="c-input py-1.5 font-mono text-xs col-span-5 sm:col-span-3">
+                            <select autocomplete="off" :name="`fields[${i}][type]`" x-model="f.type" class="c-input py-1.5 col-span-4 sm:col-span-2">
                                 @foreach(\App\Models\LeadForm::FIELD_TYPES as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach
                             </select>
-                            <label class="col-span-2 sm:col-span-2 text-xs flex items-center gap-1 cursor-pointer"><input type="checkbox" :name="`fields[${i}][required]`" value="1" x-model="f.required" class="rounded border-surface-300 text-brand-600"> Obrig.</label>
+                            <label class="col-span-2 sm:col-span-2 text-xs flex items-center gap-1 cursor-pointer"><input autocomplete="off" type="checkbox" :name="`fields[${i}][required]`" value="1" x-model="f.required" class="rounded border-surface-300 text-brand-600"> Obrig.</label>
                             <div class="col-span-1 flex justify-end gap-0.5">
                                 <button type="button" @click="move(i, -1)" x-show="i > 0" class="text-surface-400 hover:text-surface-700 p-1" title="Subir"><i class="fa-solid fa-arrow-up text-xs"></i></button>
                                 <button type="button" @click="fields.splice(i, 1)" class="text-surface-400 hover:text-danger-600 p-1" title="Remover"><i class="fa-solid fa-xmark"></i></button>

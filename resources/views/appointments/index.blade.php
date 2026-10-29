@@ -2,11 +2,7 @@
     @section('title', 'Agendamentos')
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Agendamentos</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Agendamentos']]" />
     </x-slot>
 
     @php
@@ -35,7 +31,7 @@
     <!-- Page Header + counters -->
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Agendamentos</h1>
+            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Agendamentos</h1><x-help title="Como usar esta página" description="Organize seus compromissos com clientes em lista ou calendário." example="Agende uma visita técnica para amanhã às 14h e confirme com o cliente." tip="Marque como concluído depois do atendimento para manter a agenda limpa." /></div>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Calendário de reuniões, visitas, ligações e videochamadas.</p>
         </div>
         <div class="flex items-center gap-3">

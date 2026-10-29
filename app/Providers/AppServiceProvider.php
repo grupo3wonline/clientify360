@@ -11,6 +11,8 @@ use App\Models\PersonalAccessToken;
 use App\Repositories\ClientRepository;
 use App\Services\NotificationService;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -54,12 +56,18 @@ class AppServiceProvider extends ServiceProvider
         // N+1 guard: lazy loading throws in local/testing; production stays permissive.
         Model::preventLazyLoading(!$this->app->isProduction());
 
+        // autocomplete="off" on every Filament text field (project rule for all forms and inputs).
+        TextInput::configureUsing(fn (TextInput $component): TextInput => $component->autocomplete(false));
+        Textarea::configureUsing(fn (Textarea $component): Textarea => $component->autocomplete(false));
+
         $this->configurePasswordPolicy();
         $this->configureRateLimiters();
 
         // @money($valor) → R$ 1.234,56   |   @qty($quantidade) → 1.500 / 2,5
         Blade::directive('money', fn (string $expr): string => "<?php echo e(\\App\\Support\\Format::money({$expr})); ?>");
         Blade::directive('qty', fn (string $expr): string => "<?php echo e(\\App\\Support\\Format::qty({$expr})); ?>");
+        // Same as Blade's @method, plus autocomplete="off" (project rule: every input has it; @csrf already does).
+        Blade::directive('method', fn (string $expr): string => "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"'.e(strtoupper({$expr})).'\" autocomplete=\"off\">'; ?>");
 
         // Badge de notificações no menu lateral — só calcula quando autenticado.
         View::composer('layouts.partials.sidebar-nav', function ($view): void {

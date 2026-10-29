@@ -1,22 +1,16 @@
-@extends('layouts.public')
+@extends('layouts.error')
 
-@section('title', 'Muitas Requisições')
-@section('meta_description', 'Você realizou muitas requisições em um curto período. Aguarde alguns instantes e tente novamente.')
+@php
+    $headers = isset($exception) && method_exists($exception, 'getHeaders') ? $exception->getHeaders() : [];
+    $retryAfter = (int) ($headers['Retry-After'] ?? 60);
+@endphp
 
-@section('content')
-    <section class="min-h-[60vh] flex items-center justify-center py-16 md:py-24">
-        <div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="mb-8">
-                <i class="fa-solid fa-gauge-simple-high text-warning-500 dark:text-warning-400 text-6xl md:text-8xl" aria-hidden="true"></i>
-            </div>
-            <p class="text-7xl md:text-9xl font-bold text-warning-500 dark:text-warning-400 mb-4" aria-hidden="true">429</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-surface-800 dark:text-white mb-4">Muitas requisições</h1>
-            <p class="text-surface-600 dark:text-surface-300 mb-8 leading-relaxed">
-                Você realizou muitas requisições em um curto período de tempo. Por favor, aguarde alguns instantes antes de tentar novamente. Isso ajuda a manter o sistema seguro e estável para todos.
-            </p>
-            <a href="{{ url('/') }}" class="inline-flex items-center bg-brand-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-brand-700 transition shadow-lg">
-                <i class="fa-solid fa-house mr-2" aria-hidden="true"></i> Voltar para a Página Inicial
-            </a>
-        </div>
-    </section>
+@section('title', 'Muitas requisições')
+@section('code', '429')
+@section('icon', 'fa-gauge-high')
+@section('tone', 'bg-warning-50 text-warning-700 dark:bg-warning-950/40 dark:text-warning-400')
+@section('heading', 'Muitas requisições')
+@section('message')
+    <p>Recebemos muitas tentativas em pouco tempo. Esse limite protege a sua conta e o sistema contra abusos.</p>
+    <p class="font-medium text-surface-800 dark:text-surface-100">Aguarde {{ $retryAfter }} segundos e tente novamente.</p>
 @endsection

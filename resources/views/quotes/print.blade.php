@@ -8,26 +8,26 @@
     {{-- Página autocontida (sem Tailwind CDN) para imprimir rápido e igual em qualquer navegador. "Salvar como PDF" gera o arquivo. --}}
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; color: #0f172a; margin: 0; background: #f1f5f9; font-size: 13px; line-height: 1.5; }
+        body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; color: {{ config('brand.colors.surface.900') }}; margin: 0; background: {{ config('brand.colors.surface.100') }}; font-size: 13px; line-height: 1.5; }
         .page { max-width: 820px; margin: 24px auto; background: #fff; padding: 48px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-        header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 28px; gap: 24px; }
-        h1 { margin: 0; font-size: 22px; color: #4f46e5; }
-        .muted { color: #64748b; }
+        header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid {{ config('brand.colors.brand.600') }}; padding-bottom: 20px; margin-bottom: 28px; gap: 24px; }
+        h1 { margin: 0; font-size: 22px; color: {{ config('brand.colors.brand.600') }}; }
+        .muted { color: {{ config('brand.colors.surface.500') }}; }
         .box { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
-        .box div { background: #f8fafc; border-radius: 8px; padding: 12px 14px; }
-        .label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin-bottom: 2px; }
+        .box div { background: {{ config('brand.colors.surface.50') }}; border-radius: 8px; padding: 12px 14px; }
+        .label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: {{ config('brand.colors.surface.500') }}; margin-bottom: 2px; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 8px 6px; }
-        td { padding: 10px 6px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+        th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: {{ config('brand.colors.surface.500') }}; border-bottom: 1px solid {{ config('brand.colors.surface.200') }}; padding: 8px 6px; }
+        td { padding: 10px 6px; border-bottom: 1px solid {{ config('brand.colors.surface.100') }}; vertical-align: top; }
         .r { text-align: right; white-space: nowrap; }
         .totals { margin-left: auto; width: 280px; }
         .totals div { display: flex; justify-content: space-between; padding: 4px 0; }
-        .totals .grand { border-top: 2px solid #0f172a; margin-top: 6px; padding-top: 8px; font-size: 17px; font-weight: 700; }
+        .totals .grand { border-top: 2px solid {{ config('brand.colors.surface.900') }}; margin-top: 6px; padding-top: 8px; font-size: 17px; font-weight: 700; }
         .notes { margin-top: 28px; white-space: pre-line; }
         .sign { margin-top: 64px; display: flex; gap: 48px; }
-        .sign div { flex: 1; border-top: 1px solid #94a3b8; padding-top: 6px; text-align: center; font-size: 11px; color: #64748b; }
+        .sign div { flex: 1; border-top: 1px solid {{ config('brand.colors.surface.400') }}; padding-top: 6px; text-align: center; font-size: 11px; color: {{ config('brand.colors.surface.500') }}; }
         .toolbar { max-width: 820px; margin: 16px auto 0; display: flex; justify-content: flex-end; gap: 8px; }
-        .toolbar button { background: #4f46e5; color: #fff; border: 0; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .toolbar button { background: {{ config('brand.colors.brand.600') }}; color: #fff; border: 0; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         @media print { body { background: #fff; } .page { box-shadow: none; margin: 0; padding: 0; max-width: none; } .toolbar { display: none; } }
         @media (max-width: 640px) { .page { padding: 20px; margin: 0; border-radius: 0; } .box { grid-template-columns: 1fr; } header { flex-direction: column; } }
     </style>
@@ -83,5 +83,6 @@
 
         <div class="sign"><div>{{ $user->name }}</div><div>{{ $quote->client?->name }} — De acordo</div></div>
     </main>
+    <p style="text-align:center;font-size:11px;color:{{ config('brand.colors.surface.400') }};margin:24px 0 8px">Sistema desenvolvido pelo desenvolvedor HOTWYL | WILLFROMBRASIL</p>
 </body>
 </html>

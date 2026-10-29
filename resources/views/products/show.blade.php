@@ -29,26 +29,26 @@
                     <p class="text-3xl font-bold mt-1 {{ $product->isLowStock() ? 'text-warning-700' : 'text-surface-900 dark:text-white' }}">@qty($product->stock) <span class="text-base font-medium text-surface-400">{{ $product->unit }}</span></p>
                     <p class="text-xs text-surface-500 mt-1">Mínimo: @qty($product->min_stock) {{ $product->unit }}</p>
 
-                    <form action="{{ route('products.movement', $product) }}" method="POST" class="mt-5 pt-5 border-t border-surface-100 dark:border-surface-800 space-y-3" x-data="{ type: 'in' }">
+                    <form autocomplete="off" action="{{ route('products.movement', $product) }}" method="POST" class="mt-5 pt-5 border-t border-surface-100 dark:border-surface-800 space-y-3" x-data="{ type: 'in' }">
                         @csrf
                         <div class="grid grid-cols-3 gap-1 bg-surface-100 dark:bg-surface-800 rounded-xl p-1">
                             @foreach(\App\Models\StockMovement::TYPES as $k => $label)
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="type" value="{{ $k }}" x-model="type" class="sr-only peer">
+                                    <input autocomplete="off" type="radio" name="type" value="{{ $k }}" x-model="type" class="sr-only peer">
                                     <span class="block text-center py-1.5 rounded-lg text-xs font-medium peer-checked:bg-white dark:peer-checked:bg-surface-700 peer-checked:shadow-sm">{{ $label }}</span>
                                 </label>
                             @endforeach
                         </div>
                         <div>
                             <label class="c-label" x-text="type === 'adjust' ? 'Novo saldo (contagem física)' : 'Quantidade'"></label>
-                            <input type="number" step="0.001" min="0" name="quantity" required class="c-input">
+                            <input autocomplete="off" type="number" step="0.001" min="0" name="quantity" required class="c-input">
                             @error('quantity') <p class="c-error">{{ $message }}</p> @enderror
                         </div>
                         <div x-show="type === 'in'" class="grid grid-cols-2 gap-3">
-                            <div><label class="c-label">Custo unit.</label><input type="number" step="0.01" min="0" name="unit_cost" class="c-input" :disabled="type !== 'in'"></div>
-                            <div><label class="c-label">Nº da nota</label><input name="document" maxlength="60" class="c-input" :disabled="type !== 'in'"></div>
+                            <div><label class="c-label">Custo unit.</label><input autocomplete="off" type="number" step="0.01" min="0" name="unit_cost" class="c-input" :disabled="type !== 'in'"></div>
+                            <div><label class="c-label">Nº da nota</label><input autocomplete="off" name="document" maxlength="60" class="c-input" :disabled="type !== 'in'"></div>
                         </div>
-                        <div><label class="c-label">Motivo</label><input name="reason" maxlength="255" class="c-input" placeholder="Opcional"></div>
+                        <div><label class="c-label">Motivo</label><input autocomplete="off" name="reason" maxlength="255" class="c-input" placeholder="Opcional"></div>
                         <button class="c-btn-primary w-full">Registrar movimentação</button>
                     </form>
                 </div>
@@ -63,16 +63,16 @@
                 <x-empty-state icon="fa-clock-rotate-left" title="Nenhuma movimentação ainda" />
             @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-surface-100 dark:divide-surface-800">
+                    <table class="c-table-stack min-w-full divide-y divide-surface-100 dark:divide-surface-800">
                         <thead class="bg-surface-50 dark:bg-surface-800/50"><tr><th class="c-th">Data</th><th class="c-th">Tipo</th><th class="c-th text-right">Qtd.</th><th class="c-th text-right">Saldo</th><th class="c-th">Motivo</th></tr></thead>
                         <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                             @foreach($movements as $m)
                                 <tr>
-                                    <td class="c-td text-xs whitespace-nowrap">{{ $m->created_at->format('d/m/Y H:i') }}</td>
-                                    <td class="c-td"><span class="c-badge {{ ['in' => 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300', 'out' => 'bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300', 'adjust' => 'bg-info-100 text-info-700 dark:bg-info-900/40 dark:text-info-300'][$m->type] }}">{{ \App\Models\StockMovement::TYPES[$m->type] }}</span></td>
-                                    <td class="c-td text-right">{{ $m->type === 'out' ? '−' : '+' }}@qty($m->quantity)</td>
-                                    <td class="c-td text-right font-semibold">@qty($m->balance_after)</td>
-                                    <td class="c-td text-xs">{{ $m->reason }} @if($m->document)<span class="text-surface-400">· NF {{ $m->document }}</span>@endif</td>
+                                    <td data-label="Data" class="c-td text-xs whitespace-nowrap">{{ $m->created_at->format('d/m/Y H:i') }}</td>
+                                    <td data-label="Tipo" class="c-td"><span class="c-badge {{ ['in' => 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300', 'out' => 'bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300', 'adjust' => 'bg-info-100 text-info-700 dark:bg-info-900/40 dark:text-info-300'][$m->type] }}">{{ \App\Models\StockMovement::TYPES[$m->type] }}</span></td>
+                                    <td data-label="Qtd." class="c-td text-right">{{ $m->type === 'out' ? '−' : '+' }}@qty($m->quantity)</td>
+                                    <td data-label="Saldo" class="c-td text-right font-semibold">@qty($m->balance_after)</td>
+                                    <td data-label="Motivo" class="c-td text-xs">{{ $m->reason }} @if($m->document)<span class="text-surface-400">· NF {{ $m->document }}</span>@endif</td>
                                 </tr>
                             @endforeach
                         </tbody>

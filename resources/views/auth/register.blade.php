@@ -1,7 +1,10 @@
 <x-guest-layout>
+    @section('title', 'Criar conta')
+    <x-auth-heading title="Crie sua conta grátis" subtitle="Leva menos de um minuto. Não pedimos cartão de crédito." icon="fa-user-plus"
+                    help="Escolha um nome de usuário único: ele será pedido junto com o e-mail e a senha em todo login." />
     @isset($invitation)
         @if($invitation)
-            <div class="mb-4 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 p-4 text-sm text-indigo-800 dark:text-indigo-200">
+            <div class="mb-4 rounded-lg bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 p-4 text-sm text-brand-800 dark:text-brand-200">
                 <i class="fa-solid fa-user-plus mr-1"></i>
                 Você foi convidado para a conta <strong>{{ $invitation->account->name }}</strong>
                 como <strong>{{ \App\Models\User::ROLE_LABELS[$invitation->role] ?? $invitation->role }}</strong>.
@@ -10,10 +13,10 @@
         @endif
     @endisset
 
-    <form method="POST" action="{{ route('register') }}">
+    <form autocomplete="off" method="POST" action="{{ route('register') }}">
         @csrf
         @if(!empty($inviteToken))
-            <input type="hidden" name="invite_token" value="{{ $inviteToken }}">
+            <input autocomplete="off" type="hidden" name="invite_token" value="{{ $inviteToken }}">
         @endif
 
         {{-- Honeypot anti-bot: invisível para pessoas, apenas robôs preenchem. --}}
@@ -60,9 +63,9 @@
         <!-- LGPD Consent -->
         <div class="mt-4">
             <label class="flex items-start">
-                <input type="checkbox" name="lgpd_consent" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1" required>
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                    Li e concordo com a <a href="{{ route('privacy') }}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">Política de Privacidade</a> e com os <a href="{{ route('terms.show') }}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">Termos de Uso</a>, e autorizo o tratamento dos meus dados pessoais conforme a LGPD.
+                <input autocomplete="off" type="checkbox" name="lgpd_consent" value="1" class="rounded border-surface-300 text-brand-600 shadow-sm focus:ring-brand-500 mt-1" required>
+                <span class="ms-2 text-sm text-surface-600 dark:text-surface-400">
+                    Li e concordo com a <a href="{{ route('privacy') }}" target="_blank" rel="noopener" class="text-brand-600 hover:underline">Política de Privacidade</a> e com os <a href="{{ route('terms.show') }}" target="_blank" rel="noopener" class="text-brand-600 hover:underline">Termos de Uso</a>, e autorizo o tratamento dos meus dados pessoais conforme a LGPD.
                 </span>
             </label>
             <x-input-error :messages="$errors->get('lgpd_consent')" class="mt-2" />
@@ -71,7 +74,7 @@
         <x-recaptcha action="register" />
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+            <a class="underline text-sm text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" href="{{ route('login') }}">
                 Já possui uma conta?
             </a>
 

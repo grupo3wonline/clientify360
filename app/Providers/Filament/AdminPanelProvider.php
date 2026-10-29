@@ -16,6 +16,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -23,6 +24,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\View\View;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -35,10 +37,24 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Clientify360')
             // No panel login page: guests are redirected to the Breeze /login,
             // the single implementation of the username + e-mail + password rule.
+            // Brand colors from resources/brand/tokens.json (config/brand.php).
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => (string) config('brand.colors.brand.600'),
                 'gray' => Color::Slate,
+                'success' => (string) config('brand.colors.accent.600'),
+                'danger' => Color::Red,
+                'warning' => Color::Amber,
+                'info' => Color::Blue,
             ])
+            ->brandLogo(fn (): string => asset('images/logo.svg'))
+            ->darkModeBrandLogo(fn (): string => asset('images/logo-dark.svg'))
+            ->brandLogoHeight('2rem')
+            ->favicon(fn (): string => asset('images/favicon.svg'))
+            // Shared theme script, panel styles, footer + CTA and the loading overlay.
+            ->renderHook(PanelsRenderHook::HEAD_START, fn (): View => view('filament.hooks.theme-init'))
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): View => view('filament.hooks.head-end'))
+            ->renderHook(PanelsRenderHook::FOOTER, fn (): View => view('filament.hooks.footer'))
+            ->renderHook(PanelsRenderHook::BODY_END, fn (): View => view('filament.hooks.body-end'))
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 'Principal',
@@ -99,7 +115,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 BusinessOverview::class,
             ])
-            ->font('Inter')
             ->darkMode(true)
             ->middleware([
                 EncryptCookies::class,

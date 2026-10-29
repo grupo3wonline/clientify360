@@ -2,19 +2,13 @@
     @section('title', 'Editar agendamento')
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('appointments.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Agendamentos</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Editar</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Agendamentos', 'url' => route('appointments.index')], ['label' => 'Editar']]" />
     </x-slot>
 
     <div class="max-w-3xl">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Editar agendamento</h1>
+                <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Editar agendamento</h1><x-help title="Como usar esta página" description="Altere data, horário ou detalhes do compromisso." example="Remarque a reunião de terça para quinta." tip="Avise o cliente sempre que mudar o horário." /></div>
                 <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Atualize os dados do compromisso.</p>
             </div>
             <a href="{{ route('appointments.show', $appointment) }}" class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition">
@@ -23,7 +17,7 @@
         </div>
 
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <form action="{{ route('appointments.update', $appointment) }}" method="POST">
+            <form autocomplete="off" action="{{ route('appointments.update', $appointment) }}" method="POST">
                 @csrf
                 @method('PUT')
                 @include('appointments._form')

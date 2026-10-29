@@ -1,16 +1,12 @@
 <x-guest-layout>
-    <div class="text-center mb-6">
-        <h2 class="text-xl font-bold text-surface-900 dark:text-white inline-flex items-center gap-2">
-            Bem-vindo de volta
-            <x-tooltip text="Por segurança, informe os três dados cadastrados: nome de usuário, e-mail e senha." position="bottom" />
-        </h2>
-        <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Entre na sua conta para continuar</p>
-    </div>
+    @section('title', 'Entrar')
+    <x-auth-heading title="Bem-vindo de volta" subtitle="Entre na sua conta para continuar" icon="fa-right-to-bracket"
+                    help="Por segurança, informe os três dados cadastrados: nome de usuário, e-mail e senha." />
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form autocomplete="off" method="POST" action="{{ route('login') }}">
         @csrf
 
         {{-- Honeypot anti-bot: invisível para pessoas, apenas robôs preenchem. --}}
@@ -49,7 +45,7 @@
         <!-- Remember Me -->
         <div class="flex items-center justify-between mt-4">
             <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-surface-300 dark:border-surface-600 text-brand-600 shadow-sm focus:ring-brand-500 dark:bg-surface-800" name="remember">
+                <input autocomplete="off" id="remember_me" type="checkbox" class="rounded border-surface-300 dark:border-surface-600 text-brand-600 shadow-sm focus:ring-brand-500 dark:bg-surface-800" name="remember">
                 <span class="ms-2 text-sm text-surface-600 dark:text-surface-400">Lembrar-me</span>
             </label>
 

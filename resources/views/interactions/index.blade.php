@@ -2,11 +2,7 @@
     @section('title', 'Atendimentos')
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Atendimentos</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Atendimentos']]" />
     </x-slot>
 
     <div class="flex flex-col lg:flex-row gap-6">
@@ -14,7 +10,7 @@
         <div class="flex-1">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Gestão de Atendimentos</h1>
+                    <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Gestão de Atendimentos</h1><x-help title="Como usar esta página" description="Registre cada contato com o cliente e acompanhe até a resolução." example="Ligação de suporte com João: status &#039;Em andamento&#039;." tip="Feche o atendimento com notas de resolução para consultar depois." /></div>
                     <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Registre e acompanhe interações com clientes</p>
                 </div>
             </div>
@@ -85,26 +81,26 @@
                     <div x-show="showActions" x-transition class="mt-4 pt-4 border-t border-surface-200 dark:border-surface-800" x-cloak>
                         <div class="flex flex-wrap gap-2">
                             @if($interaction->status !== 'resolved' && $interaction->status !== 'closed')
-                            <form action="{{ route('interactions.updateStatus', $interaction) }}" method="POST" class="inline">
+                            <form autocomplete="off" action="{{ route('interactions.updateStatus', $interaction) }}" method="POST" class="inline">
                                 @csrf @method('PATCH')
-                                <input type="hidden" name="status" value="in_progress">
+                                <input autocomplete="off" type="hidden" name="status" value="in_progress">
                                 <button type="submit" class="px-3 py-1.5 text-xs font-medium bg-warning-100 dark:bg-warning-950/30 text-warning-700 dark:text-warning-300 rounded-lg hover:bg-warning-200 transition">
                                     <i class="fa-solid fa-spinner mr-1"></i> Em Andamento
                                 </button>
                             </form>
-                            <form action="{{ route('interactions.updateStatus', $interaction) }}" method="POST" class="inline" x-data>
+                            <form autocomplete="off" action="{{ route('interactions.updateStatus', $interaction) }}" method="POST" class="inline" x-data>
                                 @csrf @method('PATCH')
-                                <input type="hidden" name="status" value="resolved">
-                                <input type="hidden" name="resolution_notes" id="res-{{ $interaction->id }}">
-                                <button type="button" @click="Swal.fire({ title: 'Resolver atendimento', input: 'textarea', inputLabel: 'Notas da resolução', inputPlaceholder: 'Descreva como foi resolvido...', showCancelButton: true, confirmButtonText: 'Resolver', cancelButtonText: 'Cancelar', confirmButtonColor: '#059669', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) { document.getElementById('res-{{ $interaction->id }}').value = r.value; $el.closest('form').submit(); } })"
+                                <input autocomplete="off" type="hidden" name="status" value="resolved">
+                                <input autocomplete="off" type="hidden" name="resolution_notes" id="res-{{ $interaction->id }}">
+                                <button type="button" @click="Swal.fire({ title: 'Resolver atendimento', input: 'textarea', inputLabel: 'Notas da resolução', inputPlaceholder: 'Descreva como foi resolvido...', showCancelButton: true, confirmButtonText: 'Resolver', cancelButtonText: 'Cancelar', confirmButtonColor: brandColors.accent['600'] }).then((r) => { if (r.isConfirmed) { document.getElementById('res-{{ $interaction->id }}').value = r.value; $el.closest('form').requestSubmit(); } })"
                                         class="px-3 py-1.5 text-xs font-medium bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 transition">
                                     <i class="fa-solid fa-check mr-1"></i> Resolver
                                 </button>
                             </form>
                             @endif
-                            <form action="{{ route('interactions.destroy', $interaction) }}" method="POST" class="inline" x-data>
+                            <form autocomplete="off" action="{{ route('interactions.destroy', $interaction) }}" method="POST" class="inline" x-data>
                                 @csrf @method('DELETE')
-                                <button type="button" @click="Swal.fire({ title: 'Excluir?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
+                                <button type="button" @click="Swal.fire({ title: 'Excluir?', icon: 'warning', showCancelButton: true, confirmButtonColor: brandColors.danger['600'], confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar' }).then((r) => { if (r.isConfirmed) $el.closest('form').requestSubmit() })"
                                         class="px-3 py-1.5 text-xs font-medium bg-danger-100 dark:bg-danger-950/30 text-danger-700 dark:text-danger-300 rounded-lg hover:bg-danger-200 transition">
                                     <i class="fa-solid fa-trash mr-1"></i> Excluir
                                 </button>
@@ -134,7 +130,7 @@
                 <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 mb-4 flex items-center">
                     <i class="fa-solid fa-plus-circle text-brand-500 mr-2"></i> Novo Atendimento
                 </h3>
-                <form action="{{ route('interactions.store') }}" method="POST">
+                <form autocomplete="off" action="{{ route('interactions.store') }}" method="POST">
                     @csrf
                     <div class="space-y-4">
                         <div>

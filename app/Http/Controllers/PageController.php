@@ -89,6 +89,26 @@ final class PageController extends Controller
     {
         return [
             [
+                'question' => 'O que é o Clientify360?',
+                'answer' => 'O Clientify360 é um CRM online para pequenos negócios. Ele reúne clientes, funil de vendas, orçamentos, ordens de serviço, agenda, estoque e financeiro em um só lugar, funciona no celular e no computador e tem um plano gratuito.',
+            ],
+            [
+                'question' => 'Como meus dados ficam isolados de outras empresas?',
+                'answer' => 'Cada empresa tem a sua própria conta. Todos os registros são gravados com o identificador da conta e cada consulta filtra por ela, além de permissões por papel (dono ou colaborador). Um usuário nunca vê dados de outra conta.',
+            ],
+            [
+                'question' => 'O sistema tem API?',
+                'answer' => 'Sim. O plano Profissional inclui uma API REST (versão 1) com tokens de acesso, permissões por token e documentação OpenAPI. Ela permite integrar clientes, produtos e orçamentos com sites, ERPs e planilhas.',
+            ],
+            [
+                'question' => 'Posso gerar orçamentos em PDF?',
+                'answer' => 'Sim. No plano Profissional você baixa orçamentos e ordens de serviço em PDF com o logotipo da sua empresa, prontos para enviar ao cliente.',
+            ],
+            [
+                'question' => 'Quem desenvolve o Clientify360?',
+                'answer' => 'O Clientify360 é desenvolvido pelo Grupo 3W Online, empresa que cria sites e sistemas personalizados sob demanda. O contato é pelo WhatsApp (41) 99692-4829 ou pelo e-mail contato@3wonline.com.br.',
+            ],
+            [
                 'question' => 'O Clientify360 é realmente gratuito?',
                 'answer' => 'Sim. O plano Básico é gratuito para sempre e permite cadastrar até 10 clientes, com agenda, lembretes e tema claro/escuro. Você só faz upgrade para o plano Profissional quando quiser recursos avançados como IA e clientes ilimitados.',
             ],

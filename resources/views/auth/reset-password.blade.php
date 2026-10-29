@@ -1,9 +1,11 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
+    @section('title', 'Redefinir senha')
+    <x-auth-heading title="Defina uma nova senha" subtitle="Use uma senha forte, que você não usa em outros sites." icon="fa-lock" />
+    <form autocomplete="off" method="POST" action="{{ route('password.store') }}">
         @csrf
 
         <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+        <input autocomplete="off" type="hidden" name="token" value="{{ $request->route('token') }}">
 
         <!-- Email Address -->
         <div>

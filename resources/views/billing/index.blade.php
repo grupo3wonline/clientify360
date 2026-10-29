@@ -20,7 +20,7 @@
         $exceeded = array_filter($usage, fn (array $row): bool => $row['limit'] !== -1 && $row['usage'] >= $row['limit']);
     @endphp
 
-    <x-page-title title="Minha assinatura" icon="fa-credit-card" subtitle="Seu plano atual, a vigência da assinatura e as opções de troca de plano.">
+    <x-page-title help-description="Seu plano, a vigência e as opções de troca de plano." help-example="Assine o Profissional para liberar IA, PDF, exportação e API." help-tip="Ao cancelar, você mantém o Profissional até o fim do período pago." title="Minha assinatura" icon="fa-credit-card" subtitle="Seu plano atual, a vigência da assinatura e as opções de troca de plano.">
         <x-slot name="actions">
             <x-tooltip position="left" text="A assinatura é mensal e renovada automaticamente. Ao cancelar, você mantém o Profissional até o fim do período pago. Se um pagamento falhar, a conta passa a usar os limites do Básico até a regularização.">
                 <span class="inline-flex items-center gap-1.5 text-sm text-brand-600 dark:text-brand-400">
@@ -177,7 +177,7 @@
                         <form action="{{ route('billing.cancel') }}" method="POST" autocomplete="off" x-data>
                             @csrf
                             <button type="button"
-                                    @click="Swal.fire({ title: 'Voltar para o Básico?', text: 'Você mantém o Profissional até o fim do período pago. Depois, novos cadastros acima dos limites do Básico ficam bloqueados; seus dados continuam salvos.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Sim, cancelar ao fim do período', cancelButtonText: 'Manter Profissional', customClass: { popup: 'rounded-2xl' } }).then((result) => { if (result.isConfirmed) $el.closest('form').submit() })"
+                                    @click="Swal.fire({ title: 'Voltar para o Básico?', text: 'Você mantém o Profissional até o fim do período pago. Depois, novos cadastros acima dos limites do Básico ficam bloqueados; seus dados continuam salvos.', icon: 'warning', showCancelButton: true, confirmButtonColor: brandColors.danger['600'], cancelButtonColor: brandColors.surface['500'], confirmButtonText: 'Sim, cancelar ao fim do período', cancelButtonText: 'Manter Profissional' }).then((result) => { if (result.isConfirmed) $el.closest('form').requestSubmit() })"
                                     class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-white dark:bg-surface-800 border border-danger-300 dark:border-danger-800 text-danger-700 dark:text-danger-300 hover:bg-danger-50 dark:hover:bg-danger-950/30 text-sm font-medium rounded-xl transition">
                                 <i class="fa-solid fa-arrow-down mr-2 text-xs"></i> Voltar para o Básico ao fim do período
                             </button>
@@ -189,7 +189,7 @@
 
         @if(! $plan->isFree())
             <div class="mt-4">
-                <a href="{{ route('billing.portal') }}" class="inline-flex items-center text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">
+                <a href="{{ route('billing.portal') }}" data-loading-text="Abrindo o portal seguro da Stripe..." class="inline-flex items-center text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">
                     <i class="fa-solid fa-gear mr-1.5 text-xs"></i> Gerenciar pagamento (cartão e dados de cobrança)
                 </a>
             </div>

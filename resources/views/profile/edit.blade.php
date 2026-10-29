@@ -10,7 +10,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div>
-                <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Meu Perfil</h1>
+                <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Meu Perfil</h1><x-help title="Como usar esta página" description="Seus dados de acesso, senha, privacidade e integrações." example="Troque a senha a cada poucos meses." tip="Em Exportar dados você baixa uma cópia das suas informações pessoais (LGPD)." /></div>
                 <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Gerencie suas informações pessoais, senha e privacidade da conta.</p>
             </div>
 

@@ -13,7 +13,7 @@
             @if($quote->isEditable())
                 <a href="{{ route('quotes.edit', $quote) }}" class="c-btn-ghost"><i class="fa-solid fa-pen mr-2 text-xs"></i> Editar</a>
             @endif
-            <form action="{{ route('quotes.duplicate', $quote) }}" method="POST">@csrf<button class="c-btn-ghost" title="Duplicar"><i class="fa-regular fa-copy"></i></button></form>
+            <form autocomplete="off" action="{{ route('quotes.duplicate', $quote) }}" method="POST">@csrf<button class="c-btn-ghost" title="Duplicar"><i class="fa-regular fa-copy"></i></button></form>
         </x-slot>
     </x-page-title>
 
@@ -24,7 +24,7 @@
             </p>
             <div class="flex flex-wrap gap-2">
                 @if($quote->status === 'draft')
-                    <form action="{{ route('quotes.send', $quote) }}" method="POST">@csrf<button class="c-btn-ghost"><i class="fa-solid fa-paper-plane mr-2 text-xs"></i> Marcar como enviado</button></form>
+                    <form autocomplete="off" action="{{ route('quotes.send', $quote) }}" method="POST">@csrf<button class="c-btn-ghost"><i class="fa-solid fa-paper-plane mr-2 text-xs"></i> Marcar como enviado</button></form>
                 @endif
                 <x-confirm-delete :action="route('quotes.reject', $quote)" method="POST" title="Cliente recusou?" text="O orçamento ficará como recusado." confirm="Recusado" class="c-btn-ghost text-danger-600">
                     <i class="fa-solid fa-xmark mr-2 text-xs"></i> Recusado
@@ -37,17 +37,17 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 c-card overflow-hidden h-fit">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-surface-100 dark:divide-surface-800">
+                <table class="c-table-stack min-w-full divide-y divide-surface-100 dark:divide-surface-800">
                     <thead class="bg-surface-50 dark:bg-surface-800/50"><tr><th class="c-th">Item</th><th class="c-th text-right">Qtd.</th><th class="c-th text-right">Unitário</th><th class="c-th text-right">Total</th></tr></thead>
                     <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                         @foreach($quote->items as $item)
                             <tr>
-                                <td class="c-td">{{ $item->description }}
+                                <td data-label="Item" class="c-td">{{ $item->description }}
                                     @if($item->product?->track_stock)<span class="text-xs text-surface-400 ml-1" title="Saldo atual em estoque">(estoque: @qty($item->product->stock))</span>@endif
                                 </td>
-                                <td class="c-td text-right">@qty($item->quantity)</td>
-                                <td class="c-td text-right whitespace-nowrap">@money($item->unit_price)</td>
-                                <td class="c-td text-right font-semibold whitespace-nowrap">@money($item->total)</td>
+                                <td data-label="Qtd." class="c-td text-right">@qty($item->quantity)</td>
+                                <td data-label="Unitário" class="c-td text-right whitespace-nowrap">@money($item->unit_price)</td>
+                                <td data-label="Total" class="c-td text-right font-semibold whitespace-nowrap">@money($item->total)</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -91,7 +91,7 @@
 
     @if($quote->isEditable())
         <x-modal name="approve" :show="$errors->hasAny(['installments', 'first_due_date'])" maxWidth="md">
-            <form action="{{ route('quotes.approve', $quote) }}" method="POST" class="p-6 space-y-4" x-data="{ n: {{ old('installments', 1) }} }">
+            <form autocomplete="off" action="{{ route('quotes.approve', $quote) }}" method="POST" class="p-6 space-y-4" x-data="{ n: {{ old('installments', 1) }} }">
                 @csrf
                 <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Aprovar e gerar venda</h2>
                 <ul class="text-sm text-surface-600 dark:text-surface-400 space-y-1 list-disc pl-5">
@@ -101,16 +101,16 @@
                     <li>Registra no histórico do cliente.</li>
                 </ul>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="c-label">Parcelas</label><input type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input"></div>
-                    <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input type="date" name="first_due_date" value="{{ old('first_due_date', now()->format('Y-m-d')) }}" class="c-input"></div>
+                    <div><label class="c-label">Parcelas</label><input autocomplete="off" type="number" name="installments" min="1" max="60" x-model.number="n" class="c-input"></div>
+                    <div><label class="c-label" x-text="n > 1 ? '1º vencimento' : 'Vencimento'"></label><input autocomplete="off" type="date" name="first_due_date" value="{{ old('first_due_date', now()->format('Y-m-d')) }}" class="c-input"></div>
                 </div>
                 <p class="c-hint" x-show="n > 1" x-text="n + 'x de ' + ({{ (float) $quote->total }} / n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + ' (mensais)'"></p>
                 <div>
                     <label class="c-label">Forma de pagamento</label>
-                    <select name="payment_method" class="c-input"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach</select>
+                    <select autocomplete="off" name="payment_method" class="c-input"><option value="">—</option>@foreach($paymentMethods as $k => $label)<option value="{{ $k }}">{{ $label }}</option>@endforeach</select>
                 </div>
                 <label class="flex items-start gap-2 text-xs text-surface-500 cursor-pointer">
-                    <input type="checkbox" name="allow_negative_stock" value="1" class="mt-0.5 rounded border-surface-300 text-brand-600">
+                    <input autocomplete="off" type="checkbox" name="allow_negative_stock" value="1" class="mt-0.5 rounded border-surface-300 text-brand-600">
                     Permitir mesmo com estoque insuficiente (o saldo ficará negativo — útil para venda sob encomenda).
                 </label>
                 <div class="flex justify-end gap-2 pt-2">

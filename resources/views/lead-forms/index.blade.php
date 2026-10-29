@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Captação de leads']]" />
     </x-slot>
 
-    <x-page-title title="Captação de leads" icon="fa-magnet" subtitle="Formulários com link público: cada envio vira cliente + oportunidade no funil, automaticamente.">
+    <x-page-title help-description="Formulários públicos que transformam visitantes em clientes." help-example="Crie um formulário de orçamento e coloque o link no Instagram." help-tip="Cada envio pode virar cliente e oportunidade no funil." title="Captação de leads" icon="fa-magnet" subtitle="Formulários com link público: cada envio vira cliente + oportunidade no funil, automaticamente.">
         <x-slot name="actions">
             <a href="{{ route('lead-forms.create') }}" class="c-btn-primary"><i class="fa-solid fa-plus mr-2 text-xs"></i> Novo formulário</a>
         </x-slot>
@@ -23,7 +23,7 @@
                 </div>
                 <p class="text-3xl font-bold mt-4" style="color: {{ $form->color }}">{{ $form->submissions_count }} <span class="text-sm font-medium text-surface-400">leads</span></p>
                 <div class="mt-4 flex items-center gap-2">
-                    <input readonly value="{{ $form->publicUrl() }}" class="c-input py-1.5 text-xs font-mono" aria-label="Link público">
+                    <input autocomplete="off" readonly value="{{ $form->publicUrl() }}" class="c-input py-1.5 text-xs font-mono" aria-label="Link público">
                     <button type="button" @click="navigator.clipboard.writeText(@js($form->publicUrl())); copied = true; setTimeout(() => copied = false, 1500)" class="c-btn-ghost px-3 py-1.5" title="Copiar link">
                         <i class="fa-solid" :class="copied ? 'fa-check text-accent-500' : 'fa-copy'"></i>
                     </button>

@@ -50,7 +50,7 @@
 </div>
 
 <x-modal name="client-deal" maxWidth="lg">
-    <form action="{{ route('deals.store') }}" method="POST" class="p-6 space-y-4">
+    <form autocomplete="off" action="{{ route('deals.store') }}" method="POST" class="p-6 space-y-4">
         @csrf
         <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Nova oportunidade para {{ $client->name }}</h2>
         @include('deals._form', ['deal' => null, 'fixedClient' => $client])

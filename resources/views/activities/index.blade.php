@@ -5,16 +5,16 @@
         <x-breadcrumb :items="[['label' => 'Histórico']]" />
     </x-slot>
 
-    <x-page-title title="Histórico de relacionamento" icon="fa-timeline" subtitle="Todas as interações com seus clientes, em ordem cronológica." />
+    <x-page-title help-description="Linha do tempo de tudo o que aconteceu com seus clientes." help-example="Registre uma ligação com resultado positivo e agende o próximo passo." help-tip="Filtre por tipo ou por cliente." title="Histórico de relacionamento" icon="fa-timeline" subtitle="Todas as interações com seus clientes, em ordem cronológica." />
 
     <div class="flex flex-col lg:flex-row gap-6">
         <div class="flex-1 min-w-0">
-            <form method="GET" class="flex flex-wrap gap-2 mb-4">
-                <select name="type" class="c-input w-auto" onchange="this.form.submit()">
+            <form autocomplete="off" method="GET" class="flex flex-wrap gap-2 mb-4">
+                <select autocomplete="off" name="type" class="c-input w-auto" onchange="this.form.submit()">
                     <option value="">Todos os tipos</option>
                     @foreach(\App\Models\Activity::TYPES as $k => $t)<option value="{{ $k }}" @selected($type === $k)>{{ $t['label'] }}</option>@endforeach
                 </select>
-                <select name="client_id" class="c-input w-auto max-w-xs" onchange="this.form.submit()">
+                <select autocomplete="off" name="client_id" class="c-input w-auto max-w-xs" onchange="this.form.submit()">
                     <option value="">Todos os clientes</option>
                     @foreach($clients as $c)<option value="{{ $c->id }}" @selected($clientId === $c->id)>{{ $c->name }}</option>@endforeach
                 </select>

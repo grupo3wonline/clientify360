@@ -1,9 +1,11 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+    @section('title', 'Confirmar senha')
+    <x-auth-heading title="Confirme sua senha" icon="fa-shield-halved" />
+    <div class="mb-4 text-sm text-surface-600 dark:text-surface-400">
         Esta é uma área segura da aplicação. Por favor, confirme sua senha antes de continuar.
     </div>
 
-    <form method="POST" action="{{ route('password.confirm') }}">
+    <form autocomplete="off" method="POST" action="{{ route('password.confirm') }}">
         @csrf
 
         <!-- Password -->

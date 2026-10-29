@@ -4,7 +4,7 @@
             <div class="w-12 h-12 bg-brand-50 dark:bg-brand-950/50 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <i class="fa-solid fa-file-contract text-brand-600 dark:text-brand-400 text-xl" aria-hidden="true"></i>
             </div>
-            <h2 class="text-xl font-bold text-surface-900 dark:text-white">Termos de Uso</h2>
+            <h1 class="text-xl font-bold text-surface-900 dark:text-white">Termos de Uso</h1>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Para continuar, leia e aceite os termos abaixo</p>
         </div>
 
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Accept Form -->
-        <form method="POST" action="{{ route('terms.accept') }}" @submit="submitting = true">
+        <form autocomplete="off" method="POST" action="{{ route('terms.accept') }}" @submit="submitting = true">
             @csrf
 
             <div class="mb-5">
@@ -84,7 +84,7 @@
 
         <!-- Logout option -->
         <div class="mt-4 text-center">
-            <form method="POST" action="{{ route('logout') }}">
+            <form autocomplete="off" method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="text-sm text-surface-500 dark:text-surface-400 hover:text-danger-600 dark:hover:text-danger-400 transition">
                     <i class="fa-solid fa-right-from-bracket mr-1" aria-hidden="true"></i> Sair da conta

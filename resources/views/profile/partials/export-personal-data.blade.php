@@ -18,6 +18,7 @@
 
     <x-primary-link
         :href="route('profile.export')"
+        data-no-loading
         class="w-full sm:w-auto gap-2"
         aria-label="Baixar uma cópia dos seus dados pessoais em formato JSON"
         title="Baixar uma cópia dos seus dados pessoais em formato JSON">

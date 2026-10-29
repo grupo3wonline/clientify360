@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Funil de vendas']]" />
     </x-slot>
 
-    <x-page-title title="Funil de vendas" icon="fa-filter-circle-dollar" subtitle="Arraste os cards entre as etapas. No celular, use o seletor de etapa do card.">
+    <x-page-title help-description="Acompanhe as oportunidades de venda por etapa." help-example="Arraste o card de Proposta para Negociação." help-tip="Mantenha o valor estimado atualizado para a previsão de receita." title="Funil de vendas" icon="fa-filter-circle-dollar" subtitle="Arraste os cards entre as etapas. No celular, use o seletor de etapa do card.">
         <x-slot name="actions">
             <a href="{{ route('deals.list') }}" class="c-btn-ghost"><i class="fa-solid fa-list mr-2 text-xs"></i> Lista</a>
             <a href="{{ route('stages.index') }}" class="c-btn-ghost"><i class="fa-solid fa-sliders mr-2 text-xs"></i> Etapas</a>
@@ -29,10 +29,10 @@
         @endforeach
     </div>
 
-    <form method="GET" class="mb-4 max-w-sm">
+    <form autocomplete="off" method="GET" class="mb-4 max-w-sm">
         <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400 text-xs"></i>
-            <input type="search" name="search" value="{{ $search }}" placeholder="Buscar por título ou cliente..." class="c-input pl-9">
+            <input autocomplete="off" type="search" name="search" value="{{ $search }}" placeholder="Buscar por título ou cliente..." class="c-input pl-9">
         </div>
     </form>
 
@@ -71,10 +71,10 @@
                                 @endif
                             </div>
                             {{-- Alternativa ao arrastar (touch/teclado) --}}
-                            <form action="{{ route('deals.move', $deal) }}" method="POST" class="mt-2.5">
+                            <form autocomplete="off" action="{{ route('deals.move', $deal) }}" method="POST" class="mt-2.5">
                                 @csrf @method('PATCH')
                                 <label class="sr-only" for="stage-{{ $deal->id }}">Mover para etapa</label>
-                                <select id="stage-{{ $deal->id }}" name="pipeline_stage_id" onchange="this.form.submit()"
+                                <select autocomplete="off" id="stage-{{ $deal->id }}" name="pipeline_stage_id" onchange="this.form.submit()"
                                         class="w-full text-xs py-1 px-2 rounded-lg border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-surface-600 dark:text-surface-300">
                                     @foreach($stages as $s)
                                         <option value="{{ $s->id }}" @selected($s->id === $stage->id)>{{ $s->name }}</option>
@@ -92,7 +92,7 @@
 
     {{-- Modal: nova oportunidade --}}
     <x-modal name="new-deal" :show="$errors->any()" maxWidth="lg">
-        <form action="{{ route('deals.store') }}" method="POST" class="p-6 space-y-4">
+        <form autocomplete="off" action="{{ route('deals.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
             <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Nova oportunidade</h2>
             @include('deals._form', ['deal' => null])
@@ -126,7 +126,7 @@
                         if (!res.ok) throw new Error();
                         window.location.reload();
                     } catch (e) {
-                        Swal.fire({ icon: 'error', title: 'Não foi possível mover', text: 'Tente novamente.', customClass: { popup: 'rounded-2xl' } });
+                        Swal.fire({ icon: 'error', title: 'Não foi possível mover', text: 'Tente novamente.' });
                     }
                 },
             };

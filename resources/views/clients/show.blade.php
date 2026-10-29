@@ -2,13 +2,7 @@
     @section('title', $client->name)
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('clients.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Clientes</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">{{ $client->name }}</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Clientes', 'url' => route('clients.index')], ['label' => $client->name]]" />
     </x-slot>
 
     <div class="max-w-6xl mx-auto">
@@ -21,7 +15,7 @@
                             {{ strtoupper(substr($client->name, 0, 1)) }}
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-white">{{ $client->name }}</h1>
+                            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-white">{{ $client->name }}</h1><x-help title="Como usar esta página" description="Veja tudo sobre o cliente: dados, oportunidades, atendimentos, anexos e análise com IA." example="Anexe o contrato assinado na seção Anexos." tip="Registre o próximo passo no histórico para não esquecer o retorno." /></div>
                             <p class="text-brand-200 text-sm mt-1">
                                 <i class="fa-solid fa-calendar mr-1"></i> Cadastrado em {{ $client->created_at->format('d/m/Y') }}
                                 @if($client->business_segment)
@@ -45,8 +39,8 @@
                         <a href="{{ route('clients.edit', $client) }}" class="inline-flex items-center px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-sm font-medium rounded-xl border border-white/20 transition">
                             <i class="fa-solid fa-pen-to-square mr-2 text-xs"></i> Editar
                         </a>
-                        <form id="delete-form-{{ $client->id }}" action="{{ route('clients.destroy', $client) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
-                        <button onclick="Swal.fire({ title: 'Excluir cliente?', text: 'Esta ação não pode ser desfeita!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) document.getElementById('delete-form-{{ $client->id }}').submit() })"
+                        <form autocomplete="off" id="delete-form-{{ $client->id }}" action="{{ route('clients.destroy', $client) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+                        <button onclick="Swal.fire({ title: 'Excluir cliente?', text: 'Esta ação não pode ser desfeita!', icon: 'warning', showCancelButton: true, confirmButtonColor: brandColors.danger['600'], cancelButtonColor: brandColors.surface['500'], confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar' }).then((r) => { if (r.isConfirmed) document.getElementById('delete-form-{{ $client->id }}').submit() })"
                                 class="inline-flex items-center px-4 py-2 bg-danger-500/20 hover:bg-danger-500/30 text-white text-sm font-medium rounded-xl border border-danger-400/30 transition">
                             <i class="fa-solid fa-trash-can mr-2 text-xs"></i> Excluir
                         </button>

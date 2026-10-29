@@ -2,11 +2,7 @@
     @section('title', 'Agenda')
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Agenda</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Agenda']]" />
     </x-slot>
 
     <div class="flex flex-col lg:flex-row gap-6">
@@ -15,7 +11,7 @@
             <!-- Page Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Agenda & Lembretes</h1>
+                    <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Agenda & Lembretes</h1><x-help title="Como usar esta página" description="Lembretes de follow-up, ligações e tarefas ligadas aos clientes." example="Lembrar de enviar a proposta revisada na sexta às 10h." tip="Lembretes atrasados aparecem na central de notificações." /></div>
                     <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Gerencie seus compromissos e lembretes</p>
                 </div>
             </div>
@@ -82,7 +78,7 @@
 
                         <div class="flex items-center space-x-1 flex-shrink-0">
                             @if(!$reminder->is_completed)
-                            <form action="{{ route('reminders.complete', $reminder) }}" method="POST">
+                            <form autocomplete="off" action="{{ route('reminders.complete', $reminder) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="p-2 rounded-lg text-surface-400 hover:text-accent-600 hover:bg-accent-50 dark:hover:text-accent-400 dark:hover:bg-accent-950/30 transition" title="Concluir">
@@ -90,10 +86,10 @@
                                 </button>
                             </form>
                             @endif
-                            <form action="{{ route('reminders.destroy', $reminder) }}" method="POST" x-data>
+                            <form autocomplete="off" action="{{ route('reminders.destroy', $reminder) }}" method="POST" x-data>
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" @click="Swal.fire({ title: 'Excluir lembrete?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
+                                <button type="button" @click="Swal.fire({ title: 'Excluir lembrete?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: brandColors.danger['600'], cancelButtonColor: brandColors.surface['500'], confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar' }).then((r) => { if (r.isConfirmed) $el.closest('form').requestSubmit() })"
                                         class="p-2 rounded-lg text-surface-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:text-danger-400 dark:hover:bg-danger-950/30 transition" title="Excluir">
                                     <i class="fa-solid fa-trash-can text-sm"></i>
                                 </button>
@@ -130,7 +126,7 @@
                     <i class="fa-solid fa-plus-circle text-brand-500 mr-2"></i> Novo Lembrete
                 </h3>
 
-                <form action="{{ route('reminders.store') }}" method="POST">
+                <form autocomplete="off" action="{{ route('reminders.store') }}" method="POST">
                     @csrf
                     <div class="space-y-4">
                         <div>
