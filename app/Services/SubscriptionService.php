@@ -76,31 +76,11 @@ class SubscriptionService
         return PlanData::fromConfig($this->isProfessional($user) ? 'professional' : 'basic');
     }
 
-    /**
-     * @deprecated Use currentPlan(). Kept until Phase 6 removes the last callers.
-     *
-     * @return array<string, mixed>
-     */
-    public function getCurrentPlan(User $user): array
-    {
-        return (array) config('plans.'.$this->currentPlan($user)->slug);
-    }
-
-    public function getPlanSlug(User $user): string
-    {
-        return $this->currentPlan($user)->slug;
-    }
-
     public function isProfessional(User $user): bool
     {
         $account = $this->billable($user);
 
         return $account !== null && $account->subscribed(self::SUBSCRIPTION_NAME);
-    }
-
-    public function isBasic(User $user): bool
-    {
-        return !$this->isProfessional($user);
     }
 
     public function hasFeature(User $user, string $feature): bool
@@ -120,13 +100,6 @@ class SubscriptionService
         $plan = $this->currentPlan($user)->name;
 
         return "Você atingiu o limite de {$limit} {$label} do plano {$plan}. Faça upgrade para o plano Profissional para liberar mais.";
-    }
-
-    public function canCreateClient(User $user, int $currentCount): bool
-    {
-        $limit = $this->getLimit($user, 'clients');
-
-        return $limit === -1 || $currentCount < $limit;
     }
 
     /** Limite do plano para um recurso (-1 = ilimitado; recurso não configurado = ilimitado). */
@@ -188,11 +161,6 @@ class SubscriptionService
         }
 
         return $report;
-    }
-
-    public function getClientLimit(User $user): int
-    {
-        return $this->getLimit($user, 'clients');
     }
 
     /** Plano, situação e vigência da assinatura (cacheado; não cacheia o resultado degradado). */
@@ -302,63 +270,6 @@ class SubscriptionService
         if ($user->account_id !== null) {
             $this->cache->forgetBilling($user->account_id);
         }
-    }
-
-    public function getRenewalDate(User $user): ?Carbon
-    {
-        $account = $this->billable($user);
-        $subscription = $account?->subscription(self::SUBSCRIPTION_NAME);
-
-        if ($subscription === null) {
-            return null;
-        }
-
-        return $subscription->asStripeSubscription()->current_period_end
-            ? Carbon::createFromTimestamp($subscription->asStripeSubscription()->current_period_end)
-            : null;
-    }
-
-    public function getDaysUntilRenewal(User $user): ?int
-    {
-        $renewalDate = $this->getRenewalDate($user);
-
-        if ($renewalDate === null) {
-            return null;
-        }
-
-        return (int) now()->diffInDays($renewalDate, false);
-    }
-
-    public function getPaymentHistory(User $user): array
-    {
-        $account = $this->billable($user);
-
-        if ($account === null || !$account->hasStripeId()) {
-            return [];
-        }
-
-        try {
-            $invoices = $account->invoices();
-
-            return $invoices->map(function ($invoice) {
-                return [
-                    'id' => $invoice->id,
-                    'date' => Carbon::parse($invoice->date())->format('d/m/Y'),
-                    'amount' => $invoice->total(),
-                    'status' => $invoice->isPaid() ? 'Pago' : 'Pendente',
-                    'pdf_url' => $invoice->asStripeInvoice()->invoice_pdf ?? null,
-                ];
-            })->toArray();
-        } catch (\Exception $e) {
-            return [];
-        }
-    }
-
-    public function getSubscriptionStatus(User $user): string
-    {
-        $subscription = $this->billable($user)?->subscription(self::SUBSCRIPTION_NAME);
-
-        return $subscription === null ? 'free' : $this->statusOf($subscription);
     }
 
     public function createCheckoutSession(User $user, string $priceId): string

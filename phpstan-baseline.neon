@@ -205,24 +205,6 @@ parameters:
 			path: app/Services/SubscriptionService.php
 
 		-
-			message: '#^Access to an undefined property Laravel\\Cashier\\Invoice\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/SubscriptionService.php
-
-		-
-			message: '#^Access to an undefined property Stripe\\Subscription\:\:\$current_period_end\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/SubscriptionService.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Laravel\\Cashier\\Invoice\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Services/SubscriptionService.php
-
-		-
 			message: '#^Call to an undefined method Faker\\Generator\:\:stateAbbr\(\)\.$#'
 			identifier: method.notFound
 			count: 1
