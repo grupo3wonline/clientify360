@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 use Tests\Support\Personas;
 
-/** AC-20 (except /llms.txt, added with the SEO phase). */
+/** AC-20. */
+it('shows R$ 29,90 in /llms.txt, never 39,90', function (): void {
+    $this->get(route('llms'))
+        ->assertOk()
+        ->assertSee('R$ 29,90')
+        ->assertDontSee('39,90')
+        ->assertDontSee('39.90');
+});
 it('shows R$ 29,90 and a struck R$ 79,90 on the landing, never 39,90', function (): void {
     $this->get(route('home'))
         ->assertOk()

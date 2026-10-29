@@ -24,7 +24,7 @@
             </div>
         </header>
 
-        <main class="flex-1 grid lg:grid-cols-2">
+        <main id="main-content" class="flex-1 grid lg:grid-cols-2">
             {{-- Brand panel (desktop) --}}
             <div class="hidden lg:flex relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-brand-950 text-white">
                 <div class="absolute inset-0 opacity-20 pointer-events-none" aria-hidden="true">

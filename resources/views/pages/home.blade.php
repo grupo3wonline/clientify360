@@ -2,8 +2,15 @@
 
 {{-- Unified sales page: Home + Sobre + Serviços + Ferramentas + Contato (the old URLs 301-redirect to the anchors). --}}
 @php($pro = $plans['professional'])
-@section('title', 'CRM com IA para pequenos negócios')
-@section('meta_description', 'Clientify360: CRM para pequenos negócios com clientes, funil de vendas, orçamentos, agenda e financeiro. Comece grátis e evolua para o Profissional por '.$pro->formattedPrice().'/mês.')
+@section('seo')
+    <x-seo
+        :title="'Clientify360 — CRM com IA para pequenos negócios | '.$pro->formattedPrice().'/mês'"
+        :description="'Organize clientes, funil de vendas, orçamentos, agenda e financeiro em um só lugar. Comece grátis e evolua para o Profissional por '.$pro->formattedPrice().'/mês.'"
+        :canonical="url('/')"
+        :breadcrumbs="[['Início', url('/')]]"
+        :schema="$schema"
+    />
+@endsection
 @section('cta_placement', 'landing-final')
 
 @section('content')
@@ -32,18 +39,3 @@
         <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
     </button>
 @endsection
-
-@push('scripts')
-    {{-- FAQ structured data (AEO/GEO), built from the same array as the visible FAQ --}}
-    <script type="application/ld+json">
-    {!! json_encode([
-        '@context' => 'https://schema.org',
-        '@type' => 'FAQPage',
-        'mainEntity' => collect($faqs)->map(fn ($faq) => [
-            '@type' => 'Question',
-            'name' => $faq['question'],
-            'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq['answer']],
-        ])->all(),
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}
-    </script>
-@endpush

@@ -5,21 +5,52 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Data\PlanData;
+use App\Support\StructuredData;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 final class PageController extends Controller
 {
     /**
+     * Authenticated (or customer-facing) path prefixes kept out of crawlers.
+     * The auth pages (/login, /register, ...) are deliberately NOT listed: they
+     * must stay crawlable so engines can read their noindex meta tag.
+     */
+    private const DISALLOWED_PATHS = [
+        '/app', '/api', '/dashboard', '/profile', '/equipe', '/billing',
+        '/clients', '/reminders', '/interactions', '/tags', '/appointments',
+        '/service-orders', '/purchases', '/reports', '/notifications', '/ai',
+        '/export', '/deals', '/pipeline', '/activities', '/products', '/quotes',
+        '/finance', '/lead-forms', '/f/', '/stripe',
+    ];
+
+    /**
+     * Public pages in the sitemap: route name => view files whose newest
+     * modification time is the honest lastmod.
+     */
+    private const SITEMAP = [
+        'home' => ['priority' => '1.0', 'frequency' => 'weekly', 'views' => ['pages/home.blade.php', 'pages/home']],
+        'privacy' => ['priority' => '0.5', 'frequency' => 'yearly', 'views' => ['pages/privacy.blade.php']],
+        'terms.show' => ['priority' => '0.4', 'frequency' => 'yearly', 'views' => ['terms/show.blade.php', 'terms/_content.blade.php']],
+    ];
+
+    /**
      * The unified sales page (Home + Sobre + Serviços + Ferramentas + Contato).
      */
     public function home(): View
     {
         $plans = PlanData::catalog();
+        $faqs = $this->faqs($plans['professional']);
 
         return view('pages.home', [
             'plans' => $plans,
-            'faqs' => $this->faqs($plans['professional']),
+            'faqs' => $faqs,
+            'schema' => [
+                StructuredData::organization(),
+                StructuredData::website(),
+                StructuredData::softwareApplication(...array_values($plans)),
+                StructuredData::faqPage($faqs),
+            ],
         ]);
     }
 
@@ -33,17 +64,20 @@ final class PageController extends Controller
      */
     public function sitemap(): Response
     {
-        $routes = [
-            ['name' => 'home', 'priority' => '1.0', 'frequency' => 'weekly'],
-            ['name' => 'privacy', 'priority' => '0.5', 'frequency' => 'yearly'],
-        ];
+        $urls = [];
+        foreach (self::SITEMAP as $route => $entry) {
+            $urls[] = [
+                'loc' => route($route),
+                'lastmod' => date(DATE_ATOM, $this->lastModified($entry['views'])),
+                'frequency' => $entry['frequency'],
+                'priority' => $entry['priority'],
+            ];
+        }
 
-        $lastModified = now()->toAtomString();
-
-        $content = view('pages.sitemap', compact('routes', 'lastModified'))->render();
+        $content = view('pages.sitemap', ['urls' => $urls])->render();
 
         return response($content, 200)
-            ->header('Content-Type', 'application/xml');
+            ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 
     /**
@@ -53,30 +87,50 @@ final class PageController extends Controller
     {
         $lines = [
             'User-agent: *',
-            'Allow: /$',
-            'Allow: /politica-de-privacidade',
-            '',
-            '# Áreas privadas / autenticadas',
-            'Disallow: /dashboard',
-            'Disallow: /clients',
-            'Disallow: /billing',
-            'Disallow: /profile',
-            'Disallow: /reminders',
-            'Disallow: /interactions',
-            'Disallow: /reports',
-            'Disallow: /notifications',
-            'Disallow: /ai',
-            'Disallow: /export',
-            'Disallow: /login',
-            'Disallow: /register',
-            'Disallow: /password',
-            'Disallow: /termos-de-uso',
+            'Allow: /',
+            ...array_map(fn (string $path): string => 'Disallow: '.$path, self::DISALLOWED_PATHS),
+            'Allow: /llms.txt',
             '',
             'Sitemap: '.route('sitemap'),
         ];
 
-        return response(implode(PHP_EOL, $lines), 200)
-            ->header('Content-Type', 'text/plain');
+        return response(implode("\n", $lines)."\n", 200)
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
+    }
+
+    /**
+     * Plain-text summary for AI answer engines (GEO/AEO), see llmstxt.org.
+     */
+    public function llms(): Response
+    {
+        $plans = PlanData::catalog();
+
+        $content = view('pages.llms', [
+            'plans' => $plans,
+            'faqs' => $this->faqs($plans['professional']),
+        ])->render();
+
+        return response(trim($content)."\n", 200)
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
+    }
+
+    /**
+     * Newest modification time among the given view files/directories.
+     *
+     * @param  list<string>  $views  paths relative to resources/views
+     */
+    private function lastModified(array $views): int
+    {
+        $times = [];
+        foreach ($views as $view) {
+            $path = resource_path('views/'.$view);
+            $files = is_dir($path) ? (glob($path.'/*.blade.php') ?: []) : [$path];
+            foreach ($files as $file) {
+                $times[] = is_file($file) ? (int) filemtime($file) : 0;
+            }
+        }
+
+        return max([0, ...$times]) ?: time();
     }
 
     /**

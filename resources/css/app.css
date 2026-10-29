@@ -8,7 +8,9 @@
 
 @layer base {
     [x-cloak],
-    #loading-overlay[hidden] {
+    #loading-overlay[hidden],
+    .c360-consent[hidden],
+    .c360-consent [hidden] {
         display: none !important;
     }
 

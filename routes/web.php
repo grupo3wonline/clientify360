@@ -10,6 +10,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClientAttachmentController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CookieConsentController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FinanceController;
@@ -40,6 +41,9 @@ Route::middleware('throttle:public')->group(function (): void {
     Route::get('/politica-de-privacidade', [PageController::class, 'privacy'])->name('privacy');
     Route::get('/sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
     Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
+    Route::get('/llms.txt', [PageController::class, 'llms'])->name('llms');
+    // Public, read-only terms; an authenticated user who has not accepted sees the form.
+    Route::get('/termos-de-uso', [TermsController::class, 'show'])->name('terms.show');
 
     // Rotas antigas → redirecionam para as âncoras da página única (preserva SEO/links).
     Route::permanentRedirect('/sobre', '/#sobre')->name('about');
@@ -276,11 +280,11 @@ Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group
 Route::get('/f/{slug}', [PublicLeadFormController::class, 'show'])->middleware('throttle:60,1')->name('lead-forms.public');
 Route::post('/f/{slug}', [PublicLeadFormController::class, 'submit'])->middleware('throttle:6,1')->name('lead-forms.submit');
 
-// Terms of Service (requires auth but not terms acceptance)
-Route::middleware(['auth'])->group(function (): void {
-    Route::get('/termos-de-uso', [TermsController::class, 'show'])->name('terms.show');
-    Route::post('/termos-de-uso', [TermsController::class, 'accept'])->name('terms.accept');
-});
+// Terms acceptance (requires auth but not terms acceptance)
+Route::post('/termos-de-uso', [TermsController::class, 'accept'])->middleware('auth')->name('terms.accept');
+// Cookie consent receipt (public, CSRF-protected, rate limited)
+Route::post('/privacidade/consentimento', [CookieConsentController::class, 'store'])
+    ->middleware('throttle:20,1')->name('consent.store');
 
 require __DIR__.'/auth.php';
 

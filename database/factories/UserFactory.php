@@ -30,7 +30,7 @@ final class UserFactory extends Factory
             'lgpd_consent' => true,
             'lgpd_consent_at' => now(),
             'terms_accepted_at' => now(),
-            'terms_version' => '1.0',
+            'terms_version' => (string) config('legal.terms_version'),
             'remember_token' => Str::random(10),
         ];
     }

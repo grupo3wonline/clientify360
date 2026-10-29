@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\DTOs\PersonalDataExportDTO;
 use App\Models\User;
+use App\Support\PrivacyLog;
 use Spatie\Permission\PermissionRegistrar;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -29,6 +30,8 @@ final class PersonalDataExportService
         $dto = $this->buildDto($user);
         $json = $this->encode($dto);
         $filename = 'meus-dados_'.now()->format('Y-m-d').'.json';
+
+        PrivacyLog::record('data.exported', 'Exportação dos dados pessoais do titular', $user, $user, ['format' => 'json']);
 
         return response()->streamDownload(
             fn () => print ($json),

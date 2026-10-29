@@ -8,7 +8,7 @@
         @yield('seo')
     @else
         <x-seo
-            :title="trim($__env->yieldContent('title')) ?: null"
+            :title="(trim($__env->yieldContent('title')) ?: 'Clientify360').' | Clientify360'"
             :description="trim($__env->yieldContent('meta_description')) ?: 'Clientify360: CRM para pequenos negócios, com clientes, funil de vendas, orçamentos, agenda e financeiro em um só lugar.'"
         />
     @endif
@@ -16,13 +16,11 @@
     @stack('styles')
 </head>
 <body class="min-h-screen flex flex-col bg-white dark:bg-surface-950 text-surface-800 dark:text-surface-200 font-sans antialiased">
-    <x-analytics-noscript />
-
-    <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10000] focus:px-4 focus:py-2.5 focus:rounded-xl focus:bg-brand-600 focus:text-white focus:text-sm">Pular para o conteúdo</a>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10000] focus:px-4 focus:py-2.5 focus:rounded-xl focus:bg-brand-600 focus:text-white focus:text-sm">Pular para o conteúdo</a>
 
     @include('layouts.partials.public-header')
 
-    <main id="conteudo" class="flex-1">
+    <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
         @yield('content')
     </main>
 

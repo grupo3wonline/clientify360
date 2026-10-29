@@ -6,6 +6,7 @@ import documentField from './masks';
 import countdown from './components/countdown';
 import registerTheme from './theme';
 import { initLoadingOverlay } from './loading-overlay';
+import { initConsent } from './consent';
 
 // Static assets (fonts) go through the Vite manifest, so Blade can preload them.
 import.meta.glob(['../fonts/**']);
@@ -30,4 +31,5 @@ Alpine.data('documentField', documentField);
 Alpine.data('countdown', countdown);
 
 initLoadingOverlay();
+initConsent();
 Alpine.start();

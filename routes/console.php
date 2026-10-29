@@ -21,5 +21,7 @@ Schedule::command('queue:work --stop-when-empty --max-time=50 --tries=3')
 Schedule::command('sanctum:prune-expired --hours=24')->daily();
 
 Schedule::command('model:prune')->daily();
+// Activity/privacy logs are kept for activitylog.delete_records_older_than_days (privacy policy, "Retenção").
+Schedule::command('activitylog:clean --force')->daily();
 
 Schedule::call(new PurgeOldExports)->daily()->name('purge-old-exports');

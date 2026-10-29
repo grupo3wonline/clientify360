@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
-            Ao excluir sua conta, todos os seus recursos e dados serão apagados permanentemente e não poderão ser recuperados. Antes de continuar, baixe qualquer informação que deseje guardar. Este é o seu direito de exclusão previsto na LGPD.
+            Ao excluir sua conta, o seu acesso é encerrado na hora e os seus dados deixam de ficar disponíveis no sistema. A ação não pode ser desfeita por aqui. Antes de continuar, baixe qualquer informação que deseje guardar. Para a eliminação definitiva dos registros, escreva para {{ config('legal.controller.dpo_email') }}. Este é o seu direito de exclusão (LGPD, GDPR, CCPA e POPIA).
         </p>
     </header>
 

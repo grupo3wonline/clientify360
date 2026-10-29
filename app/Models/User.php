@@ -112,6 +112,13 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->account !== null && $this->account->subscribed('default');
     }
 
+    /** Has the user accepted the current version of the Terms of Use (config/legal.php)? */
+    public function hasAcceptedCurrentTerms(): bool
+    {
+        return $this->terms_accepted_at !== null
+            && $this->terms_version === (string) config('legal.terms_version');
+    }
+
     /**
      * Panel access requires an account. E-mail verification is enforced by the
      * panel auth middleware (redirect to /verify-email instead of a 403).

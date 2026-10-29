@@ -16,5 +16,6 @@ it('schedules the queue worker, the prunes and the export purge', function (): v
         ->and($worker->runInBackground)->toBeTrue()
         ->and($commands->contains(fn (string $c): bool => str_contains($c, 'sanctum:prune-expired --hours=24')))->toBeTrue()
         ->and($commands->contains(fn (string $c): bool => str_contains($c, 'model:prune')))->toBeTrue()
+        ->and($commands->contains(fn (string $c): bool => str_contains($c, 'activitylog:clean')))->toBeTrue()
         ->and($commands->contains('purge-old-exports'))->toBeTrue();
 });

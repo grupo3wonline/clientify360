@@ -7,5 +7,9 @@
         ->map(fn (string $hex, string $name): string => $name.':'.e($hex))
         ->implode(';');
 @endphp
+{{-- Authenticated area: never indexed. --}}
+<meta name="robots" content="noindex, nofollow">
 <style>:root{ {{ $vars }} }</style>
 @vite('resources/css/panel.css')
+{{-- Consent config + Consent Mode default; GTM loads only after consent (consent.js). --}}
+<x-analytics />
