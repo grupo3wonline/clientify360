@@ -22,6 +22,9 @@ class BusinessOverview extends StatsOverviewWidget
 
     protected ?string $heading = 'Visão geral';
 
+    /** Data is cached for 10 minutes, so polling adds nothing and only triggers requests. */
+    protected ?string $pollingInterval = null;
+
     /**
      * Scalars only (the database cache store does not unserialize objects).
      *

@@ -33,17 +33,35 @@
         .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
         .ok { text-align: center; padding: 20px 0; }
         .ok .icon { width: 64px; height: 64px; border-radius: 50%; background: color-mix(in srgb, var(--c) 15%, #fff); color: var(--c); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 30px; }
-        footer { text-align: center; font-size: 11px; color: {{ config('brand.colors.surface.400') }}; padding: 0 0 16px; }
+        footer { text-align: center; font-size: 11px; color: {{ config('brand.colors.surface.400') }}; padding: 0 16px 16px; line-height: 1.6; }
         footer a { color: inherit; }
+        .page { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 12px; }
+        .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: {{ config('brand.colors.surface.500') }}; }
+        .top img { height: 22px; width: auto; display: block; }
+        .top .secure { display: inline-flex; align-items: center; gap: 4px; }
+        .cta3w { display: block; margin-top: 6px; font-weight: 600; color: {{ config('brand.colors.brand.600') }}; text-decoration: none; }
+        .cta3w:hover { text-decoration: underline; }
         @media (prefers-color-scheme: dark) {
             body { background: {{ config('brand.colors.surface.950') }}; color: {{ config('brand.colors.surface.200') }}; }
             .card { background: {{ config('brand.colors.surface.900') }}; box-shadow: none; border: 1px solid {{ config('brand.colors.surface.800') }}; }
             p.lead, .consent, .req-note { color: {{ config('brand.colors.surface.400') }}; } label { color: {{ config('brand.colors.surface.300') }}; }
             input, textarea { background: {{ config('brand.colors.surface.800') }}; border-color: {{ config('brand.colors.surface.700') }}; }
+            .top { color: {{ config('brand.colors.surface.400') }}; }
+            .cta3w { color: {{ config('brand.colors.brand.400') }}; }
         }
     </style>
 </head>
 <body>
+    <div class="page">
+    <header class="top">
+        <a href="{{ url('/') }}" aria-label="Clientify360, página inicial">
+            <picture>
+                <source srcset="{{ asset('images/logo-dark.svg') }}" media="(prefers-color-scheme: dark)">
+                <img src="{{ asset('images/logo.svg') }}" alt="Clientify360" width="120" height="22">
+            </picture>
+        </a>
+        <span class="secure">&#128274; Formulário seguro</span>
+    </header>
     <main class="card">
         <div class="bar"></div>
         <div class="body">
@@ -116,15 +134,26 @@
                         if (!form) { return; }
                         var btn = form.querySelector('[data-submit]');
                         if (!btn) { return; }
+                        var label = btn.textContent;
                         form.addEventListener('submit', function () {
                             btn.disabled = true;
                             btn.textContent = 'Enviando…';
+                        });
+                        // Back button (bfcache) must not leave the button disabled.
+                        window.addEventListener('pageshow', function () {
+                            btn.disabled = false;
+                            btn.textContent = label;
                         });
                     })();
                 </script>
             @endif
         </div>
-        <footer>Formulário seguro · <a href="{{ route('privacy') }}" target="_blank" rel="noopener">Privacidade</a><br>Sistema desenvolvido pelo desenvolvedor HOTWYL | WILLFROMBRASIL</footer>
     </main>
+    <footer>
+        <a href="{{ route('privacy') }}" target="_blank" rel="noopener">Privacidade</a><br>
+        Sistema desenvolvido pelo desenvolvedor HOTWYL | WILLFROMBRASIL
+        <a class="cta3w" href="{{ \App\Support\Cta::url('lead-form') }}" target="_blank" rel="noopener noreferrer">Crie seu site ou sistema sob medida com o {{ config('cta.company') }} &rarr;</a>
+    </footer>
+    </div>
 </body>
 </html>

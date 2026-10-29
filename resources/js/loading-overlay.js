@@ -84,19 +84,45 @@ function onClick(event) {
     show(link.dataset.loadingText || 'Carregando...');
 }
 
+// Background requests (wire:poll) must never cover the page.
+function isPollOnly(request) {
+    const actions = Array.from(request?.messages || []).flatMap((message) => Array.from(message.actions || []));
+    return actions.length > 0 && actions.every((action) => action.metadata?.type === 'poll');
+}
+
+let pendingLivewire = 0;
+
 function hookLivewire() {
     if (!window.Livewire || typeof window.Livewire.interceptRequest !== 'function') {
         return;
     }
-    window.Livewire.interceptRequest(({ onSuccess, onError, onFailure }) => {
-        const timer = setTimeout(() => show('Processando...'), LIVEWIRE_DELAY_MS);
+    window.Livewire.interceptRequest(({ request, onCancel, onFinish }) => {
+        if (isPollOnly(request)) {
+            return;
+        }
+        let finished = false;
+        pendingLivewire += 1;
+        const timer = setTimeout(() => {
+            if (!finished) {
+                show('Processando...');
+            }
+        }, LIVEWIRE_DELAY_MS);
         const done = () => {
+            if (finished) {
+                return;
+            }
+            finished = true;
             clearTimeout(timer);
-            hide();
+            pendingLivewire = Math.max(0, pendingLivewire - 1);
+            if (pendingLivewire === 0) {
+                hide();
+            }
         };
-        onSuccess(done);
-        onError(done);
-        onFailure(done);
+        // onFinish covers success, error and failure. An aborted request returns early
+        // without onFinish, so the abort signal (and onCancel) also release it.
+        onFinish(done);
+        onCancel(done);
+        request?.controller?.signal?.addEventListener('abort', done, { once: true });
     });
 }
 

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Client;
+use App\Models\LeadForm;
 use App\Models\User;
 use Illuminate\Testing\TestResponse;
 use Tests\Support\Personas;
@@ -113,6 +114,37 @@ it('renders the shared layout on a client detail page', function (): void {
     assertSingleH1($response, 'clients.show');
 });
 
+it('renders header, footer, 3W CTA and autocomplete="off" on the public lead form', function (): void {
+    $this->actingAs(Personas::owner());
+    $form = LeadForm::create([
+        'name' => 'Bio', 'slug' => 'bio-guard1', 'title' => 'Fale conosco',
+        'fields' => [['name' => 'email', 'label' => 'E-mail', 'type' => 'email', 'required' => true]],
+    ]);
+    auth()->logout();
+
+    $response = $this->get('/f/'.$form->slug)->assertOk();
+    $html = (string) $response->getContent();
+    $dom = guardDom($response);
+
+    expect($html)->toContain(FOOTER_TEXT)
+        ->and($dom->getElementsByTagName('header')->length)->toBe(1)
+        ->and($dom->getElementsByTagName('footer')->length)->toBe(1);
+
+    foreach (['form', 'input', 'textarea', 'select'] as $tag) {
+        foreach ($dom->getElementsByTagName($tag) as $node) {
+            /** @var DOMElement $node */
+            expect($node->getAttribute('autocomplete'))->toBe('off', "/f: <{$tag} name=\"{$node->getAttribute('name')}\"> without autocomplete=\"off\"");
+        }
+    }
+
+    $cta = collect(iterator_to_array($dom->getElementsByTagName('a')))
+        ->first(fn (DOMElement $a): bool => str_starts_with($a->getAttribute('href'), 'https://www.3wonline.com.br/?utm_source=clientify360'));
+    expect($cta)->not->toBeNull('/f: 3W CTA missing')
+        ->and($cta->getAttribute('href'))->toContain('utm_content=lead-form')
+        ->and($cta->getAttribute('target'))->toBe('_blank')
+        ->and($cta->getAttribute('rel'))->toContain('noopener');
+});
+
 it('marks download links so the loading overlay ignores them', function (): void {
     /** @var User $owner */
     $owner = Personas::owner('professional');
@@ -133,7 +165,11 @@ it('ships the overlay module with the bfcache, failsafe and skip rules', functio
         ->toContain('data-no-loading')
         ->toContain("hasAttribute('download')")
         ->toContain('mailto:|tel:')
-        ->toContain('interceptRequest');
+        ->toContain('interceptRequest')
+        ->toContain('onFinish(done)')
+        ->toContain('onCancel(done)')
+        ->toContain("addEventListener('abort', done")
+        ->toContain("=== 'poll'");
 });
 
 it('keeps countdown markup out of the 3W CTA', function (): void {

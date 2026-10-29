@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Filament\Resources\Clients\Pages\CreateClient;
+use App\Filament\Widgets\BusinessOverview;
 use Illuminate\Support\Facades\Vite;
 use Livewire\Livewire;
 use Tests\Support\Personas;
@@ -22,6 +23,16 @@ it('adds the scoped panel styles, footer, CTA and overlay to /app', function ():
         ->toContain('id="loading-overlay"')
         ->toContain('--c360-brand-600:'.config('brand.colors.brand.600'))
         ->not->toContain('fonts.bunny');
+});
+
+it('does not poll the dashboard overview widget (no recurring overlay)', function (): void {
+    $this->actingAs(Personas::owner());
+
+    expect((string) $this->get('/app')->assertOk()->getContent())->not->toContain('wire:poll');
+
+    Livewire::test(BusinessOverview::class)
+        ->assertSee('Visão geral')
+        ->assertDontSeeHtml('wire:poll');
 });
 
 it('renders Filament text inputs with autocomplete="off"', function (): void {
