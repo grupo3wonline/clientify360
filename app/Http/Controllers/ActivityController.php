@@ -19,8 +19,8 @@ final class ActivityController extends Controller
 {
     public function index(Request $request): View
     {
-        $type = $request->query('type');
-        $clientId = $request->query('client_id');
+        $type = $this->queryString($request, 'type');
+        $clientId = $this->queryString($request, 'client_id');
 
         $activities = Activity::with(['client:id,name', 'deal:id,title', 'reminder:id,is_completed'])
             ->when(array_key_exists((string) $type, Activity::TYPES), fn ($q) => $q->where('type', $type))

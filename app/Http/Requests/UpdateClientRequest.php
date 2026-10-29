@@ -25,17 +25,20 @@ class UpdateClientRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        // Web routes pass the id; API routes bind the model. Resolving it here (account
+        // scope) answers 404 for another account's id before validation can answer 422.
+        $route = $this->route('client');
+        $client = $route instanceof Client ? $route : Client::find($route);
+        abort_if($client === null, 404);
+
         if ($this->has('_tags') && !$this->has('tag_ids')) {
             $this->merge(['tag_ids' => []]);
         }
 
-        // person_type é NOT NULL: quando ausente, mantém o valor atual do cliente
-        // (ou o default 'individual'), para não quebrar atualizações parciais.
+        // person_type é NOT NULL: quando ausente, mantém o valor atual do cliente,
+        // para não quebrar atualizações parciais.
         if (!$this->filled('person_type')) {
-            // Web routes pass the id; API routes bind the model.
-            $route = $this->route('client');
-            $current = ($route instanceof Client ? $route : Client::find($route))?->person_type;
-            $this->merge(['person_type' => $current ?? 'individual']);
+            $this->merge(['person_type' => $client->person_type ?? 'individual']);
         }
     }
 

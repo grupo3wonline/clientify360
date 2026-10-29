@@ -24,8 +24,8 @@ final class ClientController extends Controller
 
     public function index(Request $request): View
     {
-        $search = $request->query('search');
-        $tagId = $request->query('tag');
+        $search = $this->queryString($request, 'search');
+        $tagId = $this->queryString($request, 'tag');
         $clients = $this->service->paginate(15, $search, $tagId);
         $tags = Tag::orderBy('name')->get();
 

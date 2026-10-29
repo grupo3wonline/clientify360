@@ -21,8 +21,8 @@ final class ProductController extends Controller
 
     public function index(Request $request): View
     {
-        $search = trim((string) $request->query('search', ''));
-        $filter = $request->query('filter');
+        $search = trim((string) $this->queryString($request, 'search', ''));
+        $filter = $this->queryString($request, 'filter');
 
         $products = Product::query()
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
@@ -133,7 +133,7 @@ final class ProductController extends Controller
     /** Busca usada pelo editor de orçamentos (autocomplete). */
     public function search(Request $request): JsonResponse
     {
-        $term = trim((string) $request->query('q', ''));
+        $term = trim((string) $this->queryString($request, 'q', ''));
 
         $products = Product::active()
             ->when($term !== '', fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$term}%")->orWhere('sku', 'like', "%{$term}%")))

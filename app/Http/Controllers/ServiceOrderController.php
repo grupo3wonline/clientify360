@@ -27,8 +27,8 @@ final class ServiceOrderController extends Controller
 
     public function index(Request $request): View
     {
-        $status = $request->query('status');
-        $search = trim((string) $request->query('search', ''));
+        $status = $this->queryString($request, 'status');
+        $search = trim((string) $this->queryString($request, 'search', ''));
 
         $orders = ServiceOrder::with('client:id,name')
             ->when(array_key_exists((string) $status, ServiceOrder::STATUSES), fn ($q) => $q->where('status', $status))

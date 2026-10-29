@@ -26,8 +26,8 @@ final class QuoteController extends Controller
 
     public function index(Request $request): View
     {
-        $status = $request->query('status');
-        $search = trim((string) $request->query('search', ''));
+        $status = $this->queryString($request, 'status');
+        $search = trim((string) $this->queryString($request, 'search', ''));
 
         // Expira automaticamente os vencidos ao listar (sem precisar de cron)
         $this->service->expireOverdue();
@@ -50,8 +50,8 @@ final class QuoteController extends Controller
     public function create(Request $request): View
     {
         $quote = new Quote([
-            'client_id' => $request->query('client_id'),
-            'deal_id' => $request->query('deal_id'),
+            'client_id' => $this->queryString($request, 'client_id'),
+            'deal_id' => $this->queryString($request, 'deal_id'),
             'valid_until' => now()->addDays(15),
         ]);
 
