@@ -9,15 +9,9 @@ use App\Interfaces\ClientRepositoryInterface;
 use App\Models\Client;
 use App\Models\Tag;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
 final class ClientRepository implements ClientRepositoryInterface
 {
-    public function all(): Collection
-    {
-        return Client::orderBy('name')->get();
-    }
-
     public function paginate(int $perPage = 15, ?string $search = null, ?string $tagId = null): LengthAwarePaginator
     {
         $query = Client::with('tags')->orderBy('name');

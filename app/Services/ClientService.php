@@ -8,18 +8,12 @@ use App\DTOs\ClientDTO;
 use App\Interfaces\ClientRepositoryInterface;
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
 final class ClientService
 {
     public function __construct(
         private readonly ClientRepositoryInterface $repository
     ) {}
-
-    public function findAll(): Collection
-    {
-        return $this->repository->all();
-    }
 
     public function paginate(int $perPage = 15, ?string $search = null, ?string $tagId = null): LengthAwarePaginator
     {

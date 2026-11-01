@@ -104,7 +104,7 @@ Em produção, crie o endpoint no painel do Stripe com os eventos `customer.subs
 - **Repository Pattern** — Operações de banco isoladas com interfaces.
 - **DTO** — Transferência segura de dados entre camadas.
 - **Action Pattern** — Ações isoladas e reutilizáveis.
-- **Entity** — Classes com getters/setters e métodos mágicos.
+- **Entity** — Classes com getters/setters e métodos mágicos (`app/Entities/ClientEntity.php`, previsto na especificação do projeto; ainda não é consumido por nenhuma camada).
 - **Injeção de Dependência** — Controllers → Services → Repositories.
 
 ## Requisitos
@@ -112,7 +112,7 @@ Em produção, crie o endpoint no painel do Stripe com os eventos `customer.subs
 - PHP 8.2+
 - Composer 2.x
 - MySQL 5.7+ ou 8.x (o código é compatível com MySQL 8.4 LTS)
-- Node.js 20+ (build dos assets com Vite; obrigatório, não há CDN)
+- Node.js 20.19+ ou 22.12+ (exigência do Vite 8; os assets são compilados localmente, não há CDN)
 
 ## Instalação
 
@@ -149,11 +149,28 @@ php artisan queue:work   # em outro terminal (e-mails e exportações)
 ## Comandos de qualidade
 
 ```bash
-composer test        # Pest/PHPUnit (SQLite em memória)
+composer test        # Pest/PHPUnit (SQLite em memória, não toca no banco do .env)
 composer lint:test   # Pint
 composer stan        # PHPStan/Larastan
 composer rector:dry  # Rector (somente simulação)
+composer quality     # Pint + PHPStan
 ```
+
+### Testes automatizados
+
+A suíte fica em `tests/` e roda com SQLite em memória (`phpunit.xml`), sem acessar o banco configurado no `.env`.
+
+| Pasta | O que cobre |
+|---|---|
+| `tests/Feature/Security` | IDOR (web, API e Filament), papéis e permissões, limites e recursos de plano, CSRF, limite de requisições, XSS, SQL injection, upload, tokens Sanctum, assinatura do webhook, mass assignment |
+| `tests/Feature/Navigation` | Todas as rotas GET para cada perfil de usuário e checagem dos links públicos |
+| `tests/Feature/Flows` | Cadastro → verificação → login com 3 campos → redefinição de senha, assinatura (Stripe simulado) e CRUDs |
+| `tests/Feature/Auth`, `Api`, `Filament`, `Guards` | Autenticação, API v1, painel `/app` e proteções de rota |
+| `tests/Feature/Performance` | Contagem de queries e ausência de N+1 |
+| `tests/Unit` | Regras, DTOs e utilitários |
+| `tests/Load` | Carga e estresse com k6 (via `pest-plugin-stressless`), **fora** do `composer test` |
+
+Para a carga, instale o [k6](https://k6.io), rode `composer test:load:prepare` (cria um SQLite descartável e popula os dados) e depois `composer test:load`. Os cenários usam `php artisan serve` local, nunca um servidor remoto.
 
 ## API REST
 
@@ -190,12 +207,16 @@ O login exige os três dados juntos: nome de usuário, e-mail e senha.
 - ✅ UUID como chave primária
 - ✅ SoftDeletes em todos os models, exceto as 10 exceções documentadas em `.kiro/steering/style-guide.md`
 
-### Módulos comerciais (incorporados de `bkp-after_features`)
+### Módulos comerciais
 
 - ✅ **Funil de vendas (Kanban)** — oportunidades por etapa, arrastar e soltar, previsão ponderada, taxa de conversão, motivo de perda
 - ✅ **Etapas do funil configuráveis** — nome, cor, ordem e probabilidade
 - ✅ **Histórico de relacionamento** — ligações, reuniões, WhatsApp… com **próximo passo** que vira lembrete na Agenda
 - ✅ **Tags de clientes** e **origem do lead** ("como chegou até você"), com filtro na lista
+- ✅ **Clientes PF/PJ** — tipo de pessoa com validação de CPF/CNPJ e máscara no formulário
+- ✅ **Agendamentos** — calendário de compromissos com lembretes (`/appointments`)
+- ✅ **Ordens de serviço** — status, execução, numeração por conta, PDF e geração de conta a receber sem duplicidade
+- ✅ **Compras** — entrada de mercadoria com nº da nota, entrada de estoque e conta a pagar ao fornecedor
 - ✅ **Produtos e serviços** — preço, promoção, custo, margem, NCM, fornecedor
 - ✅ **Controle de estoque** — entradas (com nº da nota), saídas, ajuste de inventário, estoque mínimo e histórico auditável
 - ✅ **Orçamentos** — itens do catálogo ou livres, desconto, validade, numeração `ORC-AAAA-0001`, impressão/PDF, duplicar
@@ -205,7 +226,7 @@ O login exige os três dados juntos: nome de usuário, e-mail e senha.
 - ✅ **Notificações** — contas vencidas, estoque baixo, novos leads e oportunidades paradas
 - ✅ **Limites por plano** — `plan.limit:{recurso}` (clientes, produtos, orçamentos/mês, formulários)
 
-Detalhes das decisões de mesclagem: [`docs/MERGE-bkp-after_features.md`](docs/MERGE-bkp-after_features.md)
+Histórico das decisões de arquitetura dos módulos comerciais: [`docs/MERGE-bkp-after_features.md`](docs/MERGE-bkp-after_features.md)
 
 ## Estrutura de Diretórios
 

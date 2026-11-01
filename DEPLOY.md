@@ -31,23 +31,22 @@ já incluído redireciona as requisições para `public/` e força HTTPS.
 
 ## 3. Envio dos arquivos (FTP)
 
-O workflow `.github/workflows/deploy.yml` faz apenas checkout + sincronização por FTP a cada push em
-`main`/`master` (secrets `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD`). Ele **não** roda `composer install`,
-`npm run build` nem comandos `artisan`, e as pastas `vendor/`, `public/build/` e os assets do Filament
-estão no `.gitignore`. Escolha uma das opções:
+A hospedagem compartilhada não roda Composer nem Node, então o build acontece no GitHub Actions. A cada
+push em `main`/`master` (ou manualmente, por `workflow_dispatch`), o workflow `.github/workflows/deploy.yml`:
 
-- **(a) Build local + upload.** Na sua máquina:
-  ```bash
-  composer install --no-dev --optimize-autoloader
-  php artisan filament:assets
-  npm ci && npm run build
-  ```
-  Depois envie por FTP as pastas `vendor/`, `public/build/`, `public/js/filament/`, `public/css/filament/`
-  e `public/fonts/filament/`. Sem as três pastas do Filament o painel `/app` abre sem CSS e JS.
-- **(b) Restaurar as etapas de build no workflow.** Volte a ter no `deploy.yml` os passos de
-  `composer install` e `npm run build` (como na versão anterior do arquivo) e acrescente
-  `php artisan filament:assets` logo após o `composer install`, para que a sincronização FTP leve
-  `vendor/`, os assets compilados e os do Filament.
+1. instala o PHP 8.2 e roda `composer install --no-dev --optimize-autoloader --no-scripts` (gera `vendor/`);
+2. instala o Node 20 e roda `npm ci` e `npm run build` (gera `public/build/`);
+3. sincroniza tudo por FTP para `clientify360/` (secrets `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD`), de forma
+   incremental, sem enviar `.env`, `tests/`, `node_modules/`, arquivos `*.md` nem o conteúdo volátil de `storage/`.
+
+O workflow **não** roda `php artisan`. Como `vendor/` e `public/build/` não ficam no git, só chegam ao servidor
+pelo build do workflow. Os assets do Filament (`public/js/filament/`, `public/css/filament/` e
+`public/fonts/filament/`) também estão no `.gitignore` e **não** são gerados pelo workflow (`--no-scripts`).
+Por isso `php artisan filament:assets` precisa rodar no servidor depois de cada deploy (seção 4). Sem isso o
+painel `/app` abre sem CSS e JS.
+
+Se o servidor não permitir rodar `artisan`, gere os assets na sua máquina com `php artisan filament:assets` e
+envie essas três pastas por FTP.
 
 A documentação da API (`storage/api-docs/api-docs.json`) vai versionada no repositório: não é preciso
 rodar `l5-swagger:generate` em produção. Quando as anotações OpenAPI em `app/Http/Controllers/Api/V1`
@@ -63,8 +62,8 @@ cp .env.example .env
 php artisan key:generate   # apenas se APP_KEY estiver vazio
 # Ajuste o .env: APP_URL (https), APP_DEBUG=false, MySQL, SMTP, Stripe, STRIPE_WEBHOOK_SECRET
 
-php artisan migrate --force
-php artisan filament:assets      # sem efeito quando os arquivos já foram enviados
+php artisan migrate --force      # o workflow não roda migrations; rode a cada deploy com mudanças de banco
+php artisan filament:assets      # obrigatório: o workflow não publica os assets do Filament
 php artisan optimize             # caches de config, rotas, views e eventos
 php artisan filament:optimize
 php artisan security:check       # deve terminar sem erros

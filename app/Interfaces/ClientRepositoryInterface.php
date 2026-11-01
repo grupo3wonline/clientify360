@@ -7,12 +7,9 @@ namespace App\Interfaces;
 use App\DTOs\ClientDTO;
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
 interface ClientRepositoryInterface
 {
-    public function all(): Collection;
-
     public function paginate(int $perPage = 15, ?string $search = null, ?string $tagId = null): LengthAwarePaginator;
 
     public function findById(string $id): ?Client;

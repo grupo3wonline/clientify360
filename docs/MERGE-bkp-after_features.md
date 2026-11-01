@@ -1,6 +1,11 @@
 # Mesclagem dos sistemas de `bkp-after_features` no Clientify360
 
-Branch: `feature/merge-bkp-features` · Data: 25/09/2026
+Data: 25/09/2026
+
+> **Documento histórico.** Registra por que cada decisão foi tomada na mesclagem original. A branch
+> `feature/merge-bkp-features` e a pasta `bkp-after_features/` já foram integradas ao `main` e removidas.
+> Onde o texto abaixo diverge do sistema atual, vale o [README](../README.md) (planos e preços em
+> `config/plans.php`; PDFs com dompdf; ~700 testes).
 
 ## 1. O que havia em cada sistema e o que foi aproveitado
 
@@ -38,28 +43,26 @@ Nada foi copiado literalmente: as regras foram **reescritas** no padrão do Clie
    **o lead não se perde**: fica salvo no envio com um aviso.
 10. **Limites de plano genéricos.** `plan.limit` (sem parâmetro) continua valendo para clientes;
     `plan.limit:products`, `:quotes_per_month`, `:lead_forms` usam `config/plans.php`.
-11. **Sem dependências novas.** Impressão de orçamento é HTML + `window.print()` ("Salvar como PDF")
-    em vez de dompdf; gráfico de fluxo de caixa em HTML/CSS em vez de biblioteca de gráficos.
+11. **Sem dependências novas (na época).** Impressão de orçamento era HTML + `window.print()` e o gráfico de
+    fluxo de caixa era HTML/CSS. *Atualização:* o PDF de orçamento e de ordem de serviço hoje é gerado no
+    servidor com `barryvdh/laravel-dompdf`; o gráfico continua em HTML/CSS.
 
 ## 3. Correções em código existente (encontradas pelos testes)
 
 - **`/clients/create` retornava 404**: a rota `Route::resource('clients')` estava antes de `clients/create`,
   então "create" era tratado como ID de cliente. Ordem corrigida em `routes/web.php`.
-- **Preço errado no banner de upgrade** do dashboard (R$ 29,90 fixo; o plano custa R$ 39,90). Agora lê `config/plans.php`.
+- **Preço errado no banner de upgrade** do dashboard (valor fixo no código divergente do plano). Agora lê `config/plans.php`, a fonte única de preços (hoje Profissional = R$ 29,90/mês).
 - **Menu "Financeiro"** apontava para a assinatura Stripe — renomeado para **Assinatura**; "Financeiro"
   agora é o módulo financeiro.
-- **Dashboard** saiu de uma closure em `routes/web.php` para `DashboardController`.
+- **Dashboard** saiu de uma closure em `routes/web.php` para `DashboardController`. *Atualização:* o dashboard
+  hoje é o painel Filament em `/app`; `/dashboard` apenas redireciona para ele e o controller foi removido.
 - **7 testes do Breeze que falhavam** (não consideravam username, LGPD, aceite de termos e soft delete) foram ajustados.
 
 ## 4. Como publicar
 
-```bash
-git checkout feature/merge-bkp-features
-composer install
-php artisan migrate          # 4 migrations novas, todas com down() — reversível: migrate:rollback --step=4
-php artisan view:clear
-php artisan test             # 35 testes
-```
+Esta etapa já foi publicada no `main`. Para publicar o sistema atual, siga o [DEPLOY.md](../DEPLOY.md).
+As migrations dessa mesclagem tinham `down()` e eram reversíveis com `php artisan migrate:rollback --step=4`
+(válido apenas se nenhuma migration posterior tiver sido aplicada).
 
 ## 5. Pendência que depende de decisão sua
 
@@ -110,12 +113,10 @@ quebrado e completar funcionalidades que ficaram pela metade.
   isolamento por usuário) e `ReportTest` (2 casos — render com métricas comerciais e
   cálculo da taxa de conversão).
 - Removido o placeholder `tests/Unit/ExampleTest.php`.
-- Suíte: **40 testes, 203 asserções, tudo verde** (`php artisan test`).
+- Suíte na época: 40 testes, 203 asserções (`php artisan test`). A suíte atual é muito maior; veja a seção
+  "Testes automatizados" do [README](../README.md).
 
 ## Publicar
 
-```bash
-php artisan migrate      # 1 migration nova: create_dismissed_notifications_table (com down())
-php artisan view:clear
-php artisan test
-```
+Já publicado. Use o [DEPLOY.md](../DEPLOY.md); `php artisan migrate --force` aplica as migrations pendentes
+(inclusive `create_dismissed_notifications_table`).
