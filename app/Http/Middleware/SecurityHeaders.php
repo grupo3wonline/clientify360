@@ -20,12 +20,13 @@ final class SecurityHeaders
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-        $response->headers->set('X-XSS-Protection', '1; mode=block');
+        // Modern recommendation: disable the legacy XSS auditor (removed from browsers).
+        $response->headers->set('X-XSS-Protection', '0');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-        $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy());
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+        $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy($request));
 
-        // HSTS apenas sob HTTPS, para não bloquear ambientes locais em HTTP.
+        // HSTS only over HTTPS, so local HTTP environments are not locked out.
         if ($request->secure()) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
@@ -36,28 +37,34 @@ final class SecurityHeaders
     /**
      * Build the Content-Security-Policy.
      *
-     * Front-end assets (Tailwind, Alpine, SweetAlert2, Font Awesome) are now
-     * bundled via Vite and served from 'self' — no more CDN origins. The only
-     * remaining external origins are Google Fonts (Inter webfont), Google Tag
-     * Manager/Analytics, Stripe (billing checkout) and Google reCAPTCHA v3
-     * (anti-bot on auth and lead forms — www.google.com / www.gstatic.com).
-     * 'unsafe-inline'/'eval' stay for Filament and the inline theme bootstrap.
+     * Assets are bundled by Vite and fonts are local, so only Google Tag
+     * Manager/Analytics and reCAPTCHA v3 (www.google.com / www.gstatic.com)
+     * remain as external script origins. Stripe Checkout and the billing portal
+     * are full-page redirects (no Stripe.js), so Stripe only appears in
+     * form-action, which Chromium enforces on the redirect chain of a form POST.
+     * 'unsafe-inline' and 'unsafe-eval' stay because Livewire/Alpine evaluate
+     * expressions and Filament emits inline scripts.
      */
-    private function contentSecurityPolicy(): string
+    private function contentSecurityPolicy(Request $request): string
     {
         $directives = [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-            "font-src 'self' https://fonts.gstatic.com data:",
-            "img-src 'self' data: https: https://www.googletagmanager.com https://www.google-analytics.com",
-            "connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com",
-            "frame-src 'self' https://js.stripe.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com",
+            "style-src 'self' 'unsafe-inline'",
+            "font-src 'self' data:",
+            "img-src 'self' data: https:",
+            "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
+            "frame-src 'self' https://www.googletagmanager.com https://www.google.com",
             "base-uri 'self'",
-            "form-action 'self'",
+            "form-action 'self' https://checkout.stripe.com https://billing.stripe.com",
             "frame-ancestors 'self'",
-            'upgrade-insecure-requests',
+            "object-src 'none'",
         ];
+
+        // Only upgrade over HTTPS, so local HTTP is not rewritten.
+        if ($request->secure()) {
+            $directives[] = 'upgrade-insecure-requests';
+        }
 
         return implode('; ', $directives);
     }

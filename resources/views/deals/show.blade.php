@@ -8,11 +8,11 @@
     <x-page-title :title="$deal->title" icon="fa-handshake">
         <x-slot name="actions">
             @if($deal->status === 'open')
-                <form action="{{ route('deals.win', $deal) }}" method="POST">@csrf<button class="c-btn-success"><i class="fa-solid fa-trophy mr-2 text-xs"></i> Ganhou</button></form>
+                <form autocomplete="off" action="{{ route('deals.win', $deal) }}" method="POST">@csrf<button class="c-btn-success"><i class="fa-solid fa-trophy mr-2 text-xs"></i> Ganhou</button></form>
                 <button type="button" x-data @click="$dispatch('open-modal', 'lose-deal')" class="c-btn-ghost text-danger-600"><i class="fa-solid fa-thumbs-down mr-2 text-xs"></i> Perdeu</button>
                 <a href="{{ route('quotes.create', ['deal_id' => $deal->id]) }}" class="c-btn-primary"><i class="fa-solid fa-file-invoice-dollar mr-2 text-xs"></i> Criar orçamento</a>
             @else
-                <form action="{{ route('deals.reopen', $deal) }}" method="POST">@csrf<button class="c-btn-ghost"><i class="fa-solid fa-rotate-left mr-2 text-xs"></i> Reabrir</button></form>
+                <form autocomplete="off" action="{{ route('deals.reopen', $deal) }}" method="POST">@csrf<button class="c-btn-ghost"><i class="fa-solid fa-rotate-left mr-2 text-xs"></i> Reabrir</button></form>
             @endif
             <x-confirm-delete :action="route('deals.destroy', $deal)" title="Excluir oportunidade?" />
         </x-slot>
@@ -29,10 +29,10 @@
                 @if($deal->source)<div class="flex justify-between"><span class="text-surface-500">Origem</span><span>{{ \App\Models\Client::SOURCES[$deal->source] ?? $deal->source }}</span></div>@endif
                 @if($deal->lost_reason)<div class="pt-2 border-t border-surface-100 dark:border-surface-800"><span class="text-surface-500 block mb-1">Motivo da perda</span>{{ $deal->lost_reason }}</div>@endif
                 @if($deal->status === 'open')
-                    <form action="{{ route('deals.move', $deal) }}" method="POST" class="pt-3 border-t border-surface-100 dark:border-surface-800">
+                    <form autocomplete="off" action="{{ route('deals.move', $deal) }}" method="POST" class="pt-3 border-t border-surface-100 dark:border-surface-800">
                         @csrf @method('PATCH')
                         <label class="c-label" for="move-stage">Etapa</label>
-                        <select id="move-stage" name="pipeline_stage_id" onchange="this.form.submit()" class="c-input">
+                        <select autocomplete="off" id="move-stage" name="pipeline_stage_id" onchange="this.form.submit()" class="c-input">
                             @foreach($stages as $s)<option value="{{ $s->id }}" @selected($s->id === $deal->pipeline_stage_id)>{{ $s->name }} ({{ $s->probability }}%)</option>@endforeach
                         </select>
                     </form>
@@ -44,9 +44,9 @@
                     <span><i class="fa-solid fa-pen-to-square text-brand-500 mr-2"></i> Editar dados</span>
                     <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
                 </summary>
-                <form action="{{ route('deals.update', $deal) }}" method="POST" class="space-y-4 mt-4">
+                <form autocomplete="off" action="{{ route('deals.update', $deal) }}" method="POST" class="space-y-4 mt-4">
                     @csrf @method('PUT')
-                    <input type="hidden" name="probability" value="{{ $deal->probability }}">
+                    <input autocomplete="off" type="hidden" name="probability" value="{{ $deal->probability }}">
                     @include('deals._form', ['deal' => $deal])
                     <button class="c-btn-primary w-full">Salvar</button>
                 </form>
@@ -75,16 +75,16 @@
     </div>
 
     <x-modal name="lose-deal" :show="$errors->has('lost_reason')" maxWidth="md">
-        <form action="{{ route('deals.lose', $deal) }}" method="POST" class="p-6 space-y-4">
+        <form autocomplete="off" action="{{ route('deals.lose', $deal) }}" method="POST" class="p-6 space-y-4">
             @csrf
             <h2 class="text-lg font-semibold text-surface-900 dark:text-white">Por que perdemos?</h2>
             <div>
-                <select name="lost_reason" class="c-input" required x-data x-on:change="if ($el.value === '__other') { $el.name = ''; $refs.other.name = 'lost_reason'; $refs.other.classList.remove('hidden'); $refs.other.focus() }">
+                <select autocomplete="off" name="lost_reason" class="c-input" required x-data x-on:change="if ($el.value === '__other') { $el.name = ''; $refs.other.name = 'lost_reason'; $refs.other.classList.remove('hidden'); $refs.other.focus() }">
                     <option value="">Selecione...</option>
                     @foreach(['Preço', 'Escolheu concorrente', 'Sem orçamento no momento', 'Sem resposta / sumiu', 'Não era o perfil', 'Adiou o projeto'] as $r)<option>{{ $r }}</option>@endforeach
                     <option value="__other">Outro...</option>
                 </select>
-                <input x-ref="other" class="c-input mt-2 hidden" maxlength="255" placeholder="Descreva o motivo">
+                <input autocomplete="off" x-ref="other" class="c-input mt-2 hidden" maxlength="255" placeholder="Descreva o motivo">
                 @error('lost_reason') <p class="c-error">{{ $message }}</p> @enderror
             </div>
             <div class="flex justify-end gap-2">

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\Client;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\AccountService;
+use App\Services\TagService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -72,5 +74,35 @@ class TagIsolationTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertSame(1, Tag::count());
+    }
+
+    public function test_update_keeps_own_name_without_uniqueness_error(): void
+    {
+        $owner = User::factory()->create();
+        $this->actingAs($owner);
+
+        $service = app(TagService::class);
+        $tag = $service->create(['name' => 'VIP', 'color' => '#16A34A']);
+
+        $this->put(route('tags.update', $tag), ['name' => 'VIP', 'color' => '#2563EB'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('#2563EB', $tag->fresh()->color);
+    }
+
+    public function test_service_detaches_clients_before_deleting_the_tag(): void
+    {
+        $owner = User::factory()->create();
+        $this->actingAs($owner);
+
+        $service = app(TagService::class);
+        $tag = $service->create(['name' => 'Para excluir', 'color' => '#DC2626']);
+        $client = Client::factory()->create(['account_id' => $owner->account_id]);
+        $tag->clients()->attach($client);
+
+        $service->delete($tag);
+
+        $this->assertSame(0, Tag::count());
+        $this->assertDatabaseMissing('client_tag', ['tag_id' => $tag->id, 'client_id' => $client->id]);
     }
 }

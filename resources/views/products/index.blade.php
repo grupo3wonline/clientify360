@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Produtos e estoque']]" />
     </x-slot>
 
-    <x-page-title title="Produtos e serviços" icon="fa-boxes-stacked" subtitle="Catálogo usado nos orçamentos, com controle de estoque opcional por item.">
+    <x-page-title help-description="Catálogo de produtos e serviços com estoque opcional." help-example="Cadastre o serviço Instalação por R$ 150,00." help-tip="Defina estoque mínimo para receber o alerta de estoque baixo." title="Produtos e serviços" icon="fa-boxes-stacked" subtitle="Catálogo usado nos orçamentos, com controle de estoque opcional por item.">
         <x-slot name="actions">
             <a href="{{ route('products.create') }}" class="c-btn-primary"><i class="fa-solid fa-plus mr-2 text-xs"></i> Novo item</a>
         </x-slot>
@@ -26,32 +26,32 @@
                 <a href="{{ route('products.index', array_filter(['filter' => $k, 'search' => $search])) }}" class="c-tab {{ $filter == $k ? 'c-tab-active' : '' }}">{{ $label }}</a>
             @endforeach
         </div>
-        <form method="GET" class="md:ml-auto md:w-72">
-            <input type="hidden" name="filter" value="{{ $filter }}">
-            <input type="search" name="search" value="{{ $search }}" placeholder="Nome, código ou descrição..." class="c-input">
+        <form autocomplete="off" method="GET" class="md:ml-auto md:w-72">
+            <input autocomplete="off" type="hidden" name="filter" value="{{ $filter }}">
+            <input autocomplete="off" type="search" name="search" value="{{ $search }}" placeholder="Nome, código ou descrição..." class="c-input">
         </form>
     </div>
 
     <div class="c-card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
+            <table class="c-table-stack min-w-full divide-y divide-surface-200 dark:divide-surface-800">
                 <thead class="bg-surface-50 dark:bg-surface-800/50">
                     <tr><th class="c-th">Item</th><th class="c-th hidden sm:table-cell">Código</th><th class="c-th text-right">Preço</th><th class="c-th text-right hidden md:table-cell">Margem</th><th class="c-th text-right">Estoque</th><th class="c-th"></th></tr>
                 </thead>
                 <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                     @forelse($products as $p)
                         <tr class="hover:bg-surface-50 dark:hover:bg-surface-800/40">
-                            <td class="c-td">
+                            <td data-label="Item" class="c-td">
                                 <a href="{{ route('products.show', $p) }}" class="font-medium text-surface-900 dark:text-white hover:text-brand-600">{{ $p->name }}</a>
                                 <span class="c-badge ml-1 {{ $p->type === 'service' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-300' }}">{{ $p->type === 'service' ? 'Serviço' : 'Produto' }}</span>
                             </td>
-                            <td class="c-td text-xs text-surface-500 hidden sm:table-cell">{{ $p->sku ?: '—' }}</td>
-                            <td class="c-td text-right whitespace-nowrap">
+                            <td data-label="Código" class="c-td text-xs text-surface-500 hidden sm:table-cell">{{ $p->sku ?: '—' }}</td>
+                            <td data-label="Preço" class="c-td text-right whitespace-nowrap">
                                 @if($p->promo_price)<span class="text-xs line-through text-surface-400 mr-1">@money($p->price)</span>@endif
                                 <strong>@money($p->salePrice())</strong><span class="text-xs text-surface-400">/{{ $p->unit }}</span>
                             </td>
-                            <td class="c-td text-right text-xs hidden md:table-cell">{{ $p->marginPercent() !== null ? str_replace('.', ',', (string) $p->marginPercent()) . '%' : '—' }}</td>
-                            <td class="c-td text-right whitespace-nowrap">
+                            <td data-label="Margem" class="c-td text-right text-xs hidden md:table-cell">{{ $p->marginPercent() !== null ? str_replace('.', ',', (string) $p->marginPercent()) . '%' : '—' }}</td>
+                            <td data-label="Estoque" class="c-td text-right whitespace-nowrap">
                                 @if($p->track_stock)
                                     <span class="{{ $p->isLowStock() ? 'text-warning-700 font-semibold' : '' }}">@qty($p->stock) {{ $p->unit }}</span>
                                     @if($p->isLowStock())<i class="fa-solid fa-triangle-exclamation text-warning-500 ml-1" title="Abaixo do mínimo (@qty($p->min_stock))"></i>@endif

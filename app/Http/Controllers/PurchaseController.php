@@ -22,7 +22,7 @@ final class PurchaseController extends Controller
 
     public function index(Request $request): View
     {
-        $search = trim((string) $request->query('search', ''));
+        $search = trim((string) $this->queryString($request, 'search', ''));
 
         $purchases = Purchase::withCount('items')
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w

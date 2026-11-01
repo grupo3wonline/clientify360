@@ -171,7 +171,18 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // Absent or empty means "secure in production, not secure elsewhere";
+    // an explicit true/false is honored; an unparsable value uses the default.
+    'secure' => (static function (): bool {
+        $value = env('SESSION_SECURE_COOKIE');
+        $default = env('APP_ENV') === 'production';
+
+        if ($value === null || $value === '') {
+            return $default;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? $default;
+    })(),
 
     /*
     |--------------------------------------------------------------------------

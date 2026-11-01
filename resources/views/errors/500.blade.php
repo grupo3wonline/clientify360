@@ -1,22 +1,11 @@
-@extends('layouts.public')
+@extends('layouts.error')
 
-@section('title', 'Erro Interno do Servidor')
-@section('meta_description', 'Ocorreu um erro interno no servidor. Nossa equipe já foi notificada e está trabalhando na solução.')
-
-@section('content')
-    <section class="min-h-[60vh] flex items-center justify-center py-16 md:py-24">
-        <div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="mb-8">
-                <i class="fa-solid fa-triangle-exclamation text-danger-500 dark:text-danger-400 text-6xl md:text-8xl" aria-hidden="true"></i>
-            </div>
-            <p class="text-7xl md:text-9xl font-bold text-danger-500 dark:text-danger-400 mb-4" aria-hidden="true">500</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-surface-800 dark:text-white mb-4">Erro interno do servidor</h1>
-            <p class="text-surface-600 dark:text-surface-300 mb-8 leading-relaxed">
-                Algo deu errado do nosso lado. Nossa equipe técnica já foi notificada e está trabalhando para resolver o problema. Tente novamente em alguns instantes.
-            </p>
-            <a href="{{ url('/') }}" class="inline-flex items-center bg-brand-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-brand-700 transition shadow-lg">
-                <i class="fa-solid fa-house mr-2" aria-hidden="true"></i> Voltar para a Página Inicial
-            </a>
-        </div>
-    </section>
+@section('title', 'Erro interno')
+@section('code', '500')
+@section('icon', 'fa-triangle-exclamation')
+@section('tone', 'bg-danger-50 text-danger-600 dark:bg-danger-950/40 dark:text-danger-400')
+@section('heading', 'Erro interno')
+@section('message')
+    <p>Algo deu errado do nosso lado e a sua solicitação não foi concluída. O erro foi registrado para a nossa equipe analisar.</p>
+    <p class="text-sm text-surface-500 dark:text-surface-400">Tente novamente em alguns minutos. Seus dados continuam seguros.</p>
 @endsection

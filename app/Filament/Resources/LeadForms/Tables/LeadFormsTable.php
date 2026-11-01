@@ -27,6 +27,7 @@ class LeadFormsTable
                 Action::make('editar')
                     ->label('Editar')
                     ->icon('heroicon-m-pencil-square')
+                    ->authorize('update')
                     ->url(fn (LeadForm $record): string => route('lead-forms.edit', $record)),
                 Action::make('publico')
                     ->label('Ver público')

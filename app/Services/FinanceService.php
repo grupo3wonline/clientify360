@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\FinancialEntry;
+use App\Traits\CachesPerAccount;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class FinanceService
 {
+    use CachesPerAccount;
+
+    private const TTL = 600;
+
     /**
      * Cria 1..N lançamentos dividindo o valor. A diferença de arredondamento
      * vai para a primeira parcela, para que a soma bata exatamente com o total
@@ -66,6 +71,13 @@ final class FinanceService
     public function monthSummary(?Carbon $month = null): array
     {
         $month ??= now();
+
+        return $this->rememberForAccount('finance:summary:'.$month->format('Y-m'), self::TTL, fn (): array => $this->buildMonthSummary($month));
+    }
+
+    /** @return array<string, float|int> */
+    private function buildMonthSummary(Carbon $month): array
+    {
         // Limites como datetime cobrindo o mês inteiro: `paid_at`/`due_date` têm cast `date`
         // e são gravados como `Y-m-d 00:00:00`, então o fim do mês precisa alcançar o fim do dia.
         $start = $month->copy()->startOfMonth()->startOfDay();
@@ -93,6 +105,13 @@ final class FinanceService
      * @return array<int, array{label: string, in: float, out: float, forecast_in: float, forecast_out: float}>
      */
     public function cashFlow(int $monthsBack = 5, int $monthsAhead = 1): array
+    {
+        // The current month is part of the key so the window rolls over on its own.
+        return $this->rememberForAccount('finance:cashflow:'.now()->format('Y-m').":{$monthsBack}:{$monthsAhead}", self::TTL, fn (): array => $this->buildCashFlow($monthsBack, $monthsAhead));
+    }
+
+    /** @return array<int, array{label: string, in: float, out: float, forecast_in: float, forecast_out: float}> */
+    private function buildCashFlow(int $monthsBack, int $monthsAhead): array
     {
         $from = now()->subMonths($monthsBack)->startOfMonth()->startOfDay();
         $to = now()->addMonths($monthsAhead)->endOfMonth()->endOfDay();

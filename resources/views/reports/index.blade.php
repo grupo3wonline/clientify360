@@ -1,16 +1,12 @@
 <x-app-layout>
     @section('title', 'Relatórios')
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Relatórios</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Relatórios']]" />
     </x-slot>
 
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Relatórios</h1>
+            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Relatórios</h1><x-help title="Como usar esta página" description="Indicadores do negócio: clientes, atendimentos, vendas e estoque no período." example="Compare os últimos 30 dias com os 90 dias para ver a tendência." tip="Use o filtro de período no topo da página." /></div>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Visão geral do seu negócio</p>
         </div>
         <div class="flex items-center space-x-2">

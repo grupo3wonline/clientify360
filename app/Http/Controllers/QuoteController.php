@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Deal;
 use App\Models\FinancialEntry;
 use App\Models\Quote;
+use App\Services\PdfService;
 use App\Services\QuoteService;
 use App\Support\OwnedRule;
 use Illuminate\Http\RedirectResponse;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 
 final class QuoteController extends Controller
 {
@@ -24,11 +26,11 @@ final class QuoteController extends Controller
 
     public function index(Request $request): View
     {
-        $status = $request->query('status');
-        $search = trim((string) $request->query('search', ''));
+        $status = $this->queryString($request, 'status');
+        $search = trim((string) $this->queryString($request, 'search', ''));
 
         // Expira automaticamente os vencidos ao listar (sem precisar de cron)
-        Quote::whereIn('status', ['draft', 'sent'])->whereDate('valid_until', '<', now()->toDateString())->update(['status' => 'expired']);
+        $this->service->expireOverdue();
 
         $quotes = Quote::with('client:id,name')
             ->when(array_key_exists((string) $status, Quote::STATUS_LABELS), fn ($q) => $q->where('status', $status))
@@ -48,8 +50,8 @@ final class QuoteController extends Controller
     public function create(Request $request): View
     {
         $quote = new Quote([
-            'client_id' => $request->query('client_id'),
-            'deal_id' => $request->query('deal_id'),
+            'client_id' => $this->queryString($request, 'client_id'),
+            'deal_id' => $this->queryString($request, 'deal_id'),
             'valid_until' => now()->addDays(15),
         ]);
 
@@ -119,6 +121,14 @@ final class QuoteController extends Controller
         $quote->load(['items', 'client']);
 
         return view('quotes.print', ['quote' => $quote, 'user' => auth()->user()]);
+    }
+
+    /** Plano Profissional (plan.feature:pdf). */
+    public function pdf(Request $request, Quote $quote, PdfService $pdf): Response
+    {
+        $this->authorize('view', $quote);
+
+        return $pdf->quote($quote, $request->user());
     }
 
     public function send(Quote $quote): RedirectResponse

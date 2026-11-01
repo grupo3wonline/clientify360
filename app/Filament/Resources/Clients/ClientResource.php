@@ -10,13 +10,16 @@ use App\Filament\Resources\Clients\Pages\ListClients;
 use App\Filament\Resources\Clients\Schemas\ClientForm;
 use App\Filament\Resources\Clients\Tables\ClientsTable;
 use App\Models\Client;
+use App\Services\SearchService;
 use BackedEnum;
+use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use UnitEnum;
 
 class ClientResource extends Resource
@@ -36,6 +39,8 @@ class ClientResource extends Resource
     protected static ?string $navigationLabel = 'Clientes';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static int $globalSearchResultsLimit = 10;
 
     public static function form(Schema $schema): Schema
     {
@@ -69,5 +74,32 @@ class ClientResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    /**
+     * Global search goes through Scout (SearchService), which always filters by account.
+     *
+     * @return Collection<int, GlobalSearchResult>
+     */
+    public static function getGlobalSearchResults(string $search): Collection
+    {
+        $user = auth()->user();
+
+        if ($user === null) {
+            return collect();
+        }
+
+        return collect(app(SearchService::class)->clients($user, $search, static::getGlobalSearchResultsLimit())->items())
+            ->map(function (Client $record): ?GlobalSearchResult {
+                $url = static::getGlobalSearchResultUrl($record);
+
+                return $url === null ? null : new GlobalSearchResult(
+                    title: (string) $record->name,
+                    url: $url,
+                    details: array_filter(['E-mail' => (string) $record->email]),
+                );
+            })
+            ->filter()
+            ->values();
     }
 }

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Models\Account;
+use App\Jobs\ExportClientsXlsxJob;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Queue;
+use Tests\Support\Subscriptions;
 use Tests\TestCase;
 
 class ExportTest extends TestCase
@@ -17,17 +18,19 @@ class ExportTest extends TestCase
 
     public function test_professional_can_download_clients_xlsx(): void
     {
-        Excel::fake();
+        Queue::fake();
 
         $user = User::factory()->create();
         // Simula plano Profissional ativo na conta.
         $this->mockProfessional($user);
 
         $this->actingAs($user)
-            ->get(route('export.clients.xlsx'))
-            ->assertOk();
+            ->from(route('clients.index'))
+            ->post(route('export.clients.xlsx'))
+            ->assertRedirect(route('clients.index'))
+            ->assertSessionHas('success', "Sua planilha está sendo gerada. Enviaremos o link de download para {$user->email} em alguns minutos.");
 
-        Excel::assertDownloaded('clientes_'.now()->format('Y-m-d').'.xlsx');
+        Queue::assertPushed(ExportClientsXlsxJob::class, fn (ExportClientsXlsxJob $job): bool => $job->accountId === $user->account_id && $job->userId === $user->id);
     }
 
     public function test_basic_plan_cannot_export(): void
@@ -35,23 +38,14 @@ class ExportTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $this->get(route('export.clients.xlsx'))->assertForbidden();
+        $this->post(route('export.clients.xlsx'))->assertForbidden();
         $this->get(route('export.clients'))->assertForbidden();
     }
 
     private function mockProfessional(User $user): void
     {
         // Cria uma assinatura ativa para a conta (Cashier Billable = Account).
-        /** @var Account $account */
-        $account = $user->account;
-        $account->update(['stripe_id' => 'cus_test_'.$account->id]);
-        $account->subscriptions()->create([
-            'type' => 'default',
-            'stripe_id' => 'sub_test_'.$account->id,
-            'stripe_status' => 'active',
-            'stripe_price' => 'price_test',
-            'quantity' => 1,
-        ]);
+        Subscriptions::makeProfessional($user->account);
 
         Client::create(['name' => 'Cliente Export', 'email' => 'exp@ex.com']);
     }

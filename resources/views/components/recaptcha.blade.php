@@ -37,6 +37,7 @@
                 }
 
                 event.preventDefault();
+                if (window.loading) { window.loading.show(form.dataset.loadingText); }
 
                 if (typeof grecaptcha === 'undefined') {
                     // reCAPTCHA failed to load: submit anyway so the server-side

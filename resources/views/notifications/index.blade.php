@@ -1,11 +1,7 @@
 <x-app-layout>
     @section('title', 'Notificações')
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Notificações</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Notificações']]" />
     </x-slot>
 
     @php
@@ -23,7 +19,7 @@
     <div class="max-w-4xl mx-auto">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Notificações</h1>
+                <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Notificações</h1><x-help title="Como usar esta página" description="Avisos de lembretes atrasados, compromissos próximos e atendimentos parados." example="Abra a notificação para ir direto ao registro." tip="Use &#039;Marcar todas como lidas&#039; para limpar a lista." /></div>
                 <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Alertas e lembretes importantes</p>
             </div>
             <div class="flex items-center gap-3">
@@ -31,10 +27,10 @@
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-danger-100 dark:bg-danger-950/50 text-danger-700 dark:text-danger-300 border border-danger-200 dark:border-danger-800">
                     {{ $notifications->count() }} {{ $notifications->count() === 1 ? 'alerta' : 'alertas' }}
                 </span>
-                <form method="POST" action="{{ route('notifications.markAllRead') }}" id="dismiss-all-form">
+                <form autocomplete="off" method="POST" action="{{ route('notifications.markAllRead') }}" id="dismiss-all-form">
                     @csrf
                     @foreach($notifications as $notification)
-                        <input type="hidden" name="keys[]" value="{{ $notification['id'] }}">
+                        <input autocomplete="off" type="hidden" name="keys[]" value="{{ $notification['id'] }}">
                     @endforeach
                     <button type="submit"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-surface-600 dark:text-surface-300 bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition">
@@ -67,7 +63,7 @@
                             </span>
                         </div>
                     </a>
-                    <form method="POST" action="{{ route('notifications.markRead', $notification['id']) }}" class="flex-shrink-0">
+                    <form autocomplete="off" method="POST" action="{{ route('notifications.markRead', $notification['id']) }}" class="flex-shrink-0">
                         @csrf
                         <button type="submit" title="Dispensar notificação"
                             class="w-8 h-8 rounded-lg flex items-center justify-center text-surface-400 hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/40 transition">

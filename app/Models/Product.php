@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable;
 
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
-    use BelongsToAccount, HasFactory, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasFactory, HasUuid, Searchable, SoftDeletes;
 
     public const UNITS = ['un' => 'Unidade', 'h' => 'Hora', 'mes' => 'Mês', 'kg' => 'Kg', 'm' => 'Metro', 'm2' => 'm²', 'cx' => 'Caixa', 'pct' => 'Pacote'];
 
@@ -39,6 +41,21 @@ class Product extends Model
             'min_stock' => 'decimal:3',
             'track_stock' => 'boolean',
             'is_active' => 'boolean',
+        ];
+    }
+
+    /**
+     * Columns searched by Scout's database engine (always filtered by account in SearchService).
+     *
+     * @return array<string, mixed>
+     */
+    #[SearchUsingPrefix(['sku'])]
+    public function toSearchableArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'sku' => $this->sku,
+            'description' => $this->description,
         ];
     }
 

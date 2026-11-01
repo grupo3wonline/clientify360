@@ -1,5 +1,7 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+    @section('title', 'Confirme seu e-mail')
+    <x-auth-heading title="Confirme seu e-mail" icon="fa-envelope-circle-check" help="Não chegou? Verifique o spam ou clique em reenviar. O link expira em 60 minutos." />
+    <div class="mb-4 text-sm text-surface-600 dark:text-surface-400">
         Obrigado por se cadastrar! Antes de começar, verifique seu endereço de e-mail clicando no link que acabamos de enviar. Se não recebeu o e-mail, enviaremos outro com prazer.
     </div>
 
@@ -10,7 +12,7 @@
     @endif
 
     <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
+        <form autocomplete="off" method="POST" action="{{ route('verification.send') }}">
             @csrf
 
             <div>
@@ -20,10 +22,10 @@
             </div>
         </form>
 
-        <form method="POST" action="{{ route('logout') }}">
+        <form autocomplete="off" method="POST" action="{{ route('logout') }}">
             @csrf
 
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button type="submit" class="underline text-sm text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
                 Sair
             </button>
         </form>

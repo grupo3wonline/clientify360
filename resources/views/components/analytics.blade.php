@@ -1,37 +1,27 @@
+{{--
+    Consent configuration only. It never loads Google Tag Manager/Analytics:
+    resources/js/consent.js injects them after the visitor's consent.
+    The Google Consent Mode v2 default (everything denied) runs first.
+--}}
 @php
-    $gtmId = config('analytics.gtm_id');
-    $ga4Id = config('analytics.ga4_id');
-    $siteVerification = config('analytics.google_site_verification');
     $enabled = ! app()->environment('testing', 'local');
+    $siteVerification = config('analytics.google_site_verification');
+    $consentConfig = [
+        'version' => (string) config('legal.privacy_version'),
+        'endpoint' => route('consent.store'),
+        'privacyUrl' => route('privacy'),
+        'gtmId' => $enabled && filled(config('analytics.gtm_id')) ? (string) config('analytics.gtm_id') : null,
+        'ga4Id' => $enabled && filled(config('analytics.ga4_id')) ? (string) config('analytics.ga4_id') : null,
+    ];
 @endphp
 
 @if($siteVerification)
     <meta name="google-site-verification" content="{{ $siteVerification }}">
 @endif
 
-@if($enabled && $gtmId)
-    {{-- Google Tag Manager --}}
-    <script>
-        (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', '{{ $gtmId }}');
-    </script>
-@endif
-
-@if($enabled && $ga4Id)
-    {{-- Google Analytics 4 --}}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $ga4Id }}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', '{{ $ga4Id }}');
-    </script>
-@endif
+<script>
+    window.__consentConfig = {!! json_encode($consentConfig, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!};
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', { ad_storage: 'denied', analytics_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500 });
+</script>

@@ -24,7 +24,7 @@
 
         <div>
             <span id="tags-label" class="c-label">Tags</span>
-            <input type="hidden" name="_tags" value="1">
+            <input autocomplete="off" type="hidden" name="_tags" value="1">
             @if($tags->isEmpty())
                 <p class="text-xs text-surface-500 dark:text-surface-400 mt-2">
                     Nenhuma tag criada ainda. <a href="{{ route('tags.index') }}" class="text-brand-600 dark:text-brand-400 hover:underline" target="_blank" rel="noopener">Criar tags</a>
@@ -37,7 +37,7 @@
                                class="cursor-pointer inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border transition focus-within:ring-2 focus-within:ring-brand-500"
                                :class="on ? 'border-transparent' : 'border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300'"
                                :style="on ? 'background: {{ $tag->color }}; color: {{ $tag->textColor() }}' : ''">
-                            <input type="checkbox" name="tag_ids[]" value="{{ $tag->id }}" x-model="on" class="sr-only" @checked($selectedTags->contains($tag->id))>
+                            <input autocomplete="off" type="checkbox" name="tag_ids[]" value="{{ $tag->id }}" x-model="on" class="sr-only" @checked($selectedTags->contains($tag->id))>
                             <span class="w-2 h-2 rounded-full mr-1.5 ring-1 ring-white/60" style="background: {{ $tag->color }}"></span>{{ $tag->name }}
                         </label>
                     @endforeach

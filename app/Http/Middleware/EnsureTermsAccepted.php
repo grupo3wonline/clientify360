@@ -10,21 +10,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Ensures the authenticated user has accepted the current version
- * of the Terms of Service before accessing the application.
+ * of the Terms of Service (config legal.terms_version) before accessing the application.
  */
 final class EnsureTermsAccepted
 {
-    private const CURRENT_VERSION = '1.0';
-
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
 
-        if ($user === null) {
-            return $next($request);
-        }
-
-        if ($user->terms_accepted_at !== null && $user->terms_version === self::CURRENT_VERSION) {
+        if ($user === null || $user->hasAcceptedCurrentTerms()) {
             return $next($request);
         }
 

@@ -7,8 +7,10 @@ namespace App\Services;
 use App\Models\Account;
 use App\Models\AccountInvitation;
 use App\Models\User;
+use App\Notifications\AccountInvitationNotification;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -105,7 +107,7 @@ final class AccountService
     {
         $email = mb_strtolower(trim($email));
 
-        return AccountInvitation::updateOrCreate(
+        $invitation = AccountInvitation::updateOrCreate(
             ['account_id' => $account->id, 'email' => $email],
             [
                 'role' => $role,
@@ -115,6 +117,11 @@ final class AccountService
                 'accepted_at' => null,
             ],
         );
+
+        Notification::route('mail', $email)
+            ->notify(AccountInvitationNotification::for($invitation, $account->name, $invitedBy));
+
+        return $invitation;
     }
 
     /** Remove um colaborador da conta (não pode remover o dono). */
@@ -126,6 +133,8 @@ final class AccountService
 
         $this->registrar->setPermissionsTeamId($account->id);
         $member->syncRoles([]);
+        // A removed member keeps no API access to the former account.
+        $member->tokens()->delete();
         $member->account_id = null;
         $member->save();
         $this->registrar->forgetCachedPermissions();

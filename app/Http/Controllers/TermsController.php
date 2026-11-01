@@ -10,10 +10,18 @@ use Illuminate\View\View;
 
 final class TermsController extends Controller
 {
-    private const CURRENT_VERSION = '1.0';
-
-    public function show(): View
+    /**
+     * Public, read-only terms page. An authenticated user who has not accepted
+     * the current version gets the acceptance form instead.
+     */
+    public function show(Request $request): View
     {
+        $user = $request->user();
+
+        if ($user !== null && !$user->hasAcceptedCurrentTerms()) {
+            return view('terms.accept');
+        }
+
         return view('terms.show');
     }
 
@@ -28,7 +36,7 @@ final class TermsController extends Controller
 
         $request->user()->update([
             'terms_accepted_at' => now(),
-            'terms_version' => self::CURRENT_VERSION,
+            'terms_version' => (string) config('legal.terms_version'),
         ]);
 
         return redirect()->route('dashboard')

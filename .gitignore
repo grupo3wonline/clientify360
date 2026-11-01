@@ -3,6 +3,9 @@
 .env
 .env.backup
 .env.production
+.env.loadtest
+/database/loadtest.sqlite
+/storage/app/private/loadtest-credentials.json
 .phpactor.json
 .phpunit.result.cache
 /.codex

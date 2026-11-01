@@ -6,10 +6,12 @@ namespace App\Http\Requests;
 
 use App\Models\Client;
 use App\Rules\CpfCnpj;
+use App\Support\OwnedRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class StoreClientRequest extends FormRequest
+/** Not final: the API v1 request extends it to reuse rules() and messages(). */
+class StoreClientRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -48,7 +50,7 @@ final class StoreClientRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'],
             'source' => ['nullable', 'string', Rule::in(array_keys(Client::SOURCES))],
             'tag_ids' => ['nullable', 'array'],
-            'tag_ids.*' => ['string', Rule::exists('tags', 'id')->where('user_id', $this->user()?->id)],
+            'tag_ids.*' => ['string', OwnedRule::exists('tags', false)],
             'score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'score_label' => ['nullable', 'string', 'max:20'],
         ];

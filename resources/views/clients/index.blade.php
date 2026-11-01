@@ -2,28 +2,30 @@
     @section('title', 'Clientes')
 
     <x-slot name="header">
-        <div class="flex items-center space-x-2">
-            <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-                <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-                <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-                <span class="text-surface-800 dark:text-surface-200 font-medium">Clientes</span>
-            </nav>
-        </div>
+        <x-breadcrumb :items="[['label' => 'Clientes']]" />
     </x-slot>
 
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Clientes</h1>
+            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Clientes</h1><x-help title="Como usar esta página" description="Cadastre e acompanhe todos os seus clientes em um só lugar." example="Cadastre &#039;Maria Silva&#039;, adicione a tag VIP e registre um atendimento." tip="Use a busca por nome, e-mail ou documento e filtre por tag." /></div>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Gerencie sua base de clientes</p>
         </div>
         <div class="flex items-center gap-3">
             @if(auth()->user()->isProfessional())
-                <a href="{{ route('export.clients') }}"
+                <a href="{{ route('export.clients') }}" data-no-loading
                    class="inline-flex items-center px-4 py-2.5 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-xl transition shadow-sm shadow-accent-600/25"
                    title="Exportar clientes em CSV">
                     <i class="fa-solid fa-file-csv mr-2 text-xs"></i> Exportar
                 </a>
+                <form method="POST" action="{{ route('export.clients.xlsx') }}" autocomplete="off" class="inline">
+                    @csrf
+                    <button type="submit" data-loading-text="Gerando planilha..."
+                            class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-medium rounded-xl transition"
+                            title="Gerar planilha Excel (XLSX): o link de download chega por e-mail">
+                        <i class="fa-solid fa-file-excel mr-2 text-xs" aria-hidden="true"></i> Excel
+                    </button>
+                </form>
             @endif
             <a href="{{ route('clients.create') }}"
                class="inline-flex items-center px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition shadow-sm shadow-brand-600/25">
@@ -34,8 +36,8 @@
 
     <!-- Search Bar -->
     <div class="mb-6">
-        <form action="{{ route('clients.index') }}" method="GET">
-            @if($tagId ?? false)<input type="hidden" name="tag" value="{{ $tagId }}">@endif
+        <form autocomplete="off" action="{{ route('clients.index') }}" method="GET">
+            @if($tagId ?? false)<input autocomplete="off" type="hidden" name="tag" value="{{ $tagId }}">@endif
             <div class="relative max-w-lg">
                 <input type="text"
                        name="search"
@@ -83,7 +85,7 @@
     <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
         @if($clients->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full">
+                <table class="c-table-stack min-w-full">
                     <thead>
                         <tr class="border-b border-surface-200 dark:border-surface-800">
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Nome</th>
@@ -97,7 +99,7 @@
                     <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                         @foreach($clients as $client)
                             <tr class="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-                                <td class="px-6 py-4">
+                                <td data-label="Nome" class="px-6 py-4">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                             {{ strtoupper(substr($client->name, 0, 1)) }}
@@ -113,13 +115,13 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 hidden md:table-cell">
+                                <td data-label="E-mail" class="px-6 py-4 hidden md:table-cell">
                                     <span class="text-sm text-surface-600 dark:text-surface-400">{{ $client->email ?? '—' }}</span>
                                 </td>
-                                <td class="px-6 py-4 hidden lg:table-cell">
+                                <td data-label="Telefone" class="px-6 py-4 hidden lg:table-cell">
                                     <span class="text-sm text-surface-600 dark:text-surface-400">{{ $client->phone ?? '—' }}</span>
                                 </td>
-                                <td class="px-6 py-4 hidden lg:table-cell">
+                                <td data-label="Cidade/UF" class="px-6 py-4 hidden lg:table-cell">
                                     <span class="text-sm text-surface-600 dark:text-surface-400">
                                         @if($client->city && $client->state)
                                             {{ $client->city }}/{{ $client->state }}
@@ -128,7 +130,7 @@
                                         @endif
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 hidden md:table-cell text-center">
+                                <td data-label="Score" class="px-6 py-4 hidden md:table-cell text-center">
                                     @if($client->score > 0)
                                         <div class="inline-flex items-center space-x-1.5">
                                             <span class="text-sm font-bold {{ $client->score >= 80 ? 'text-accent-600 dark:text-accent-400' : ($client->score >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-surface-500') }}">{{ $client->score }}</span>
@@ -140,7 +142,7 @@
                                         <span class="text-xs text-surface-300 dark:text-surface-600">—</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td data-label="Ações" class="px-6 py-4">
                                     <div class="flex items-center justify-center space-x-1">
                                         <a href="{{ route('clients.show', $client) }}"
                                            class="p-2 rounded-lg text-surface-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:text-brand-400 dark:hover:bg-brand-950/30 transition"
@@ -152,7 +154,7 @@
                                            title="Editar">
                                             <i class="fa-solid fa-pen-to-square text-sm"></i>
                                         </a>
-                                        <form id="delete-form-{{ $client->id }}" action="{{ route('clients.destroy', $client) }}" method="POST" class="hidden">
+                                        <form autocomplete="off" id="delete-form-{{ $client->id }}" action="{{ route('clients.destroy', $client) }}" method="POST" class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -206,11 +208,10 @@
                 text: 'Esta ação não poderá ser desfeita!',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#64748b',
+                confirmButtonColor: brandColors.danger['600'],
+                cancelButtonColor: brandColors.surface['500'],
                 confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Cancelar',
-                customClass: { popup: 'rounded-2xl' }
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('delete-form-' + id).submit();

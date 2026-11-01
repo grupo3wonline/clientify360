@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Funil de vendas', 'url' => route('deals.index')], ['label' => 'Lista']]" />
     </x-slot>
 
-    <x-page-title title="Todas as oportunidades" icon="fa-list">
+    <x-page-title help-description="Todas as oportunidades em lista, com filtros." help-example="Filtre as oportunidades ganhas no mês." help-tip="Clique na oportunidade para ver o histórico completo." title="Todas as oportunidades" icon="fa-list">
         <x-slot name="actions">
             <a href="{{ route('deals.index') }}" class="c-btn-ghost"><i class="fa-solid fa-table-columns mr-2 text-xs"></i> Kanban</a>
         </x-slot>
@@ -20,19 +20,19 @@
 
     <div class="c-card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
+            <table class="c-table-stack min-w-full divide-y divide-surface-200 dark:divide-surface-800">
                 <thead class="bg-surface-50 dark:bg-surface-800/50">
                     <tr><th class="c-th">Oportunidade</th><th class="c-th hidden sm:table-cell">Cliente</th><th class="c-th hidden md:table-cell">Etapa</th><th class="c-th text-right">Valor</th><th class="c-th">Status</th><th class="c-th hidden lg:table-cell">Atualizada</th></tr>
                 </thead>
                 <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                     @forelse($deals as $deal)
                         <tr class="hover:bg-surface-50 dark:hover:bg-surface-800/40">
-                            <td class="c-td"><a href="{{ route('deals.show', $deal) }}" class="font-medium text-brand-700 dark:text-brand-400 hover:underline">{{ $deal->title }}</a></td>
-                            <td class="c-td hidden sm:table-cell">{{ $deal->client?->name }}</td>
-                            <td class="c-td hidden md:table-cell">@if($deal->stage)<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background: {{ $deal->stage->color }}"></span>{{ $deal->stage->name }}</span>@endif</td>
-                            <td class="c-td text-right font-semibold whitespace-nowrap">@money($deal->value)</td>
-                            <td class="c-td">@include('deals._status', ['deal' => $deal])</td>
-                            <td class="c-td text-xs text-surface-500 whitespace-nowrap hidden lg:table-cell">{{ $deal->updated_at->diffForHumans() }}</td>
+                            <td data-label="Oportunidade" class="c-td"><a href="{{ route('deals.show', $deal) }}" class="font-medium text-brand-700 dark:text-brand-400 hover:underline">{{ $deal->title }}</a></td>
+                            <td data-label="Cliente" class="c-td hidden sm:table-cell">{{ $deal->client?->name }}</td>
+                            <td data-label="Etapa" class="c-td hidden md:table-cell">@if($deal->stage)<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background: {{ $deal->stage->color }}"></span>{{ $deal->stage->name }}</span>@endif</td>
+                            <td data-label="Valor" class="c-td text-right font-semibold whitespace-nowrap">@money($deal->value)</td>
+                            <td data-label="Status" class="c-td">@include('deals._status', ['deal' => $deal])</td>
+                            <td data-label="Atualizada" class="c-td text-xs text-surface-500 whitespace-nowrap hidden lg:table-cell">{{ $deal->updated_at->diffForHumans() }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="6"><x-empty-state icon="fa-filter-circle-dollar" title="Nenhuma oportunidade encontrada" /></td></tr>

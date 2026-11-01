@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Financeiro', 'url' => route('finance.index')], ['label' => 'Categorias']]" />
     </x-slot>
 
-    <x-page-title title="Categorias financeiras" icon="fa-folder-tree" subtitle="Organize receitas e despesas para entender para onde vai o dinheiro." />
+    <x-page-title help-description="Categorias de receitas e despesas." help-example="Crie a categoria Marketing para separar esses gastos." help-tip="Poucas categorias bem definidas deixam os relatórios mais claros." title="Categorias financeiras" icon="fa-folder-tree" subtitle="Organize receitas e despesas para entender para onde vai o dinheiro." />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         @foreach(['income' => ['Receitas', 'fa-arrow-down text-accent-500'], 'expense' => ['Despesas', 'fa-arrow-up text-danger-500']] as $type => [$label, $icon])
@@ -24,12 +24,12 @@
 
         <div class="c-card p-5 h-fit">
             <h3 class="text-sm font-semibold mb-4"><i class="fa-solid fa-plus-circle text-brand-500 mr-2"></i>Nova categoria</h3>
-            <form action="{{ route('finance.categories.store') }}" method="POST" class="space-y-3">
+            <form autocomplete="off" action="{{ route('finance.categories.store') }}" method="POST" class="space-y-3">
                 @csrf
-                <div><label class="c-label">Nome</label><input name="name" required maxlength="80" class="c-input">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
+                <div><label class="c-label">Nome</label><input autocomplete="off" name="name" required maxlength="80" class="c-input">@error('name')<p class="c-error">{{ $message }}</p>@enderror</div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="c-label">Tipo</label><select name="type" class="c-input"><option value="expense">Despesa</option><option value="income">Receita</option></select></div>
-                    <div><label class="c-label">Cor</label><input type="color" name="color" value="#64748b" class="h-10 w-full rounded-lg border border-surface-200 dark:border-surface-700"></div>
+                    <div><label class="c-label">Tipo</label><select autocomplete="off" name="type" class="c-input"><option value="expense">Despesa</option><option value="income">Receita</option></select></div>
+                    <div><label class="c-label">Cor</label><input autocomplete="off" type="color" name="color" value="#64748b" class="h-10 w-full rounded-lg border border-surface-200 dark:border-surface-700"></div>
                 </div>
                 <button class="c-btn-primary w-full">Criar</button>
             </form>

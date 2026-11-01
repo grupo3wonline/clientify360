@@ -2,18 +2,12 @@
     @section('title', 'Nova compra')
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('purchases.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Compras</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Nova</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Compras', 'url' => route('purchases.index')], ['label' => 'Nova']]" />
     </x-slot>
 
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Nova compra</h1>
+            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Nova compra</h1><x-help title="Como usar esta página" description="Lance os itens comprados, quantidades e custos." example="Fornecedor ACME, 10 caixas a R$ 25,00." tip="Revise os custos: eles alimentam o valor do estoque." /></div>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Dê entrada de mercadoria de um fornecedor. Ao confirmar, o estoque é atualizado e uma conta a pagar é gerada.</p>
         </div>
         <a href="{{ route('purchases.index') }}" class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition">
@@ -21,7 +15,7 @@
         </a>
     </div>
 
-    <form action="{{ route('purchases.store') }}" method="POST"
+    <form autocomplete="off" action="{{ route('purchases.store') }}" method="POST"
           x-data="purchaseEditor(@js(old('items', [])))" class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         @csrf
 
@@ -71,10 +65,10 @@
                 <div class="divide-y divide-surface-100 dark:divide-surface-800">
                     <template x-for="(item, i) in items" :key="item.key">
                         <div class="p-4 grid grid-cols-12 gap-3 items-end">
-                            <input type="hidden" :name="`items[${i}][product_id]`" :value="item.product_id ?? ''">
+                            <input autocomplete="off" type="hidden" :name="`items[${i}][product_id]`" :value="item.product_id ?? ''">
                             <div class="col-span-12 md:col-span-6">
                                 <label class="c-label text-xs" x-show="i === 0">Produto</label>
-                                <input :value="item.name" readonly class="c-input py-2 bg-surface-50 dark:bg-surface-800/40" placeholder="Busque um produto acima">
+                                <input autocomplete="off" :value="item.name" readonly class="c-input py-2 bg-surface-50 dark:bg-surface-800/40" placeholder="Busque um produto acima">
                             </div>
                             <div class="col-span-4 md:col-span-2">
                                 <label class="c-label text-xs" x-show="i === 0">Qtd.</label>

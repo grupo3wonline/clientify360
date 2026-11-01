@@ -10,13 +10,16 @@ use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Schemas\ProductForm;
 use App\Filament\Resources\Products\Tables\ProductsTable;
 use App\Models\Product;
+use App\Services\SearchService;
 use BackedEnum;
+use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use UnitEnum;
 
 class ProductResource extends Resource
@@ -34,6 +37,8 @@ class ProductResource extends Resource
     protected static ?string $navigationLabel = 'Produtos e estoque';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static int $globalSearchResultsLimit = 10;
 
     public static function form(Schema $schema): Schema
     {
@@ -67,5 +72,32 @@ class ProductResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    /**
+     * Global search goes through Scout (SearchService), which always filters by account.
+     *
+     * @return Collection<int, GlobalSearchResult>
+     */
+    public static function getGlobalSearchResults(string $search): Collection
+    {
+        $user = auth()->user();
+
+        if ($user === null) {
+            return collect();
+        }
+
+        return collect(app(SearchService::class)->products($user, $search, static::getGlobalSearchResultsLimit())->items())
+            ->map(function (Product $record): ?GlobalSearchResult {
+                $url = static::getGlobalSearchResultUrl($record);
+
+                return $url === null ? null : new GlobalSearchResult(
+                    title: (string) $record->name,
+                    url: $url,
+                    details: array_filter(['SKU' => (string) $record->sku]),
+                );
+            })
+            ->filter()
+            ->values();
     }
 }

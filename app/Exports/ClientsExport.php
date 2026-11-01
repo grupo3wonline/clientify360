@@ -14,17 +14,24 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
- * Exportação de clientes em XLSX. O escopo por conta é garantido pelo global
- * scope do model Client (só os clientes da conta autenticada são exportados).
+ * Exportação de clientes em XLSX. Roda na fila (sem usuário autenticado), por
+ * isso filtra explicitamente pela conta recebida no construtor.
  */
-class ClientsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
+final class ClientsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
+    public function __construct(
+        private readonly string $accountId,
+    ) {}
+
     /**
      * @return Collection<int, Client>
      */
     public function collection(): Collection
     {
-        return Client::orderBy('name')->get();
+        return Client::withoutGlobalScope('owned')
+            ->where('account_id', $this->accountId)
+            ->orderBy('name')
+            ->get();
     }
 
     /**

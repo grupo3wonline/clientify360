@@ -8,6 +8,7 @@ use App\Models\Activity;
 use App\Models\FinancialCategory;
 use App\Models\Product;
 use App\Models\Quote;
+use App\Support\AccountCache;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -26,6 +27,25 @@ final class QuoteService
         private readonly StockService $stock,
         private readonly FinanceService $finance,
     ) {}
+
+    /**
+     * Expires draft/sent quotes past their validity (runs on the listing, no cron needed).
+     * A mass update fires no model events, so the account cache is bumped here.
+     */
+    public function expireOverdue(): int
+    {
+        $updated = Quote::whereIn('status', ['draft', 'sent'])
+            ->whereDate('valid_until', '<', now()->toDateString())
+            ->update(['status' => 'expired']);
+
+        $accountId = auth()->user()?->account_id;
+
+        if ($updated > 0 && $accountId !== null) {
+            app(AccountCache::class)->bump((string) $accountId);
+        }
+
+        return $updated;
+    }
 
     /** Próximo número no formato ORC-2026-0001, sequencial por conta e por ano. */
     public function nextNumber(string $accountId): string

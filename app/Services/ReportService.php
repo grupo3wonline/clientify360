@@ -10,6 +10,7 @@ use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Quote;
 use App\Models\QuoteItem;
+use App\Traits\CachesPerAccount;
 use Carbon\Carbon;
 
 /**
@@ -18,12 +19,22 @@ use Carbon\Carbon;
  */
 final class ReportService
 {
+    use CachesPerAccount;
+
+    private const TTL = 900;
+
     /**
      * Desempenho comercial no período informado.
      *
      * @return array<string, mixed>
      */
     public function commercial(Carbon $startDate): array
+    {
+        return $this->rememberForAccount('reports:commercial:'.$startDate->format('Y-m-d'), self::TTL, fn (): array => $this->buildCommercial($startDate));
+    }
+
+    /** @return array<string, mixed> */
+    private function buildCommercial(Carbon $startDate): array
     {
         $wonInPeriod = Deal::won()->where('closed_at', '>=', $startDate);
         $lostInPeriod = Deal::where('status', Deal::STATUS_LOST)->where('closed_at', '>=', $startDate);
@@ -63,6 +74,12 @@ final class ReportService
      */
     public function stockTurnover(): array
     {
+        return $this->rememberForAccount('reports:stock', self::TTL, fn (): array => $this->buildStockTurnover());
+    }
+
+    /** @return array{products: array<int, array{name: string, stock: float, cost: float, stock_value: float, below_min: bool}>, total_stock_value: float} */
+    private function buildStockTurnover(): array
+    {
         $products = Product::where('track_stock', true)
             ->orderBy('name')
             ->get()
@@ -93,6 +110,12 @@ final class ReportService
      * @return array{total_purchased: float, by_supplier: array<int, array{supplier: string, total: float}>, top_items: array<int, array{name: string, quantity: float, total: float}>}
      */
     public function purchases(Carbon $startDate): array
+    {
+        return $this->rememberForAccount('reports:purchases:'.$startDate->format('Y-m-d'), self::TTL, fn (): array => $this->buildPurchases($startDate));
+    }
+
+    /** @return array{total_purchased: float, by_supplier: array<int, array{supplier: string, total: float}>, top_items: array<int, array{name: string, quantity: float, total: float}>} */
+    private function buildPurchases(Carbon $startDate): array
     {
         $confirmedInPeriod = Purchase::whereNotNull('confirmed_at')
             ->where('purchased_at', '>=', $startDate->copy()->startOfDay());

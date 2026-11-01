@@ -2,20 +2,14 @@
     @section('title', 'Compra ' . $purchase->number)
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('purchases.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Compras</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">{{ $purchase->number }}</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Compras', 'url' => route('purchases.index')], ['label' => $purchase->number]]" />
     </x-slot>
 
     <div class="max-w-3xl">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <div>
                 <p class="font-mono text-xs text-surface-500 dark:text-surface-400">{{ $purchase->number }}</p>
-                <h1 class="text-2xl font-bold text-surface-900 dark:text-white">{{ $purchase->supplier ?? 'Compra sem fornecedor' }}</h1>
+                <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">{{ $purchase->supplier ?? 'Compra sem fornecedor' }}</h1><x-help title="Como usar esta página" description="Detalhes da compra e confirmação." example="Confira os itens antes de confirmar." tip="Depois de confirmada, a compra gera a conta a pagar automaticamente." /></div>
                 <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">
                     @if($purchase->isConfirmed())
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300">Confirmada em {{ $purchase->confirmed_at?->format('d/m/Y H:i') }}</span>
@@ -25,10 +19,10 @@
                 </p>
             </div>
             @unless($purchase->isConfirmed())
-                <form action="{{ route('purchases.confirm', $purchase) }}" method="POST" x-data>
+                <form autocomplete="off" action="{{ route('purchases.confirm', $purchase) }}" method="POST" x-data>
                     @csrf @method('PATCH')
                     <button type="button"
-                            @click="Swal.fire({ title: 'Confirmar compra?', text: 'O estoque de cada item será atualizado e uma conta a pagar ao fornecedor será gerada.', icon: 'question', showCancelButton: true, confirmButtonColor: '#059669', cancelButtonColor: '#64748b', confirmButtonText: 'Confirmar', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
+                            @click="Swal.fire({ title: 'Confirmar compra?', text: 'O estoque de cada item será atualizado e uma conta a pagar ao fornecedor será gerada.', icon: 'question', showCancelButton: true, confirmButtonColor: brandColors.accent['600'], cancelButtonColor: brandColors.surface['500'], confirmButtonText: 'Confirmar', cancelButtonText: 'Cancelar' }).then((r) => { if (r.isConfirmed) $el.closest('form').requestSubmit() })"
                             class="inline-flex items-center px-3 py-2 text-sm rounded-xl bg-accent-600 hover:bg-accent-700 text-white transition">
                         <i class="fa-solid fa-check-double mr-2 text-xs"></i> Confirmar entrada
                     </button>
@@ -66,7 +60,7 @@
                 <h3 class="text-sm font-semibold"><i class="fa-solid fa-list-check text-brand-500 mr-2"></i>Itens da compra</h3>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
+                <table class="c-table-stack min-w-full divide-y divide-surface-200 dark:divide-surface-800">
                     <thead class="bg-surface-50 dark:bg-surface-800/50">
                         <tr>
                             <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400">Produto</th>
@@ -78,10 +72,10 @@
                     <tbody class="divide-y divide-surface-100 dark:divide-surface-800">
                         @foreach($purchase->items as $item)
                             <tr>
-                                <td class="px-4 py-3 text-sm text-surface-900 dark:text-white">{{ $item->product?->name ?? '—' }}</td>
-                                <td class="px-4 py-3 text-right text-sm text-surface-700 dark:text-surface-300">{{ rtrim(rtrim(number_format((float) $item->quantity, 3, ',', '.'), '0'), ',') }}</td>
-                                <td class="px-4 py-3 text-right text-sm text-surface-700 dark:text-surface-300">@money($item->unit_cost)</td>
-                                <td class="px-4 py-3 text-right text-sm font-semibold text-surface-900 dark:text-white">@money($item->total)</td>
+                                <td data-label="Produto" class="px-4 py-3 text-sm text-surface-900 dark:text-white">{{ $item->product?->name ?? '—' }}</td>
+                                <td data-label="Qtd." class="px-4 py-3 text-right text-sm text-surface-700 dark:text-surface-300">{{ rtrim(rtrim(number_format((float) $item->quantity, 3, ',', '.'), '0'), ',') }}</td>
+                                <td data-label="Custo unit." class="px-4 py-3 text-right text-sm text-surface-700 dark:text-surface-300">@money($item->unit_cost)</td>
+                                <td data-label="Total" class="px-4 py-3 text-right text-sm font-semibold text-surface-900 dark:text-white">@money($item->total)</td>
                             </tr>
                         @endforeach
                     </tbody>

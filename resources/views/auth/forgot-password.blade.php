@@ -1,12 +1,14 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+    @section('title', 'Recuperar senha')
+    <x-auth-heading title="Recuperar senha" icon="fa-key" help="O link de redefinição vale por 60 minutos. Confira também a caixa de spam." />
+    <div class="mb-4 text-sm text-surface-600 dark:text-surface-400">
         Esqueceu sua senha? Sem problemas. Informe seu e-mail e enviaremos um link para redefinição de senha.
     </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.email') }}">
+    <form autocomplete="off" method="POST" action="{{ route('password.email') }}">
         @csrf
 
         {{-- Honeypot anti-bot: invisível para pessoas, apenas robôs preenchem. --}}

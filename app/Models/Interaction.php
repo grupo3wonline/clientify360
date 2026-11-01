@@ -9,10 +9,22 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Interaction extends Model
 {
-    use BelongsToAccount, HasUuid, SoftDeletes;
+    use BelongsToAccount, HasUuid, LogsActivity, SoftDeletes;
+
+    /** Auditoria LGPD: registra alterações em dados sensíveis da interação. */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['subject', 'description', 'resolution_notes'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('interaction');
+    }
 
     protected $keyType = 'string';
 

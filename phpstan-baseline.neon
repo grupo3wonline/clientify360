@@ -7,18 +7,6 @@ parameters:
 			path: app/Http/Controllers/DealController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/ExportController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/ExportController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$color\.$#'
 			identifier: property.notFound
 			count: 1
@@ -83,12 +71,6 @@ parameters:
 			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Controllers/QuoteController.php
-
-		-
-			message: '#^Parameter \#1 \$value of static method Illuminate\\Support\\Str\:\:lower\(\) expects string, Illuminate\\Support\\Stringable given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Requests/Auth/LoginRequest.php
 
 		-
 			message: '#^Cannot call method isPast\(\) on string\.$#'
@@ -219,24 +201,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Laravel\\Cashier\\Checkout\:\:\$url\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Services/SubscriptionService.php
-
-		-
-			message: '#^Access to an undefined property Laravel\\Cashier\\Invoice\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/SubscriptionService.php
-
-		-
-			message: '#^Access to an undefined property Stripe\\Subscription\:\:\$current_period_end\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/SubscriptionService.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Laravel\\Cashier\\Invoice\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: app/Services/SubscriptionService.php
 

@@ -12,6 +12,7 @@ use App\Models\LeadFormSubmission;
 use App\Models\Product;
 use App\Models\Reminder;
 use App\Support\Format;
+use App\Traits\CachesPerAccount;
 use Illuminate\Support\Collection;
 
 /**
@@ -23,6 +24,8 @@ use Illuminate\Support\Collection;
  */
 final class NotificationService
 {
+    use CachesPerAccount;
+
     /** Cache por request para evitar recomputar (ex.: badge do menu + página). */
     private ?Collection $cache = null;
 
@@ -56,9 +59,14 @@ final class NotificationService
         return $this->cache = $notifications->sortByDesc('time')->values();
     }
 
+    /** Menu badge. Cached per user; any account write (incl. a dismissal) bumps the account version. */
     public function count(): int
     {
-        return $this->for()->count();
+        if ($this->cache !== null) {
+            return $this->cache->count();
+        }
+
+        return (int) $this->rememberForAccount('notifications:'.auth()->id(), 300, fn (): int => $this->for()->count());
     }
 
     private function pushReminders(Collection $notifications): void

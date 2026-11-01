@@ -1,16 +1,12 @@
 <x-app-layout>
     @section('title', 'Configurações IA')
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Configurações IA</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Configurações IA']]" />
     </x-slot>
 
     <div class="max-w-4xl mx-auto">
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Inteligência Artificial</h1>
+            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Inteligência Artificial</h1><x-help title="Como usar esta página" description="Conecte sua chave de IA para analisar o perfil dos clientes." example="Cole a chave do Google Gemini e clique em salvar." tip="O OpenRouter tem modelos gratuitos para começar." /></div>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">Configure suas credenciais para análises com IA</p>
             <p class="text-sm text-surface-600 dark:text-surface-300 mt-3">Conecte um provedor de IA para gerar resumos, insights e recomendações automáticas sobre seus clientes e atendimentos.</p>
         </div>
@@ -44,7 +40,7 @@
         </div>
         @endif
 
-        <form action="{{ route('ai.saveSettings') }}" method="POST">
+        <form autocomplete="off" action="{{ route('ai.saveSettings') }}" method="POST">
             @csrf
             <div class="space-y-6">
                 <div class="flex items-start space-x-2.5 text-xs text-surface-500 dark:text-surface-400 bg-surface-50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-800 rounded-xl px-4 py-3">

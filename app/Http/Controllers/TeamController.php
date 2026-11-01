@@ -14,7 +14,7 @@ use Illuminate\View\View;
 
 /**
  * Gestão de equipe da conta: membros, papéis e convites.
- * Protegido pela permissão `account.members` (Dono e Gestor).
+ * Protegido pela permissão `account.members` (Dono e Gestor) via middleware de rota.
  */
 final class TeamController extends Controller
 {
@@ -46,7 +46,6 @@ final class TeamController extends Controller
 
     public function invite(Request $request): RedirectResponse
     {
-        $this->authorizeMembers($request);
         $account = $request->user()->account;
 
         $validated = $request->validate([
@@ -71,7 +70,6 @@ final class TeamController extends Controller
 
     public function updateRole(Request $request, User $member): RedirectResponse
     {
-        $this->authorizeMembers($request);
         $account = $request->user()->account;
 
         abort_unless($member->account_id === $account->id, 404);
@@ -88,7 +86,6 @@ final class TeamController extends Controller
 
     public function removeMember(Request $request, User $member): RedirectResponse
     {
-        $this->authorizeMembers($request);
         $account = $request->user()->account;
 
         abort_unless($member->account_id === $account->id, 404);
@@ -101,17 +98,11 @@ final class TeamController extends Controller
 
     public function revokeInvite(Request $request, AccountInvitation $invitation): RedirectResponse
     {
-        $this->authorizeMembers($request);
 
         abort_unless($invitation->account_id === $request->user()->account_id, 404);
 
         $invitation->delete();
 
         return redirect()->route('team.index')->with('success', 'Convite cancelado.');
-    }
-
-    private function authorizeMembers(Request $request): void
-    {
-        abort_unless($request->user()->can('account.members'), 403);
     }
 }

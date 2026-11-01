@@ -2,32 +2,27 @@
     @section('title', 'Ordem de serviço ' . $order->number)
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('service-orders.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Ordens de Serviço</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">{{ $order->number }}</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Ordens de Serviço', 'url' => route('service-orders.index')], ['label' => $order->number]]" />
     </x-slot>
 
     <div class="max-w-3xl">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <div>
                 <p class="font-mono text-xs text-surface-500 dark:text-surface-400">{{ $order->number }}</p>
-                <h1 class="text-2xl font-bold text-surface-900 dark:text-white">{{ $order->title }}</h1>
+                <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">{{ $order->title }}</h1><x-help title="Como usar esta página" description="Detalhes e ações da ordem de serviço." example="Inicie, conclua e fature a OS pelos botões de status." tip="No Profissional, baixe o PDF para enviar ao cliente." /></div>
                 <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium {{ $order->statusColor() }}">{{ $order->statusLabel() }}</span>
                 </p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <x-pdf-button :href="route('service-orders.pdf', $order)" />
                 <a href="{{ route('service-orders.edit', $order) }}" class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition">
                     <i class="fa-solid fa-pen mr-2 text-xs"></i> Editar
                 </a>
-                <form action="{{ route('service-orders.destroy', $order) }}" method="POST" x-data>
+                <form autocomplete="off" action="{{ route('service-orders.destroy', $order) }}" method="POST" x-data>
                     @csrf
                     @method('DELETE')
-                    <button type="button" @click="Swal.fire({ title: 'Excluir ordem de serviço?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
+                    <button type="button" @click="Swal.fire({ title: 'Excluir ordem de serviço?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: brandColors.danger['600'], cancelButtonColor: brandColors.surface['500'], confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar' }).then((r) => { if (r.isConfirmed) $el.closest('form').requestSubmit() })"
                             class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950/30 transition">
                         <i class="fa-solid fa-trash-can mr-2 text-xs"></i> Excluir
                     </button>
@@ -38,7 +33,7 @@
         <!-- Quick status actions -->
         <div class="flex flex-wrap items-center gap-2 mb-6">
             @if($order->isOpen())
-                <form action="{{ route('service-orders.start', $order) }}" method="POST">
+                <form autocomplete="off" action="{{ route('service-orders.start', $order) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition">
                         <i class="fa-solid fa-play mr-2 text-xs"></i> Iniciar
@@ -46,7 +41,7 @@
                 </form>
             @endif
             @if($order->isOpen() || $order->isInProgress())
-                <form action="{{ route('service-orders.complete', $order) }}" method="POST">
+                <form autocomplete="off" action="{{ route('service-orders.complete', $order) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl bg-accent-600 hover:bg-accent-700 text-white transition">
                         <i class="fa-solid fa-check-double mr-2 text-xs"></i> Concluir
@@ -54,7 +49,7 @@
                 </form>
             @endif
             @if(!$order->isDone() && !$order->isCancelled())
-                <form action="{{ route('service-orders.cancel', $order) }}" method="POST">
+                <form autocomplete="off" action="{{ route('service-orders.cancel', $order) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl border border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition">
                         <i class="fa-solid fa-ban mr-2 text-xs"></i> Cancelar
@@ -62,7 +57,7 @@
                 </form>
             @endif
             @if($order->isDone() && $order->quote_id === null && (float) $order->total > 0)
-                <form action="{{ route('service-orders.billing', $order) }}" method="POST">
+                <form autocomplete="off" action="{{ route('service-orders.billing', $order) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950/30 transition">
                         <i class="fa-solid fa-file-invoice-dollar mr-2 text-xs"></i> Gerar cobrança

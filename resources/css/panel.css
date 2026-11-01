@@ -1,0 +1,352 @@
+/*
+ * Styles for the shared Blade components rendered inside the Filament panel
+ * (footer, 3W CTA, loading overlay). Plain CSS scoped to .c360-panel-ui:
+ * Filament's precompiled CSS does not contain the app's Tailwind utilities.
+ * Colors come from the --c360-* variables emitted by filament/hooks/head-end.
+ */
+
+.c360-panel-footer {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
+    padding: 0 1rem 1rem;
+}
+
+/* Footer */
+.c360-panel-ui.c360-footer {
+    border-top: 1px solid var(--c360-surface-200);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--c360-surface-500);
+}
+
+.c360-panel-ui .c360-footer__bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0 0.5rem;
+}
+
+.c360-panel-ui .c360-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+}
+
+.c360-panel-ui .c360-footer__links a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.c360-panel-ui .c360-footer__links a:hover {
+    color: var(--c360-brand-600);
+    text-decoration: underline;
+}
+
+.c360-panel-ui .c360-footer__credits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    margin: 0;
+}
+
+.c360-panel-ui .c360-footer__credits span:last-child {
+    font-weight: 600;
+    color: var(--c360-surface-600);
+}
+
+/* CTA (inline variant) */
+.c360-panel-ui.c360-cta {
+    border: 1px solid var(--c360-brand-200);
+    background: var(--c360-brand-50);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.c360-panel-ui .c360-cta__text {
+    margin: 0;
+    color: var(--c360-surface-700);
+}
+
+.c360-panel-ui .c360-cta__text i {
+    color: var(--c360-brand-600);
+    margin-right: 0.25rem;
+}
+
+.c360-panel-ui .c360-cta__text strong {
+    color: var(--c360-surface-900);
+}
+
+.c360-panel-ui .c360-cta__urgency {
+    color: var(--c360-surface-500);
+}
+
+.c360-panel-ui .c360-cta__link {
+    font-weight: 600;
+    color: var(--c360-brand-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.c360-panel-ui .c360-cta__link:hover {
+    text-decoration: none;
+}
+
+/* Loading overlay */
+.c360-panel-ui.c360-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--c360-surface-900) 60%, transparent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.c360-panel-ui.c360-overlay[hidden] {
+    display: none;
+}
+
+.c360-panel-ui .c360-overlay__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--c360-surface-50) 10%, transparent);
+}
+
+.c360-panel-ui .c360-overlay__spinner {
+    position: relative;
+    display: block;
+    width: 3rem;
+    height: 3rem;
+}
+
+.c360-panel-ui .c360-overlay__spinner span {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 4px solid color-mix(in srgb, var(--c360-surface-50) 25%, transparent);
+}
+
+.c360-panel-ui .c360-overlay__spinner span + span {
+    border-color: transparent;
+    border-top-color: var(--c360-surface-50);
+    animation: c360-panel-spin 0.8s linear infinite;
+}
+
+.c360-panel-ui .c360-overlay__message {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--c360-surface-50);
+}
+
+@keyframes c360-panel-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Cookie consent banner */
+.c360-panel-ui.c360-consent {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 99998;
+    padding: 0.75rem;
+}
+.c360-panel-ui.c360-consent[hidden],
+.c360-panel-ui [hidden] {
+    display: none !important;
+}
+.c360-panel-ui .c360-consent__box {
+    max-width: 56rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    margin: 0 auto;
+    padding: 1.25rem;
+    border: 1px solid var(--c360-surface-200);
+    border-radius: 1rem;
+    background: var(--c360-surface-50);
+    color: var(--c360-surface-700);
+    box-shadow: 0 25px 50px -12px color-mix(in srgb, var(--c360-surface-900) 25%, transparent);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+.c360-panel-ui .c360-consent__box > div {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+.c360-panel-ui .c360-consent__box > div > div {
+    flex: 1;
+    min-width: 0;
+}
+.c360-panel-ui .c360-consent__icon {
+    display: none;
+}
+.c360-panel-ui .c360-consent__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--c360-surface-900);
+    outline: none;
+}
+.c360-panel-ui .c360-consent__text {
+    margin: 0.25rem 0 0;
+}
+.c360-panel-ui .c360-consent__link {
+    font-weight: 500;
+    color: var(--c360-brand-600);
+    text-decoration: underline;
+}
+.c360-panel-ui .c360-consent__panel {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    border: 0;
+}
+.c360-panel-ui .c360-consent__panel legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+.c360-panel-ui .c360-consent__option {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.75rem;
+    border: 1px solid var(--c360-surface-200);
+    border-radius: 0.75rem;
+    cursor: pointer;
+}
+.c360-panel-ui .c360-consent__option > span > span:first-child {
+    font-weight: 600;
+    color: var(--c360-surface-900);
+}
+.c360-panel-ui .c360-consent__option > span > span:last-child {
+    display: block;
+    color: var(--c360-surface-500);
+}
+.c360-panel-ui .c360-consent__badge {
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--c360-accent-700);
+}
+.c360-panel-ui .c360-consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-top: 1rem;
+}
+.c360-panel-ui .c360-consent__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--c360-surface-300);
+    border-radius: 0.75rem;
+    background: transparent;
+    color: var(--c360-surface-700);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+.c360-panel-ui .c360-consent__btn:hover {
+    background: var(--c360-surface-100);
+}
+.c360-panel-ui .c360-consent__btn--primary {
+    border-color: var(--c360-brand-600);
+    background: var(--c360-brand-600);
+    color: var(--c360-surface-50);
+}
+.c360-panel-ui .c360-consent__btn--primary:hover {
+    background: var(--c360-brand-700);
+}
+@media (min-width: 640px) {
+    .c360-panel-ui.c360-consent {
+        padding: 1.5rem;
+    }
+    .c360-panel-ui .c360-consent__box {
+        padding: 1.5rem;
+    }
+    .c360-panel-ui .c360-consent__icon {
+        display: flex;
+        width: 2.75rem;
+        height: 2.75rem;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        background: var(--c360-brand-50);
+        color: var(--c360-brand-600);
+    }
+}
+.dark .c360-panel-ui .c360-consent__box {
+    border-color: var(--c360-surface-700);
+    background: var(--c360-surface-900);
+    color: var(--c360-surface-300);
+}
+.dark .c360-panel-ui .c360-consent__title,
+.dark .c360-panel-ui .c360-consent__option > span > span:first-child {
+    color: var(--c360-surface-50);
+}
+.dark .c360-panel-ui .c360-consent__option {
+    border-color: var(--c360-surface-700);
+}
+.dark .c360-panel-ui .c360-consent__btn {
+    border-color: var(--c360-surface-600);
+    color: var(--c360-surface-200);
+}
+.dark .c360-panel-ui .c360-consent__btn:hover {
+    background: var(--c360-surface-800);
+}
+.dark .c360-panel-ui .c360-consent__btn--primary {
+    border-color: var(--c360-brand-600);
+    color: var(--c360-surface-50);
+}
+.dark .c360-panel-ui .c360-consent__link {
+    color: var(--c360-brand-400);
+}
+
+/* Dark mode (Filament puts .dark on <html>) */
+.dark .c360-panel-ui.c360-footer {
+    border-top-color: var(--c360-surface-800);
+    color: var(--c360-surface-400);
+}
+
+.dark .c360-panel-ui .c360-footer__credits span:last-child {
+    color: var(--c360-surface-300);
+}
+
+.dark .c360-panel-ui.c360-cta {
+    border-color: var(--c360-brand-900);
+    background: color-mix(in srgb, var(--c360-brand-950) 40%, transparent);
+}
+
+.dark .c360-panel-ui .c360-cta__text {
+    color: var(--c360-surface-300);
+}
+
+.dark .c360-panel-ui .c360-cta__text strong {
+    color: var(--c360-surface-50);
+}
+
+.dark .c360-panel-ui .c360-cta__link {
+    color: var(--c360-brand-300);
+}
+
+.dark .c360-panel-ui .c360-footer__links a:hover {
+    color: var(--c360-brand-400);
+}

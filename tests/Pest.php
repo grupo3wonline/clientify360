@@ -14,6 +14,7 @@ declare(strict_types=1);
 */
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)
@@ -21,3 +22,12 @@ pest()->extend(TestCase::class)
     ->in('Feature');
 
 pest()->extend(TestCase::class)->in('Unit');
+
+/** A real temp file: unlike UploadedFile::fake(), its MIME type is sniffed from the content (finfo). */
+function realUpload(string $name, string $content): UploadedFile
+{
+    $path = tempnam(sys_get_temp_dir(), 'upl');
+    file_put_contents($path, $content);
+
+    return new UploadedFile($path, $name, null, null, true);
+}

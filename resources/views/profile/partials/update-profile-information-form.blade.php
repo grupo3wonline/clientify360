@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+    <form autocomplete="off" id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
 

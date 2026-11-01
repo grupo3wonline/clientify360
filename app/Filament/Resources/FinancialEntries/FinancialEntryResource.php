@@ -33,6 +33,8 @@ class FinancialEntryResource extends Resource
 
     protected static ?string $navigationLabel = 'Contas a pagar/receber';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $recordTitleAttribute = 'description';
 
     public static function form(Schema $schema): Schema

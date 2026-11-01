@@ -21,7 +21,7 @@ final class AiController extends Controller
     public function settings(Request $request): View
     {
         $user = $request->user();
-        $isProfessional = $this->subscriptionService->isProfessional($user);
+        $isProfessional = $this->subscriptionService->hasFeature($user, 'ai');
         $providers = $this->aiService->getAvailableProviders($user);
 
         return view('ai.settings', compact('user', 'isProfessional', 'providers'));
@@ -31,9 +31,9 @@ final class AiController extends Controller
     {
         $user = $request->user();
 
-        if (!$this->subscriptionService->isProfessional($user)) {
+        if (!$this->subscriptionService->hasFeature($user, 'ai')) {
             return redirect()->route('ai.settings')
-                ->with('error', 'Recurso disponível apenas no plano Profissional.');
+                ->with('error', $this->subscriptionService->featureMessage('ai'));
         }
 
         $validated = $request->validate([
@@ -53,9 +53,9 @@ final class AiController extends Controller
     {
         $user = $request->user();
 
-        if (!$this->subscriptionService->isProfessional($user)) {
+        if (!$this->subscriptionService->hasFeature($user, 'ai')) {
             return redirect()->back()
-                ->with('error', 'Recurso disponível apenas no plano Profissional.');
+                ->with('error', $this->subscriptionService->featureMessage('ai'));
         }
 
         $client = Client::findOrFail($clientId);

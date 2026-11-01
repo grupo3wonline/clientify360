@@ -23,7 +23,7 @@ final class DealController extends Controller
         PipelineStage::ensureDefaultsFor((string) auth()->user()->account_id);
 
         $stages = PipelineStage::ordered()->get();
-        $search = trim((string) $request->query('search', ''));
+        $search = trim((string) $this->queryString($request, 'search', ''));
 
         $deals = Deal::open()
             ->with('client:id,name')
@@ -52,7 +52,7 @@ final class DealController extends Controller
     /** Lista (inclui ganhas/perdidas) — complemento do Kanban, que mostra só as abertas. */
     public function list(Request $request): View
     {
-        $status = $request->query('status');
+        $status = $this->queryString($request, 'status');
 
         $deals = Deal::with(['client:id,name', 'stage:id,name,color'])
             ->when(in_array($status, array_keys(Deal::STATUS_LABELS), true), fn ($q) => $q->where('status', $status))

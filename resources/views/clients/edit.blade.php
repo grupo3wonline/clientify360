@@ -2,19 +2,13 @@
     @section('title', 'Editar Cliente')
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('clients.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Clientes</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">Editar</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Clientes', 'url' => route('clients.index')], ['label' => 'Editar']]" />
     </x-slot>
 
     <div class="max-w-4xl mx-auto">
         <!-- Page Header -->
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-surface-900 dark:text-white">Editar Cliente</h1>
+            <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">Editar Cliente</h1><x-help title="Como usar esta página" description="Atualize os dados, o score e as tags do cliente." example="Mude a classificação para &#039;Quente&#039; depois de uma reunião positiva." tip="As alterações ficam registradas no histórico de auditoria (LGPD)." /></div>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">
                 <i class="fa-solid fa-circle-info text-brand-500 mr-1" aria-hidden="true"></i>
                 Atualize os dados abaixo. Campos com <span class="text-danger-500 font-medium">*</span> são obrigatórios.
@@ -23,7 +17,7 @@
 
         <!-- Form Card -->
         <div class="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
-            <form action="{{ route('clients.update', $client) }}" method="POST">
+            <form autocomplete="off" action="{{ route('clients.update', $client) }}" method="POST">
                 @csrf
                 @method('PUT')
 

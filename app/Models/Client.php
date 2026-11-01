@@ -12,13 +12,40 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Client extends Model
+class Client extends Model implements HasMedia
 {
     /** @use HasFactory<ClientFactory> */
-    use BelongsToAccount, HasFactory, HasUuid, LogsActivity, SoftDeletes;
+    use BelongsToAccount, HasFactory, HasUuid, InteractsWithMedia, LogsActivity, Searchable, SoftDeletes;
+
+    /** Real MIME types (content sniffed) accepted for client attachments. */
+    public const ATTACHMENT_MIME_TYPES = [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'text/plain',
+        'text/csv',
+        'application/csv',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ];
+
+    /** Private disk only: files are served by ClientAttachmentController, never by URL. */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments')
+            ->useDisk('media')
+            ->acceptsMimeTypes(self::ATTACHMENT_MIME_TYPES);
+    }
 
     /** Auditoria LGPD: registra alterações nos dados pessoais do cliente. */
     public function getActivitylogOptions(): LogOptions
@@ -90,6 +117,22 @@ class Client extends Model
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * Columns searched by Scout's database engine (always filtered by account in SearchService).
+     *
+     * @return array<string, mixed>
+     */
+    #[SearchUsingPrefix(['email', 'document'])]
+    public function toSearchableArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'document' => $this->document,
         ];
     }
 

@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Equipe']]" />
     </x-slot>
 
-    <x-page-title title="Equipe e colaboradores" icon="fa-users-gear"
+    <x-page-title help-description="Convide colaboradores e defina o papel de cada um." help-example="Convide sua secretária como Colaboradora." help-tip="Colaboradores não veem a assinatura nem a equipe." title="Equipe e colaboradores" icon="fa-users-gear"
         subtitle="Convide pessoas para acessar a conta e defina o papel de cada uma. Dica: o Dono controla tudo; o Gestor opera sem acesso à cobrança; o Colaborador trabalha clientes, funil e orçamentos." />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -33,9 +33,9 @@
                         @if($isOwner)
                             <span class="c-badge bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 text-xs px-3 py-1">Dono</span>
                         @elseif(auth()->user()->can('account.members'))
-                            <form action="{{ route('team.updateRole', $member) }}" method="POST" class="flex items-center gap-2">
+                            <form autocomplete="off" action="{{ route('team.updateRole', $member) }}" method="POST" class="flex items-center gap-2">
                                 @csrf @method('PATCH')
-                                <select name="role" onchange="this.form.submit()" class="c-input py-1.5 text-xs w-36">
+                                <select autocomplete="off" name="role" onchange="this.form.submit()" class="c-input py-1.5 text-xs w-36">
                                     @foreach($roles as $r)
                                         <option value="{{ $r }}" @selected($role === $r)>{{ \App\Models\User::ROLE_LABELS[$r] }}</option>
                                     @endforeach
@@ -85,7 +85,7 @@
             <div class="c-card p-5 h-fit">
                 <h3 class="text-sm font-semibold mb-1"><i class="fa-solid fa-user-plus text-brand-500 mr-2"></i>Convidar colaborador</h3>
                 <p class="text-xs text-surface-500 mb-4">Enviaremos um link de cadastro. Ao se registrar, a pessoa entra na conta com o papel escolhido.</p>
-                <form action="{{ route('team.invite') }}" method="POST" class="space-y-3">
+                <form autocomplete="off" action="{{ route('team.invite') }}" method="POST" class="space-y-3">
                     @csrf
                     <div>
                         <label class="c-label">E-mail</label>
@@ -94,7 +94,7 @@
                     </div>
                     <div>
                         <label class="c-label">Papel</label>
-                        <select name="role" class="c-input">
+                        <select autocomplete="off" name="role" class="c-input">
                             @foreach($roles as $r)
                                 <option value="{{ $r }}" @selected(old('role') === $r)>{{ \App\Models\User::ROLE_LABELS[$r] }}</option>
                             @endforeach

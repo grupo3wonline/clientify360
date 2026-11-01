@@ -105,8 +105,8 @@
     @unless($isEdit)
         <div class="md:col-span-2">
             <label class="inline-flex items-center gap-2 text-sm text-surface-700 dark:text-surface-300 cursor-pointer">
-                <input type="hidden" name="generate_reminder" value="0">
-                <input type="checkbox" name="generate_reminder" value="1" {{ old('generate_reminder') ? 'checked' : '' }}
+                <input autocomplete="off" type="hidden" name="generate_reminder" value="0">
+                <input autocomplete="off" type="checkbox" name="generate_reminder" value="1" {{ old('generate_reminder') ? 'checked' : '' }}
                        class="rounded border-surface-300 dark:border-surface-600 text-brand-600 focus:ring-brand-500/30">
                 Gerar lembrete na Agenda para a data de início
             </label>

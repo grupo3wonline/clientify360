@@ -5,7 +5,7 @@
         <x-breadcrumb :items="[['label' => 'Financeiro']]" />
     </x-slot>
 
-    <x-page-title title="Financeiro" icon="fa-chart-pie" :subtitle="'Resumo de ' . ucfirst(now()->translatedFormat('F \d\e Y'))">
+    <x-page-title help-description="Resumo financeiro do mês e fluxo de caixa." help-example="Veja quanto entra e sai nos próximos dias." help-tip="Lance as contas recorrentes no início do mês." title="Financeiro" icon="fa-chart-pie" :subtitle="'Resumo de ' . ucfirst(now()->translatedFormat('F \d\e Y'))">
         <x-slot name="actions">
             <a href="{{ route('finance.entries', ['direction' => 'payable']) }}" class="c-btn-ghost"><i class="fa-solid fa-arrow-up mr-2 text-xs text-danger-500"></i> A pagar</a>
             <a href="{{ route('finance.entries', ['direction' => 'receivable']) }}" class="c-btn-primary"><i class="fa-solid fa-arrow-down mr-2 text-xs"></i> A receber</a>

@@ -12,13 +12,7 @@
     @endphp
 
     <x-slot name="header">
-        <nav class="text-sm text-surface-500 dark:text-surface-400" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Dashboard</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <a href="{{ route('appointments.index') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Agendamentos</a>
-            <span class="mx-1.5 text-surface-300 dark:text-surface-600">/</span>
-            <span class="text-surface-800 dark:text-surface-200 font-medium">{{ \Illuminate\Support\Str::limit($appointment->title, 40) }}</span>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Agendamentos', 'url' => route('appointments.index')], ['label' => \Illuminate\Support\Str::limit($appointment->title, 40)]]" />
     </x-slot>
 
     <div class="max-w-3xl">
@@ -26,7 +20,7 @@
             <div class="flex items-center gap-3">
                 <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: {{ $appointment->color ?? '#6366f1' }}"></span>
                 <div>
-                    <h1 class="text-2xl font-bold text-surface-900 dark:text-white">{{ $appointment->title }}</h1>
+                    <div class="flex items-center gap-3"><h1 class="text-2xl font-bold text-surface-900 dark:text-white">{{ $appointment->title }}</h1><x-help title="Como usar esta página" description="Detalhes do compromisso e ações rápidas de status." example="Confirme o agendamento depois de falar com o cliente." tip="Use Cancelar em vez de excluir para manter o histórico." /></div>
                     <p class="text-sm text-surface-500 dark:text-surface-400 mt-1">
                         {{ $appointment->typeLabel() }}
                         <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded-full text-[11px] font-medium {{ $badge }}">{{ $appointment->statusLabel() }}</span>
@@ -37,10 +31,10 @@
                 <a href="{{ route('appointments.edit', $appointment) }}" class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition">
                     <i class="fa-solid fa-pen mr-2 text-xs"></i> Editar
                 </a>
-                <form action="{{ route('appointments.destroy', $appointment) }}" method="POST" x-data>
+                <form autocomplete="off" action="{{ route('appointments.destroy', $appointment) }}" method="POST" x-data>
                     @csrf
                     @method('DELETE')
-                    <button type="button" @click="Swal.fire({ title: 'Excluir agendamento?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar', customClass: { popup: 'rounded-2xl' } }).then((r) => { if (r.isConfirmed) $el.closest('form').submit() })"
+                    <button type="button" @click="Swal.fire({ title: 'Excluir agendamento?', text: 'Esta ação não pode ser desfeita.', icon: 'warning', showCancelButton: true, confirmButtonColor: brandColors.danger['600'], cancelButtonColor: brandColors.surface['500'], confirmButtonText: 'Excluir', cancelButtonText: 'Cancelar' }).then((r) => { if (r.isConfirmed) $el.closest('form').requestSubmit() })"
                             class="inline-flex items-center px-3 py-2 text-sm rounded-xl text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950/30 transition">
                         <i class="fa-solid fa-trash-can mr-2 text-xs"></i> Excluir
                     </button>
@@ -51,7 +45,7 @@
         <!-- Quick status actions -->
         <div class="flex flex-wrap items-center gap-2 mb-6">
             @if($appointment->status !== 'confirmed' && $appointment->status !== 'cancelled')
-                <form action="{{ route('appointments.confirm', $appointment) }}" method="POST">
+                <form autocomplete="off" action="{{ route('appointments.confirm', $appointment) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition">
                         <i class="fa-solid fa-circle-check mr-2 text-xs"></i> Confirmar
@@ -59,7 +53,7 @@
                 </form>
             @endif
             @if($appointment->status !== 'done' && $appointment->status !== 'cancelled')
-                <form action="{{ route('appointments.done', $appointment) }}" method="POST">
+                <form autocomplete="off" action="{{ route('appointments.done', $appointment) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl bg-accent-600 hover:bg-accent-700 text-white transition">
                         <i class="fa-solid fa-check-double mr-2 text-xs"></i> Concluir
@@ -67,7 +61,7 @@
                 </form>
             @endif
             @if($appointment->status !== 'cancelled')
-                <form action="{{ route('appointments.cancel', $appointment) }}" method="POST">
+                <form autocomplete="off" action="{{ route('appointments.cancel', $appointment) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" class="inline-flex items-center px-3 py-2 text-sm rounded-xl border border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition">
                         <i class="fa-solid fa-ban mr-2 text-xs"></i> Cancelar
