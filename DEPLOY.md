@@ -31,22 +31,41 @@ já incluído redireciona as requisições para `public/` e força HTTPS.
 
 ## 3. Envio dos arquivos (FTP)
 
-A hospedagem compartilhada não roda Composer nem Node, então o build acontece no GitHub Actions. A cada
-push em `main`/`master` (ou manualmente, por `workflow_dispatch`), o workflow `.github/workflows/deploy.yml`:
+O workflow `.github/workflows/deploy.yml` é simples: faz o checkout do repositório e o sincroniza por FTP com
+a action `SamKirkland/FTP-Deploy-Action` para a pasta `clientify360/` do servidor (secrets `FTP_HOST`,
+`FTP_USER` e `FTP_PASSWORD`). Ele roda a cada push em `main`/`master` e também a cada pull request para essas
+branches. A action é incremental: guarda um arquivo de estado no servidor e envia só o que mudou. Por padrão
+ela ignora `.git*` e `node_modules/`.
 
-1. instala o PHP 8.2 e roda `composer install --no-dev --optimize-autoloader --no-scripts` (gera `vendor/`);
-2. instala o Node 20 e roda `npm ci` e `npm run build` (gera `public/build/`);
-3. sincroniza tudo por FTP para `clientify360/` (secrets `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD`), de forma
-   incremental, sem enviar `.env`, `tests/`, `node_modules/`, arquivos `*.md` nem o conteúdo volátil de `storage/`.
+> **Atenção.** Como o gatilho inclui `pull_request`, abrir uma PR para `main` também dispara o envio ao
+> servidor. Em produção, trate o `main` como a versão publicada e revise o código antes de abrir a PR.
 
-O workflow **não** roda `php artisan`. Como `vendor/` e `public/build/` não ficam no git, só chegam ao servidor
-pelo build do workflow. Os assets do Filament (`public/js/filament/`, `public/css/filament/` e
-`public/fonts/filament/`) também estão no `.gitignore` e **não** são gerados pelo workflow (`--no-scripts`).
-Por isso `php artisan filament:assets` precisa rodar no servidor depois de cada deploy (seção 4). Sem isso o
-painel `/app` abre sem CSS e JS.
+**O workflow não compila nada nem roda comandos `artisan`.** Estas pastas estão no `.gitignore`, portanto
+**não existem no repositório** e nunca chegam ao servidor pelo workflow:
 
-Se o servidor não permitir rodar `artisan`, gere os assets na sua máquina com `php artisan filament:assets` e
-envie essas três pastas por FTP.
+| Pasta | Origem | Sem ela |
+|---|---|---|
+| `vendor/` | `composer install --no-dev --optimize-autoloader` | A aplicação não inicia (erro 500) |
+| `public/build/` | `npm ci && npm run build` | Páginas sem CSS/JS do Clientify360 |
+| `public/js/filament/`, `public/css/filament/`, `public/fonts/filament/` | `php artisan filament:assets` | O painel `/app` abre sem estilo |
+
+Gere essas pastas e envie-as ao servidor **por fora do workflow** (FTP ou Gerenciador de Arquivos do cPanel),
+na primeira publicação e sempre que `composer.lock`, `package-lock.json`, o front-end ou a versão do Filament
+mudarem. Em uma cópia limpa do projeto, para não perder as dependências de desenvolvimento da sua pasta de
+trabalho:
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan filament:assets
+npm ci && npm run build
+```
+
+Depois envie `vendor/`, `public/build/`, `public/js/filament/`, `public/css/filament/` e
+`public/fonts/filament/` para as mesmas pastas em `clientify360/`. Node 20.19+ ou 22.12+ é necessário para o
+`npm run build` (exigência do Vite 8).
+
+Como o código e as dependências são enviados por caminhos diferentes, uma mudança em `composer.json` ou
+`composer.lock` só funciona em produção depois de você reenviar o `vendor/`.
 
 A documentação da API (`storage/api-docs/api-docs.json`) vai versionada no repositório: não é preciso
 rodar `l5-swagger:generate` em produção. Quando as anotações OpenAPI em `app/Http/Controllers/Api/V1`
@@ -63,7 +82,7 @@ php artisan key:generate   # apenas se APP_KEY estiver vazio
 # Ajuste o .env: APP_URL (https), APP_DEBUG=false, MySQL, SMTP, Stripe, STRIPE_WEBHOOK_SECRET
 
 php artisan migrate --force      # o workflow não roda migrations; rode a cada deploy com mudanças de banco
-php artisan filament:assets      # obrigatório: o workflow não publica os assets do Filament
+php artisan filament:assets      # só se o servidor tiver o Composer/artisan; senão envie as pastas (seção 3)
 php artisan optimize             # caches de config, rotas, views e eventos
 php artisan filament:optimize
 php artisan security:check       # deve terminar sem erros
