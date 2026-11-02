@@ -13,6 +13,8 @@
             'low_stock' => ['Estoque baixo', 'bg-warning-100 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300'],
             'new_lead' => ['Novo lead', 'bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300'],
             'stale_deal' => ['Oportunidade parada', 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300'],
+            'password_expiring' => ['Segurança', 'bg-warning-100 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300'],
+            'subscription_renewal' => ['Assinatura', 'bg-warning-100 dark:bg-warning-950/50 text-warning-700 dark:text-warning-300'],
         ];
     @endphp
 

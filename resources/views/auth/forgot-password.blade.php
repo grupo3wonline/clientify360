@@ -24,7 +24,7 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <x-recaptcha action="forgot" />
+        <x-captcha action="forgot" />
 
         <div class="flex items-center justify-end mt-4">
             <x-primary-button>

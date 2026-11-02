@@ -72,7 +72,29 @@ Depois do deploy, cadastre um usuário de teste e confirme que o e-mail de verif
 
 ### Verificação de segurança em produção
 
-`php artisan security:check` falha (código de saída 1) em produção quando: `APP_DEBUG` está ligado, `APP_KEY` está vazia, `APP_URL` não usa `https://`, `STRIPE_WEBHOOK_SECRET` está vazio, o cookie de sessão não é `secure` ou a chave secreta do reCAPTCHA está vazia. Para testar webhooks localmente use `stripe listen --forward-to http://clientify360.test/stripe/webhook` e copie o `whsec_...` exibido para `STRIPE_WEBHOOK_SECRET` no `.env`.
+`php artisan security:check` falha (código de saída 1) em produção quando: `APP_DEBUG` está ligado, `APP_KEY` está vazia, `APP_URL` não usa `https://`, `STRIPE_WEBHOOK_SECRET` está vazio, o cookie de sessão não é `secure`, falta a chave secreta do reCAPTCHA ou do Turnstile (ou a chave do site correspondente), o e-mail não está configurado para entrega real (`MAIL_MAILER` `log`/`array`, host local, usuário ou senha vazios, remetente de teste) ou faltam extensões PHP. Para testar webhooks localmente use `stripe listen --forward-to http://clientify360.test/stripe/webhook` e copie o `whsec_...` exibido para `STRIPE_WEBHOOK_SECRET` no `.env`.
+
+### Proteção contra robôs (Turnstile + reCAPTCHA v3)
+
+Login, cadastro, "esqueci a senha", redefinição de senha e o formulário público de captação de leads usam **duas** verificações: o [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) (widget visível) e o Google reCAPTCHA v3 (invisível, roda no envio). Cada uma liga sozinha quando a chave secreta correspondente está no `.env` (`TURNSTILE_SITE_KEY`/`TURNSTILE_SECRET_KEY` e `RECAPTCHA_SITE_KEY`/`RECAPTCHA_SECRET_KEY`); sem a chave secreta ela fica desligada, o que é útil em desenvolvimento e nos testes. Com a chave secreta preenchida a verificação é **obrigatória**: um envio sem o token, com token inválido, repetido ou expirado (o token do Turnstile vale 5 minutos e só uma vez) é rejeitado, e uma falha de rede também. Preencha sempre as duas chaves de cada serviço: a do site desenha o widget e a secreta valida no servidor. O domínio da Cloudflare só entra na política de segurança de conteúdo (CSP) enquanto a chave do site estiver configurada. As chaves de teste da Cloudflare (sempre aprovam) estão no `.env.example`; nunca as use em produção.
+
+### E-mail (cadastro, ativação e recuperação de senha)
+
+Os três e-mails saem pelo SMTP da HostGator, configurado no `.env` (`MAIL_*`, veja o `.env.example`). Use como `MAIL_HOST` o servidor da **hospedagem** (ex.: `sh-pro32.hostgator.com.br`, o mesmo nome do servidor que aparece no cPanel), porta `465` e `MAIL_SCHEME=smtps`. O host `mail.seudominio.com.br` costuma falhar na validação do certificado. A porta 25 é bloqueada no Brasil. Use o endereço completo da caixa como `MAIL_USERNAME` e o mesmo endereço (ou do mesmo domínio) como `MAIL_FROM_ADDRESS`, senão SPF e DKIM reprovam e a mensagem cai no spam.
+
+Para validar sem criar um usuário, rode `php artisan mail:test seu@email.com`. O comando envia na hora (sem fila), mostra o servidor, a porta e o usuário (nunca a senha) e, se falhar, imprime o erro real do SMTP. O e-mail de cadastro e o de recuperação de senha são enfileirados e saem pelo cron (veja "Agendador e filas"), então o primeiro pode levar até 1 minuto.
+
+### Conta ativa só com e-mail confirmado
+
+Quem se cadastra recebe o e-mail de ativação e fica **inativo** até clicar no link (assinado, com validade de 60 minutos): enquanto isso só consegue ver a tela de verificação, pedir um novo e-mail e sair. Isso vale para o sistema, o painel `/app` e a API, onde os tokens de um usuário sem e-mail confirmado recebem `403` em JSON. Trocar o e-mail no perfil desativa a conta de novo até o novo endereço ser confirmado, e os tokens da API deixam de funcionar nesse intervalo.
+
+### Validade da senha (90 dias)
+
+A senha vale **90 dias** (`PASSWORD_MAX_AGE_DAYS`), contados da última troca (`users.password_changed_at`). A data é atualizada automaticamente em qualquer caminho que altere a senha (cadastro, redefinição, perfil, troca forçada). Nos **7 dias** anteriores (`PASSWORD_WARNING_DAYS`) o usuário vê um aviso no sino de notificações e uma faixa no topo do sistema e do painel, com a contagem regressiva; a senha vale até o fim do dia limite. Depois disso qualquer página redireciona para `/senha-expirada`, onde é preciso informar a senha atual e uma nova, **diferente** da anterior, e a API responde `403` em JSON. Ao trocar a senha, as outras sessões são encerradas e a atual continua ativa. Usuários que já existiam começam a contar os 90 dias na data da migration, para que ninguém seja bloqueado de uma vez.
+
+### Lembrete de renovação da assinatura (7 dias)
+
+O Dono da conta (quem tem a permissão `account.billing`) recebe, nos **7 dias** anteriores à renovação (`SUBSCRIPTION_WARNING_DAYS`), um aviso no sino e na faixa do topo. O texto muda conforme a situação: renovação próxima, assinatura cancelada que vai encerrar, ou pagamento pendente. Plano gratuito não tem aviso, e uma falha de comunicação com o Stripe nunca derruba a página: nesse caso o aviso simplesmente não aparece.
 
 ## Planos e assinatura (Stripe)
 
@@ -233,7 +255,7 @@ Histórico das decisões de arquitetura dos módulos comerciais: [`docs/MERGE-bk
 ```
 app/
 ├── Actions/          # Ações isoladas
-├── Console/Commands/ # accounts:backfill, security:check, stripe:setup
+├── Console/Commands/ # accounts:backfill, mail:test, security:check, stripe:setup
 ├── Data/             # Objetos Laravel Data (planos, assinatura, faturas, listagens)
 ├── DTOs/             # Data Transfer Objects
 ├── Entities/         # Entidades com getters/setters

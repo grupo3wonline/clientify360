@@ -75,7 +75,8 @@ function smokeExpected(RoutingRoute $route, string $persona): array
         $persona === 'collaborator' && $permission !== null
             && !in_array(substr($permission, 11), RolesAndPermissionsSeeder::rolePermissions()[User::ROLE_COLLABORATOR], true) => [403],
         $name === 'account.logo.show' => [404], // no logo uploaded
-        in_array($name, ['dashboard', 'verification.notice', 'billing.portal'], true) => [302],
+        // password.expired redirects a user whose password is still valid (PasswordExpiryTest covers the expired case).
+        in_array($name, ['dashboard', 'verification.notice', 'billing.portal', 'password.expired'], true) => [302],
         $persona === 'basic' && in_array($name, SMOKE_PLAN_FEATURE, true) => [403],
         default => [200],
     };

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Prepares the disposable load-test environment (composer test:load:prepare):
  * a gitignored .env.loadtest pointing to database/loadtest.sqlite, raised rate
- * limits, no Stripe/reCAPTCHA/analytics keys, then migrate + LoadTestSeeder.
+ * limits, no Stripe/reCAPTCHA/Turnstile/analytics keys, then migrate + LoadTestSeeder.
  * It never touches the database configured in .env.
  */
 
@@ -62,6 +62,8 @@ file_put_contents($root.'/.env.loadtest', implode(PHP_EOL, [
     'STRIPE_WEBHOOK_SECRET=',
     'RECAPTCHA_SITE_KEY=',
     'RECAPTCHA_SECRET_KEY=',
+    'TURNSTILE_SITE_KEY=',
+    'TURNSTILE_SECRET_KEY=',
     'GTM_ID=',
     'GA4_ID=',
     'API_RATE_LIMIT=100000',

@@ -17,6 +17,12 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class Recaptcha implements ValidationRule
 {
+    /**
+     * Run even when the field is missing or empty. Without this Laravel skips the rule for
+     * an absent field, so a bot could bypass the captcha by simply omitting the token.
+     */
+    public bool $implicit = true;
+
     private readonly RecaptchaService $service;
 
     public function __construct(

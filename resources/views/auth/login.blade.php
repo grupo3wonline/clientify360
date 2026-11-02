@@ -56,7 +56,7 @@
             @endif
         </div>
 
-        <x-recaptcha action="login" />
+        <x-captcha action="login" />
 
         <!-- Submit -->
         <div class="mt-6">

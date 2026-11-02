@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use App\Traits\HasUuid;
+use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -17,9 +18,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property Carbon|null $password_changed_at When the current password was set (drives the 90-day expiry).
+ */
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -48,6 +53,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'username',
         'email',
         'password',
+        'password_changed_at',
         'lgpd_consent',
         'lgpd_consent_at',
         'terms_accepted_at',
@@ -71,6 +77,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_changed_at' => 'datetime',
             'lgpd_consent' => 'boolean',
             'lgpd_consent_at' => 'datetime',
             'terms_accepted_at' => 'datetime',
@@ -80,10 +87,70 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         ];
     }
 
+    /**
+     * Keeps password_changed_at in step with the password on EVERY write path (registration,
+     * reset, profile, forced change, Filament, seeders), so no caller can forget it.
+     * An explicit value set together with the password is respected (tests, imports).
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $user): void {
+            if ($user->isDirty('password') && !$user->isDirty('password_changed_at')) {
+                $user->password_changed_at = now();
+            }
+        });
+    }
+
     /** @return BelongsTo<Account, $this> */
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /** When the password stops being valid, or null when it is unknown. */
+    public function passwordExpiresAt(): ?CarbonImmutable
+    {
+        if ($this->password_changed_at === null) {
+            return null;
+        }
+
+        return CarbonImmutable::instance($this->password_changed_at)
+            ->addDays((int) config('security.password.max_age_days'));
+    }
+
+    /**
+     * The password is valid through the END of its deadline day: on that day the user is told
+     * "expires today" and is blocked from the next day on. Everything below is derived from one
+     * number (days left, by calendar day) so the reminder and the block can never disagree.
+     */
+    public function passwordExpired(): bool
+    {
+        $days = $this->passwordDaysLeft();
+
+        return $days !== null && $days < 0;
+    }
+
+    /**
+     * Calendar days until the deadline day (0 = expires today, negative = expired), or null
+     * when the date is unknown. By calendar day so "7 days" matches what the user reads.
+     */
+    public function passwordDaysLeft(): ?int
+    {
+        $expiresAt = $this->passwordExpiresAt();
+
+        if ($expiresAt === null) {
+            return null;
+        }
+
+        return (int) now()->startOfDay()->diffInDays($expiresAt->startOfDay(), false);
+    }
+
+    /** Inside the reminder window (default: the last 7 days, including the deadline day). */
+    public function passwordExpiresSoon(): bool
+    {
+        $days = $this->passwordDaysLeft();
+
+        return $days !== null && $days >= 0 && $days <= (int) config('security.password.warning_days');
     }
 
     /**

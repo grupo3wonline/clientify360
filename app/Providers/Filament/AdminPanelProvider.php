@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\Widgets\BusinessOverview;
+use App\Http\Middleware\EnsurePasswordNotExpired;
 use App\Http\Middleware\EnsureTermsAccepted;
 use App\Http\Middleware\SetSpatieTeam;
 use Filament\Http\Middleware\Authenticate;
@@ -53,6 +54,7 @@ class AdminPanelProvider extends PanelProvider
             // Shared theme script, panel styles, footer + CTA and the loading overlay.
             ->renderHook(PanelsRenderHook::HEAD_START, fn (): View => view('filament.hooks.theme-init'))
             ->renderHook(PanelsRenderHook::HEAD_END, fn (): View => view('filament.hooks.head-end'))
+            ->renderHook(PanelsRenderHook::CONTENT_START, fn (): View => view('filament.hooks.account-alerts'))
             ->renderHook(PanelsRenderHook::FOOTER, fn (): View => view('filament.hooks.footer'))
             ->renderHook(PanelsRenderHook::BODY_END, fn (): View => view('filament.hooks.body-end'))
             ->sidebarCollapsibleOnDesktop()
@@ -133,6 +135,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
                 // Unverified users are redirected to /verify-email (not a 403).
                 EnsureEmailIsVerified::class,
+                EnsurePasswordNotExpired::class,
                 EnsureTermsAccepted::class,
             ]);
     }

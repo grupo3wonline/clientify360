@@ -71,7 +71,7 @@
             <x-input-error :messages="$errors->get('lgpd_consent')" class="mt-2" />
         </div>
 
-        <x-recaptcha action="register" />
+        <x-captcha action="register" />
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" href="{{ route('login') }}">

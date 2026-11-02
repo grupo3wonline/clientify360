@@ -118,8 +118,11 @@
                         <span>Autorizo o contato e o tratamento dos meus dados para esta finalidade, conforme a LGPD.</span></label>
                     @error('lgpd_consent')<div class="err" style="margin:-10px 0 14px">{{ $message }}</div>@enderror
 
-                    @error('g-recaptcha-response')<div class="err" style="margin:-10px 0 14px">{{ $message }}</div>@enderror
+                    @php $captchaError = $errors->first('cf-turnstile-response') ?: $errors->first('g-recaptcha-response'); @endphp
+                    @if($captchaError)<div class="err" role="alert" style="margin:-10px 0 14px">{{ $captchaError }}</div>@endif
 
+                    {{-- Turnstile + reCAPTCHA v3. O erro já é mostrado acima, então só os widgets são renderizados. --}}
+                    <x-turnstile action="lead" />
                     <x-recaptcha action="lead" />
 
                     <button type="submit" data-submit>{{ $form->button_text }}</button>

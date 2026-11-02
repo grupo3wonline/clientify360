@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
-use App\Rules\Recaptcha;
+use App\Support\Captcha;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -29,8 +29,8 @@ final class LoginRequest extends FormRequest
             'password' => ['required', 'string'],
             // Honeypot: only bots fill it. A present/non-empty value fails.
             'website' => ['nullable', 'prohibited'],
-            // reCAPTCHA v3 token (passes silently when captcha is disabled).
-            'g-recaptcha-response' => [new Recaptcha('login')],
+            // reCAPTCHA v3 + Cloudflare Turnstile (each passes silently when disabled).
+            ...Captcha::rules('login'),
         ];
     }
 

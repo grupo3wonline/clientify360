@@ -38,7 +38,8 @@ final class SecurityHeaders
      * Build the Content-Security-Policy.
      *
      * Assets are bundled by Vite and fonts are local, so only Google Tag
-     * Manager/Analytics and reCAPTCHA v3 (www.google.com / www.gstatic.com)
+     * Manager/Analytics, reCAPTCHA v3 (www.google.com / www.gstatic.com) and,
+     * when configured, Cloudflare Turnstile (challenges.cloudflare.com)
      * remain as external script origins. Stripe Checkout and the billing portal
      * are full-page redirects (no Stripe.js), so Stripe only appears in
      * form-action, which Chromium enforces on the redirect chain of a form POST.
@@ -47,14 +48,18 @@ final class SecurityHeaders
      */
     private function contentSecurityPolicy(Request $request): string
     {
+        // Turnstile loads its script and a challenge iframe from Cloudflare. The origin is only
+        // allowed while the widget is configured (least privilege).
+        $turnstile = filled(config('services.turnstile.site_key')) ? ' https://challenges.cloudflare.com' : '';
+
         $directives = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com".$turnstile,
             "style-src 'self' 'unsafe-inline'",
             "font-src 'self' data:",
             "img-src 'self' data: https:",
             "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
-            "frame-src 'self' https://www.googletagmanager.com https://www.google.com",
+            "frame-src 'self' https://www.googletagmanager.com https://www.google.com".$turnstile,
             "base-uri 'self'",
             "form-action 'self' https://checkout.stripe.com https://billing.stripe.com",
             "frame-ancestors 'self'",

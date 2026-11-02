@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 // Versioned REST API (token-only, account-isolated, Profissional plan).
 Route::prefix('v1')
     ->name('api.v1.')
-    ->middleware(['auth:sanctum', SetSpatieTeam::class, 'plan.feature:api', 'throttle:api'])
+    ->middleware(['auth:sanctum', 'api.verified', 'password.fresh', SetSpatieTeam::class, 'plan.feature:api', 'throttle:api'])
     ->group(function (): void {
         Route::get('me', MeController::class)->name('me');
 

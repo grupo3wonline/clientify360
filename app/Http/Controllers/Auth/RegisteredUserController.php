@@ -7,8 +7,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\AccountInvitation;
 use App\Models\User;
-use App\Rules\Recaptcha;
 use App\Services\AccountService;
+use App\Support\Captcha;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,8 +44,8 @@ final class RegisteredUserController extends Controller
             'lgpd_consent' => ['required', 'accepted'],
             // Honeypot: only bots fill it. A present/non-empty value fails.
             'website' => ['nullable', 'prohibited'],
-            // reCAPTCHA v3 token (passes silently when captcha is disabled).
-            'g-recaptcha-response' => [new Recaptcha('register')],
+            // reCAPTCHA v3 + Cloudflare Turnstile (each passes silently when disabled).
+            ...Captcha::rules('register'),
         ], [
             'name.required' => 'O nome é obrigatório.',
             'username.required' => 'O nome de usuário é obrigatório.',

@@ -27,6 +27,15 @@ class SecurityCheckCommandTest extends TestCase
             'cashier.webhook.secret' => 'whsec_test',
             'session.secure' => true,
             'services.recaptcha.secret_key' => 'prod-secret',
+            'services.recaptcha.site_key' => 'prod-site',
+            'services.turnstile.secret_key' => 'prod-turnstile-secret',
+            'services.turnstile.site_key' => 'prod-turnstile-site',
+            // SMTP da hospedagem: cadastro, ativação e recuperação de senha dependem dele.
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => 'sh-pro32.hostgator.com.br',
+            'mail.mailers.smtp.username' => 'nao-responder@clientify360.com.br',
+            'mail.mailers.smtp.password' => 'segredo',
+            'mail.from.address' => 'nao-responder@clientify360.com.br',
         ]);
 
         $this->fakePhp();
@@ -61,7 +70,7 @@ class SecurityCheckCommandTest extends TestCase
 
     public function test_it_is_skipped_outside_production(): void
     {
-        config(['services.recaptcha.secret_key' => '', 'app.debug' => true]);
+        config(['services.recaptcha.secret_key' => '', 'services.turnstile.secret_key' => '', 'mail.default' => 'log', 'app.debug' => true]);
 
         $this->artisan('security:check')
             ->expectsOutput('Security check skipped: not running in production.')
@@ -78,6 +87,16 @@ class SecurityCheckCommandTest extends TestCase
             'empty webhook secret' => ['cashier.webhook.secret', '', 'STRIPE_WEBHOOK_SECRET is empty'],
             'insecure session cookie' => ['session.secure', false, 'Session cookie is not marked secure'],
             'empty recaptcha secret' => ['services.recaptcha.secret_key', '', 'reCAPTCHA secret key is empty'],
+            'empty turnstile secret' => ['services.turnstile.secret_key', '', 'Turnstile secret key is empty'],
+            'turnstile secret without site key' => ['services.turnstile.site_key', '', 'Turnstile site key is empty'],
+            'recaptcha secret without site key' => ['services.recaptcha.site_key', '', 'reCAPTCHA site key is empty'],
+            'log mailer' => ['mail.default', 'log', 'MAIL_MAILER is "log"'],
+            'array mailer' => ['mail.default', 'array', 'MAIL_MAILER is "array"'],
+            'local smtp host' => ['mail.mailers.smtp.host', '127.0.0.1', 'MAIL_HOST is empty or local'],
+            'empty smtp host' => ['mail.mailers.smtp.host', '', 'MAIL_HOST is empty or local'],
+            'empty smtp password' => ['mail.mailers.smtp.password', '', 'MAIL_USERNAME or MAIL_PASSWORD is empty'],
+            'empty smtp username' => ['mail.mailers.smtp.username', '', 'MAIL_USERNAME or MAIL_PASSWORD is empty'],
+            'placeholder from address' => ['mail.from.address', 'noreply@clientify360.test', 'MAIL_FROM_ADDRESS is not a real address'],
         ];
     }
 

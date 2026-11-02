@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Rules\Recaptcha;
+use App\Support\Captcha;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,8 +38,8 @@ class NewPasswordController extends Controller
             'token' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            // reCAPTCHA v3 token (passes silently when captcha is disabled).
-            'g-recaptcha-response' => [new Recaptcha('reset')],
+            // reCAPTCHA v3 + Cloudflare Turnstile (each passes silently when disabled).
+            ...Captcha::rules('reset'),
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we

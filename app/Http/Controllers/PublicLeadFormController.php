@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\LeadForm;
-use App\Rules\Recaptcha;
 use App\Services\LeadCaptureService;
+use App\Support\Captcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -47,8 +47,8 @@ final class PublicLeadFormController extends Controller
         }
         $rules['lgpd_consent'] = ['accepted'];
         $messages['lgpd_consent.accepted'] = 'É preciso autorizar o contato para enviar.';
-        // reCAPTCHA v3 token (passes silently when captcha is disabled).
-        $rules['g-recaptcha-response'] = [new Recaptcha('lead')];
+        // reCAPTCHA v3 + Cloudflare Turnstile (each passes silently when disabled).
+        $rules = [...$rules, ...Captcha::rules('lead')];
 
         $validated = $request->validate($rules, $messages);
 

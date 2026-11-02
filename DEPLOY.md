@@ -82,6 +82,8 @@ php artisan key:generate   # apenas se APP_KEY estiver vazio
 # Ajuste o .env: APP_URL (https), APP_DEBUG=false, MySQL, SMTP, Stripe, STRIPE_WEBHOOK_SECRET
 
 php artisan migrate --force      # o workflow não roda migrations; rode a cada deploy com mudanças de banco
+                                 # (a de senha preenche password_changed_at de todos com a data de hoje)
+php artisan mail:test seu@email.com   # confirma que o SMTP entrega (cadastro, ativação, recuperação)
 php artisan filament:assets      # só se o servidor tiver o Composer/artisan; senão envie as pastas (seção 3)
 php artisan optimize             # caches de config, rotas, views e eventos
 php artisan filament:optimize
@@ -143,6 +145,9 @@ segunda linha de cron que execute a fila diretamente:
 - [ ] `SESSION_ENCRYPT=true`
 - [ ] Certificado SSL ativo (AutoSSL no cPanel)
 - [ ] Webhook do Stripe apontando para `https://seudominio.com.br/stripe/webhook` e `STRIPE_WEBHOOK_SECRET` preenchido
+- [ ] Turnstile (`TURNSTILE_SITE_KEY` e `TURNSTILE_SECRET_KEY`) e reCAPTCHA v3 (`RECAPTCHA_SITE_KEY` e `RECAPTCHA_SECRET_KEY`) preenchidos, com o domínio de produção cadastrado em cada painel
+- [ ] SMTP da HostGator configurado (`MAIL_HOST` = servidor da hospedagem, porta 465, `MAIL_SCHEME=smtps`) e `php artisan mail:test seu@email.com` entregando a mensagem
+- [ ] Cron do agendador ativo (sem ele os e-mails de ativação e recuperação de senha não saem)
 - [ ] `.env` inacessível pela web (protegido pelo `.htaccess`)
 - [ ] Permissões: `storage/` e `bootstrap/cache/` graváveis (755/775)
 - [ ] `php artisan security:check` sem erros

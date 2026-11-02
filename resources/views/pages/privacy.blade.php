@@ -116,7 +116,7 @@
                         <tbody class="divide-y divide-surface-200 dark:divide-surface-700">
                             <tr><td class="{{ $td }}">Criar e manter a conta, autenticar o acesso e prestar o serviço</td><td class="{{ $td }}">Execução de contrato (V)</td><td class="{{ $td }}">Contrato (b)</td></tr>
                             <tr><td class="{{ $td }}">Cobrar a assinatura do plano Profissional (Stripe)</td><td class="{{ $td }}">Execução de contrato (V)</td><td class="{{ $td }}">Contrato (b)</td></tr>
-                            <tr><td class="{{ $td }}">Segurança, prevenção a fraudes e robôs (reCAPTCHA), registros de acesso</td><td class="{{ $td }}">Legítimo interesse (IX)</td><td class="{{ $td }}">Legítimo interesse (f)</td></tr>
+                            <tr><td class="{{ $td }}">Segurança, prevenção a fraudes e robôs (reCAPTCHA e Cloudflare Turnstile), registros de acesso</td><td class="{{ $td }}">Legítimo interesse (IX)</td><td class="{{ $td }}">Legítimo interesse (f)</td></tr>
                             <tr><td class="{{ $td }}">Guardar registros fiscais e de faturamento</td><td class="{{ $td }}">Obrigação legal (II)</td><td class="{{ $td }}">Obrigação legal (c)</td></tr>
                             <tr><td class="{{ $td }}">Estatísticas de uso (Google Analytics) e medição de campanhas (Google Tag Manager)</td><td class="{{ $td }}">Consentimento (I)</td><td class="{{ $td }}">Consentimento (a)</td></tr>
                             <tr><td class="{{ $td }}">Comunicações sobre o serviço (segurança, cobrança, mudanças nos termos)</td><td class="{{ $td }}">Execução de contrato (V)</td><td class="{{ $td }}">Contrato (b)</td></tr>
@@ -138,7 +138,7 @@
                             <tr><td class="{{ $td }}"><code>{{ config('session.cookie') }}</code></td><td class="{{ $td }}">Necessários</td><td class="{{ $td }}">Mantém a sessão e o login</td><td class="{{ $td }}">{{ (int) config('session.lifetime') }} minutos</td></tr>
                             <tr><td class="{{ $td }}"><code>XSRF-TOKEN</code></td><td class="{{ $td }}">Necessários</td><td class="{{ $td }}">Proteção contra ataques CSRF nos formulários</td><td class="{{ $td }}">Sessão</td></tr>
                             <tr><td class="{{ $td }}"><code>c360_consent</code></td><td class="{{ $td }}">Necessários</td><td class="{{ $td }}">Guarda a sua escolha de cookies (sem dados pessoais)</td><td class="{{ $td }}">180 dias</td></tr>
-                            <tr><td class="{{ $td }}"><code>_GRECAPTCHA</code> (Google)</td><td class="{{ $td }}">Necessários</td><td class="{{ $td }}">reCAPTCHA v3 nos formulários de login e cadastro, contra robôs</td><td class="{{ $td }}">6 meses</td></tr>
+                            <tr><td class="{{ $td }}"><code>_GRECAPTCHA</code> (Google)</td><td class="{{ $td }}">Necessários</td><td class="{{ $td }}">reCAPTCHA v3 e Cloudflare Turnstile nos formulários de login, cadastro, recuperação de senha e captação de leads, contra robôs</td><td class="{{ $td }}">6 meses</td></tr>
                             <tr><td class="{{ $td }}"><code>_ga</code>, <code>_ga_*</code> (Google)</td><td class="{{ $td }}">Análise (opcional)</td><td class="{{ $td }}">Estatísticas de uso do Google Analytics</td><td class="{{ $td }}">Até 2 anos</td></tr>
                             <tr><td class="{{ $td }}">Google Tag Manager / anúncios (<code>_gcl_*</code>)</td><td class="{{ $td }}">Marketing (opcional)</td><td class="{{ $td }}">Medição de campanhas e publicidade</td><td class="{{ $td }}">Até 90 dias</td></tr>
                         </tbody>
@@ -158,6 +158,7 @@
                 <ul class="space-y-3 {{ $p }} list-disc pl-5">
                     <li><strong>Stripe</strong> (pagamentos, Estados Unidos): processa a assinatura e o cartão. Transferência com cláusulas contratuais padrão.</li>
                     <li><strong>Google</strong> (Estados Unidos): reCAPTCHA (segurança) sempre; Google Tag Manager e Google Analytics <strong>somente com o seu consentimento</strong>.</li>
+                    <li><strong>Cloudflare</strong> (Estados Unidos): Turnstile (segurança), sempre que você usa um formulário protegido. Recebe o seu endereço IP e dados técnicos do navegador para distinguir pessoas de robôs; não usamos esse serviço para publicidade.</li>
                     <li><strong>Provedor de e-mail</strong>: envio de verificação de e-mail, recuperação de senha, convites e avisos.</li>
                     <li><strong>Hospedagem</strong> (HostGator, Brasil/Estados Unidos): servidores onde o sistema e o banco de dados ficam.</li>
                     <li><strong>Provedores de IA</strong> (Google Gemini, Groq, OpenRouter): apenas se você ativar a análise com IA no plano Profissional, usando as suas próprias credenciais, e só com os dados do cliente analisado.</li>

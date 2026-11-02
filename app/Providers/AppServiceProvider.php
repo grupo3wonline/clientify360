@@ -48,6 +48,10 @@ class AppServiceProvider extends ServiceProvider
             Log::error('reCAPTCHA secret key is empty in production: anti-bot protection is disabled (fail-open).');
         }
 
+        if ($this->app->environment('production') && blank(config('services.turnstile.secret_key'))) {
+            Log::error('Turnstile secret key is empty in production: Cloudflare anti-bot protection is disabled (fail-open).');
+        }
+
         // A assinatura é da conta (tenant), não do usuário: a conta é o Billable do Cashier.
         Cashier::useCustomerModel(Account::class);
 

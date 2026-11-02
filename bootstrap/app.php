@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\CheckPlanLimit;
+use App\Http\Middleware\EnsureApiEmailIsVerified;
+use App\Http\Middleware\EnsurePasswordNotExpired;
 use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\EnsureTermsAccepted;
 use App\Http\Middleware\SecurityHeaders;
@@ -45,6 +47,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'plan.limit' => CheckPlanLimit::class,
             'plan.feature' => EnsurePlanFeature::class,
             'terms.accepted' => EnsureTermsAccepted::class,
+            // 90-day password lifetime and API-side e-mail verification
+            'password.fresh' => EnsurePasswordNotExpired::class,
+            'api.verified' => EnsureApiEmailIsVerified::class,
             // ACL por conta (Spatie Permission)
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,

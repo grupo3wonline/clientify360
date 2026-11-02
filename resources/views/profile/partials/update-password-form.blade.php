@@ -7,6 +7,16 @@
         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
             Use uma senha longa e aleatória para manter sua conta segura.
         </p>
+        @if($expiresAt = auth()->user()->passwordExpiresAt())
+            <p class="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                <i class="fa-solid fa-clock mr-1" aria-hidden="true"></i>
+                Por segurança, a senha é trocada a cada {{ config('security.password.max_age_days') }} dias.
+                A atual vale até <strong>{{ $expiresAt->format('d/m/Y') }}</strong>
+                @if(auth()->user()->passwordExpiresSoon())
+                    <span class="font-semibold text-warning-700 dark:text-warning-300">(troque agora)</span>
+                @endif.
+            </p>
+        @endif
     </header>
 
     <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6" autocomplete="off">

@@ -59,7 +59,7 @@ Route::get('/dashboard', fn () => redirect('/app'))
     ->middleware(['auth', 'throttle:app'])->name('dashboard');
 
 // Authenticated routes
-Route::middleware(['auth', 'verified', 'terms.accepted', 'throttle:app'])->group(function (): void {
+Route::middleware(['auth', 'verified', 'password.fresh', 'terms.accepted', 'throttle:app'])->group(function (): void {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/exportar-dados', [ProfileController::class, 'exportPersonalData'])->name('profile.export');

@@ -110,6 +110,8 @@
                         {{ $header }}
                     @endisset
 
+                    <x-account-alerts />
+
                     {{ $slot }}
 
                     <x-cta-3w variant="card" placement="app-card" :dismissible="true" class="mt-10" />

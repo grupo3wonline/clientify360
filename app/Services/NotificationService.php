@@ -29,6 +29,10 @@ final class NotificationService
     /** Cache por request para evitar recomputar (ex.: badge do menu + página). */
     private ?Collection $cache = null;
 
+    public function __construct(
+        private readonly AccountAlertService $alerts,
+    ) {}
+
     /**
      * @return Collection<int, array<string, mixed>>
      */
@@ -46,6 +50,7 @@ final class NotificationService
         $this->pushStock($notifications);
         $this->pushLeads($notifications);
         $this->pushDeals($notifications);
+        $this->pushAccountAlerts($notifications);
 
         $dismissed = DismissedNotification::where('user_id', auth()->id())
             ->pluck('notification_key')
@@ -66,7 +71,9 @@ final class NotificationService
             return $this->cache->count();
         }
 
-        return (int) $this->rememberForAccount('notifications:'.auth()->id(), 300, fn (): int => $this->for()->count());
+        // The key already carries the user id, so members of one account never share a count
+        // (the password alert is per user). The day is part of it: password alerts change at midnight.
+        return (int) $this->rememberForAccount('notifications:'.auth()->id().':'.now()->toDateString(), 300, fn (): int => $this->for()->count());
     }
 
     private function pushReminders(Collection $notifications): void
@@ -178,6 +185,30 @@ final class NotificationService
                 'message' => ($submission->client?->name ?? $submission->data['name'] ?? 'Lead').' via '.($submission->form?->name ?? 'formulário'),
                 'time' => $submission->created_at,
                 'url' => $submission->client_id ? route('clients.show', $submission->client_id) : route('lead-forms.index'),
+            ]);
+        }
+    }
+
+    /** Password expiry and subscription renewal reminders (7 days ahead). */
+    private function pushAccountAlerts(Collection $notifications): void
+    {
+        $user = auth()->user();
+
+        if ($user === null) {
+            return;
+        }
+
+        foreach ($this->alerts->for($user) as $alert) {
+            $notifications->push([
+                'id' => $alert['id'],
+                'type' => $alert['type'],
+                'icon' => $alert['type'] === 'password_expiring'
+                    ? 'fa-solid fa-key '.($alert['level'] === 'danger' ? 'text-red-500' : 'text-amber-500')
+                    : 'fa-solid fa-credit-card '.($alert['level'] === 'danger' ? 'text-red-500' : 'text-amber-500'),
+                'title' => $alert['title'],
+                'message' => $alert['message'],
+                'time' => $alert['time'],
+                'url' => $alert['url'],
             ]);
         }
     }

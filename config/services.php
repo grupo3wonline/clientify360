@@ -45,6 +45,14 @@ return [
         'min_score' => (float) env('RECAPTCHA_MIN_SCORE', 0.5),
     ],
 
+    // Cloudflare Turnstile. Same contract as reCAPTCHA: secret key empty => disabled
+    // (fail-open in dev); secret key present => enforced (fail-closed). The widget is
+    // rendered only when the site key is present.
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret_key' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
     // Requests per minute for the named rate limiters (AppServiceProvider).
     // Only the disposable load-test environment raises them.
     'rate_limits' => [
