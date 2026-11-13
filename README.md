@@ -283,6 +283,58 @@ resources/
 └── views/            # Blade (layouts, componentes, páginas, PDFs)
 ```
 
+---
+
+## Melhorias e Refatorações Recentes
+
+### Design e UI/UX
+- **Neumorphism** — utilitários `.c-neumorphic` / `.c-neu-inset` com sombras suaves internas e externas, adaptadas ao tema claro/escuro.
+- **Claymorphism** — utilitários `.c-clay` / `.c-clay-accent` com `border-radius` amplo, sombras coloridas e realce de borda.
+- **Glassmorphism aprimorado** — `glass` e `glass-nav` com `saturate(180%)` para maior vibração no backdrop.
+- **Aurora / Gradient UI** — classe `.c-aurora` com gradiente cônico animado; `.bg-mesh` com radial-gradients em camadas.
+- **Gradient text** — `.c-gradient-text` e `.c-gradient-text-warm`.
+- **Micro-animações** — `float-up`, `shimmer`, `pulse-glow`, `aurora-spin` (respeitam `prefers-reduced-motion`).
+- **Skeleton loading** — `.c-skeleton` com shimmer animado para estados de carregamento.
+- **Scroll-reveal** — `.c-reveal` / `.is-visible` para elementos que aparecem ao rolar a página.
+- **Botões** com leve `translateY(-1px)` no hover, dando profundidade visual sem excesso.
+
+### Gatilhos Psicológicos (Landing Page)
+- **Escassez** — badge de oferta por tempo limitado na seção de planos e no hero.
+- **Urgência** — aviso de preço promocional, barra de preço dinâmica e destaque de desconto.
+- **Autoridade** — badges de tecnologia (Laravel 12, Stripe, LGPD), lista de garantias e selos de segurança.
+- **Reciprocidade** — plano Básico gratuito destacado sem pressão de cartão de crédito.
+- **Transformação** — CTA final reescrito com foco em "transformar a gestão" e custo por dia.
+- **Antecipação** — preview de dashboard na seção hero com números e funcionalidades.
+- **Novidade** — badge "CRM gratuito para começar" com pulso animado.
+- **Comparativo de recursos** — tabela clara com check/x por plano no lugar de listas repetidas.
+
+### SEO / GEO / AEO
+- **GEO** — `geo.region`, `geo.placename`, `geo.position` e `ICBM` adicionados ao componente SEO.
+- **AEO** — meta tags `ai:abstract`, `ai:keywords`, `ai:type`, `ai:audience` para otimização em motores de resposta por IA (ChatGPT, Perplexity, Google SGE).
+- **JSON-LD ampliado** — adicionados schemas `HowTo`, `Speakable`, `LocalBusiness`, `Product` ao `StructuredData.php`.
+- **Preconnect** — `<link rel="preconnect">` para GTM/GA4 e `dns-prefetch` adicionados ao `head.blade.php`.
+- **theme-color dual** — meta `theme-color` separada para `prefers-color-scheme: light/dark`.
+- **Robots aprimorado** — `max-video-preview:-1` adicionado à diretiva `robots`.
+
+### JavaScript / Performance
+- **Debounce de busca** (`resources/js/debounce.js`) — inputs com `data-debounce-search` submetem o form apenas após 450 ms de pausa, evitando requisições desnecessárias ao servidor.
+- **Form guard** — `initFormGuard()` impede submissões duplicadas em formulários POST; libera o guard em `pageshow` / `pagehide` (compatível com bfcache).
+- **Search debounce com Escape** — pressionar Esc limpa o campo e envia imediatamente.
+
+### Testes
+- `tests/Feature/Security/SecurityHeadersTest.php` — verifica todos os cabeçalhos de segurança (CSP, COOP, Permissions-Policy, etc.).
+- `tests/Feature/Seo/SeoMetaTagsTest.php` — valida SEO, GEO, AEO, JSON-LD, sitemap.xml e robots.txt.
+- `tests/Feature/Security/FormProtectionTest.php` — testa `autocomplete="off"`, `data-debounce-search`, SQL injection e XSS nos formulários.
+- `tests/Feature/Navigation/PublicRouteTest.php` — 25+ rotas públicas e autenticadas verificadas.
+- `tests/Feature/Security/HoneypotTest.php` — verifica o campo honeypot nas telas de login e cadastro.
+- `tests/Feature/Security/SqlInjectionTest.php` — testa SQL injection em todos os campos de busca, login e IDOR.
+- `tests/Feature/Security/AccessibilitySecurityTest.php` — CSRF meta tag, `lang="pt-BR"`, loading overlay, cookie consent, footer credit, skip-to-content.
+- `tests/Feature/Flows/ClientCrmFlowTest.php` — ciclo completo de CRM: create → view → search → interaction → reminder → delete, com IDOR.
+- `tests/Feature/Flows/QuoteApprovalFlowTest.php` — ciclo de orçamento: create → view → send → approve → duplicate.
+- `tests/Feature/Flows/FinanceFlowTest.php` — ciclo financeiro: create → settle → reopen → cancel.
+
+---
+
 ## Desenvolvedor
 
 **HOTWYL | WILLFROMBRASIL**

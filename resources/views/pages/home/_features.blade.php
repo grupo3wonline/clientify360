@@ -27,9 +27,9 @@
         </div>
         <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             @foreach($features as [$icon, $title, $text, $proOnly])
-                <article class="group c-card p-6 transition hover:border-brand-200 dark:hover:border-brand-800 hover:shadow-lg">
+                <article class="group c-card p-6 transition hover:border-brand-200 dark:hover:border-brand-800 hover:shadow-lg hover:-translate-y-0.5">
                     <div class="flex items-start justify-between gap-3">
-                        <span class="c-icon-tile bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400 transition group-hover:scale-110"><i class="fa-solid {{ $icon }}" aria-hidden="true"></i></span>
+                        <span class="c-icon-tile bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400 transition duration-300 group-hover:scale-110 group-hover:shadow-brand-500/20 c-clay"><i class="fa-solid {{ $icon }}" aria-hidden="true"></i></span>
                         @if($proOnly)
                             <span class="c-badge bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-200">PRO</span>
                         @else

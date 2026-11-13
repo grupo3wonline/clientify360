@@ -43,6 +43,7 @@
                        name="search"
                        value="{{ $search ?? '' }}"
                        autocomplete="off"
+                       data-debounce-search
                        placeholder="Buscar por nome, e-mail, telefone, documento ou cidade..."
                        class="w-full pl-11 pr-10 py-3 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-800 dark:text-surface-200 placeholder-surface-400 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition"
                        aria-label="Buscar clientes">

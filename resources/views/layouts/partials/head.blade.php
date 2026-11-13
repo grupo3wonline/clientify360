@@ -6,12 +6,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<meta name="theme-color" content="{{ config('brand.colors.brand.600') }}">
+<meta name="theme-color" content="{{ config('brand.colors.brand.600') }}" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="{{ config('brand.colors.brand.800') }}" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
 <meta name="application-name" content="Clientify360">
+<meta name="msapplication-TileColor" content="{{ config('brand.colors.brand.600') }}">
 <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+
+{{-- Preconnect para recursos externos críticos --}}
+<link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.google-analytics.com">
+
+{{-- Fonte crítica (Inter) — carregada antes do primeiro render --}}
 <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ Vite::asset('resources/fonts/inter-latin-wght-normal.woff2') }}">
+
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @if($noindex ?? false)
     <meta name="robots" content="noindex, nofollow">

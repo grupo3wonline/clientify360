@@ -17,8 +17,10 @@
         </div>
         <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach($tips as [$icon, $title, $text])
-                <article class="flex gap-4 rounded-card border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950 p-5">
-                    <span class="c-icon-tile bg-warning-50 text-warning-700 dark:bg-warning-950/40 dark:text-warning-400"><i class="fa-solid {{ $icon }}" aria-hidden="true"></i></span>
+                <article class="flex gap-4 rounded-card border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950 p-5 hover:shadow-md hover:-translate-y-0.5 transition duration-300 group">
+                    <span class="c-icon-tile bg-warning-50 text-warning-700 dark:bg-warning-950/40 dark:text-warning-400 c-clay shrink-0 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
+                    </span>
                     <div>
                         <h3 class="font-semibold text-surface-900 dark:text-white">{{ $title }}</h3>
                         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400 leading-relaxed">{{ $text }}</p>

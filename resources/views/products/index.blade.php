@@ -28,7 +28,7 @@
         </div>
         <form autocomplete="off" method="GET" class="md:ml-auto md:w-72">
             <input autocomplete="off" type="hidden" name="filter" value="{{ $filter }}">
-            <input autocomplete="off" type="search" name="search" value="{{ $search }}" placeholder="Nome, código ou descrição..." class="c-input">
+            <input autocomplete="off" type="search" name="search" value="{{ $search }}" data-debounce-search placeholder="Nome, código ou descrição..." class="c-input">
         </form>
     </div>
 

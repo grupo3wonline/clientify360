@@ -23,44 +23,205 @@
         html {
             scroll-behavior: auto;
         }
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 
     :focus-visible {
         @apply outline-none ring-2 ring-brand-500 ring-offset-2 dark:ring-offset-surface-900;
     }
+
+    /* Smooth scroll for the entire page */
+    * {
+        scroll-margin-top: 5rem;
+    }
 }
 
 @layer components {
+    /* ------------------------------------------------------------------ */
+    /* Core UI atoms                                                         */
+    /* ------------------------------------------------------------------ */
+
     /* .c-btn is declared BEFORE the .c-btn-* variants that @apply it */
-    .c-btn { @apply inline-flex items-center justify-center gap-1 px-4 py-2.5 text-sm font-semibold rounded-button transition duration-150 active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed; }
-    .c-card { @apply bg-white dark:bg-surface-900 rounded-card border border-surface-200/80 dark:border-surface-800 shadow-sm shadow-surface-900/[0.03]; }
+    .c-btn {
+        @apply inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-button transition duration-150 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed select-none;
+        letter-spacing: 0.01em;
+    }
+    .c-card {
+        @apply bg-white dark:bg-surface-900 rounded-card border border-surface-200/80 dark:border-surface-800 shadow-sm shadow-surface-900/[0.03];
+    }
     .c-label { @apply block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5; }
-    .c-input { @apply w-full px-3.5 py-2.5 rounded-button border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition shadow-sm shadow-surface-900/[0.02]; }
-    .c-hint { @apply mt-1 text-xs text-surface-500 dark:text-surface-400; }
+    .c-input {
+        @apply w-full px-3.5 py-2.5 rounded-button border border-surface-200 dark:border-surface-700
+               bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200
+               placeholder-surface-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
+               text-sm transition shadow-sm shadow-surface-900/[0.02];
+    }
+    .c-hint  { @apply mt-1 text-xs text-surface-500 dark:text-surface-400; }
     .c-error { @apply mt-1.5 text-xs text-danger-600 dark:text-danger-400; }
-    .c-btn-primary { @apply c-btn bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/25 hover:shadow-md hover:shadow-brand-600/30; }
-    /* accent-700 instead of -600: AA contrast (>= 4.5:1) for white text on green */
+
+    /* Buttons */
+    .c-btn-primary {
+        @apply c-btn bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/25 hover:shadow-md hover:shadow-brand-600/30;
+    }
+    .c-btn-primary:hover { transform: translateY(-1px); }
+    /* accent-700: AA contrast (>= 4.5:1) for white text on green */
     .c-btn-success { @apply c-btn bg-accent-700 hover:bg-accent-800 text-white shadow-sm shadow-accent-700/25; }
-    .c-btn-danger { @apply c-btn bg-danger-600 hover:bg-danger-700 text-white; }
-    .c-btn-ghost { @apply c-btn bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300; }
+    .c-btn-danger  { @apply c-btn bg-danger-600 hover:bg-danger-700 text-white; }
+    .c-btn-ghost   { @apply c-btn bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300; }
+
+    /* Badges / chips */
     .c-badge { @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold; }
+
+    /* Table helpers */
     .c-th { @apply px-4 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider; }
     .c-td { @apply px-4 py-3 text-sm text-surface-700 dark:text-surface-300; }
-    .c-tab { @apply flex items-center px-3.5 py-2 rounded-lg text-sm font-medium transition text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 whitespace-nowrap; }
+
+    /* Tabs */
+    .c-tab       { @apply flex items-center px-3.5 py-2 rounded-lg text-sm font-medium transition text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200 whitespace-nowrap; }
     .c-tab-active { @apply bg-white dark:bg-surface-700 text-brand-700 dark:text-brand-300 shadow-sm; }
 
-    /* Public site helpers */
-    .c-eyebrow { @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand-600 dark:text-brand-400; }
-    .c-section { @apply py-16 md:py-24 scroll-mt-20; }
+    /* ------------------------------------------------------------------ */
+    /* Public site helpers                                                   */
+    /* ------------------------------------------------------------------ */
+    .c-eyebrow  { @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand-600 dark:text-brand-400; }
+    .c-section  { @apply py-16 md:py-24 scroll-mt-20; }
     .c-container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
-    .c-h2 { @apply text-3xl md:text-4xl font-bold tracking-tight text-surface-900 dark:text-white; }
-    .c-lead { @apply text-base md:text-lg text-surface-600 dark:text-surface-400 leading-relaxed; }
+    .c-h2       { @apply text-3xl md:text-4xl font-bold tracking-tight text-surface-900 dark:text-white; }
+    .c-lead     { @apply text-base md:text-lg text-surface-600 dark:text-surface-400 leading-relaxed; }
     .c-icon-tile { @apply w-11 h-11 rounded-xl flex items-center justify-center shrink-0; }
 
-    /*
-     * Responsive tables: below md each row becomes a stacked card.
-     * Cells show their column name through data-label (optional).
-     */
+    /* ------------------------------------------------------------------ */
+    /* Glassmorphism — enhanced                                              */
+    /* ------------------------------------------------------------------ */
+    .c-glass {
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .dark .c-glass {
+        background: rgba(15, 23, 42, 0.75);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Neumorphism — subtle soft-UI shadows                                  */
+    /* ------------------------------------------------------------------ */
+    .c-neumorphic {
+        background: theme('colors.surface.50');
+        box-shadow:
+            6px 6px 12px rgba(0, 0, 0, 0.08),
+            -4px -4px 10px rgba(255, 255, 255, 0.90);
+        border: none;
+    }
+    .dark .c-neumorphic {
+        background: theme('colors.surface.900');
+        box-shadow:
+            6px 6px 14px rgba(0, 0, 0, 0.45),
+            -4px -4px 10px rgba(255, 255, 255, 0.04);
+    }
+    .c-neu-inset {
+        box-shadow:
+            inset 3px 3px 7px rgba(0, 0, 0, 0.07),
+            inset -3px -3px 7px rgba(255, 255, 255, 0.85);
+    }
+    .dark .c-neu-inset {
+        box-shadow:
+            inset 3px 3px 8px rgba(0, 0, 0, 0.5),
+            inset -3px -3px 7px rgba(255, 255, 255, 0.03);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Claymorphism — rounded, soft, 3-D feel                               */
+    /* ------------------------------------------------------------------ */
+    .c-clay {
+        @apply rounded-3xl;
+        box-shadow:
+            0 8px 32px -4px rgba(99, 102, 241, 0.18),
+            0 0 0 1px rgba(99, 102, 241, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .dark .c-clay {
+        box-shadow:
+            0 8px 32px -4px rgba(99, 102, 241, 0.25),
+            0 0 0 1px rgba(99, 102, 241, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    .c-clay-accent {
+        @apply rounded-3xl;
+        box-shadow:
+            0 8px 32px -4px rgba(16, 185, 129, 0.2),
+            0 0 0 1px rgba(16, 185, 129, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Gradient text utility                                                 */
+    /* ------------------------------------------------------------------ */
+    .c-gradient-text {
+        @apply bg-gradient-to-r from-brand-500 via-brand-400 to-accent-400 bg-clip-text text-transparent;
+    }
+    .c-gradient-text-warm {
+        @apply bg-gradient-to-r from-warning-500 via-danger-400 to-brand-500 bg-clip-text text-transparent;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Aurora / Gradient UI helpers                                          */
+    /* ------------------------------------------------------------------ */
+    .c-aurora {
+        position: relative;
+        overflow: hidden;
+    }
+    .c-aurora::before {
+        content: '';
+        position: absolute;
+        inset: -50%;
+        background: conic-gradient(
+            from 180deg at 50% 50%,
+            theme('colors.brand.600 / 15%') 0deg,
+            theme('colors.accent.500 / 10%') 90deg,
+            theme('colors.info.500 / 8%') 180deg,
+            transparent 270deg
+        );
+        animation: aurora-spin 20s linear infinite;
+        pointer-events: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .c-aurora::before { animation: none; }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Urgency / scarcity UI atoms                                           */
+    /* ------------------------------------------------------------------ */
+    .c-urgency-badge {
+        @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold;
+        background: linear-gradient(135deg, theme('colors.warning.500'), theme('colors.danger.500'));
+        color: white;
+        box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .c-countdown {
+        @apply inline-flex items-center gap-1 font-mono font-bold text-danger-600 dark:text-danger-400;
+    }
+    .c-countdown__unit {
+        @apply flex flex-col items-center gap-0.5 min-w-[2.5rem] rounded-lg px-1.5 py-1 bg-danger-50 dark:bg-danger-950/40;
+    }
+    .c-countdown__num  { @apply text-xl leading-none; }
+    .c-countdown__label { @apply text-[9px] uppercase tracking-wider text-danger-500 dark:text-danger-400; }
+
+    /* Scarcity / social-proof pill */
+    .c-social-proof {
+        @apply inline-flex items-center gap-2 rounded-full border border-accent-200 dark:border-accent-800
+               bg-accent-50 dark:bg-accent-950/40 px-4 py-1.5 text-xs font-semibold text-accent-700 dark:text-accent-300;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Responsive table stacking                                             */
+    /* ------------------------------------------------------------------ */
     @media (max-width: 767px) {
         .c-table-stack thead { @apply sr-only; }
         .c-table-stack tbody tr { @apply block border-b border-surface-200 dark:border-surface-800 px-2 py-3; }
@@ -70,50 +231,132 @@
         .c-table-stack tbody td[colspan] { @apply block text-center; }
         .c-table-stack tbody td[colspan]::before { content: none; }
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Scroll-triggered reveal (applied by JS / Intersection Observer)       */
+    /* ------------------------------------------------------------------ */
+    .c-reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .c-reveal.is-visible {
+        opacity: 1;
+        transform: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .c-reveal { opacity: 1; transform: none; }
+    }
 }
 
-/* Glass helpers used by the headers */
+/* ------------------------------------------------------------------ */
+/* Glass helpers used by the layouts (outside @layer for specificity)    */
+/* ------------------------------------------------------------------ */
 .glass {
     @apply bg-white/80 dark:bg-surface-900/85;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 
 .glass-nav {
-    @apply bg-white/85 dark:bg-surface-950/85;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    @apply bg-white/90 dark:bg-surface-950/90;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
+/* ------------------------------------------------------------------ */
+/* Background patterns                                                   */
+/* ------------------------------------------------------------------ */
 .bg-grid {
     background-image: radial-gradient(circle at 1px 1px, theme('colors.brand.500 / 8%') 1px, transparent 0);
     background-size: 28px 28px;
 }
-
 .dark .bg-grid {
     background-image: radial-gradient(circle at 1px 1px, theme('colors.brand.400 / 7%') 1px, transparent 0);
 }
 
-.scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
+/* Mesh gradient — hero backgrounds */
+.bg-mesh {
+    background-image:
+        radial-gradient(ellipse 80% 60% at 20% 20%, theme('colors.brand.600 / 20%'), transparent),
+        radial-gradient(ellipse 60% 80% at 80% 80%, theme('colors.accent.500 / 15%'), transparent),
+        radial-gradient(ellipse 50% 50% at 50% 50%, theme('colors.info.500 / 8%'), transparent);
+}
+.dark .bg-mesh {
+    background-image:
+        radial-gradient(ellipse 80% 60% at 20% 20%, theme('colors.brand.600 / 25%'), transparent),
+        radial-gradient(ellipse 60% 80% at 80% 80%, theme('colors.accent.500 / 20%'), transparent),
+        radial-gradient(ellipse 50% 50% at 50% 50%, theme('colors.info.500 / 10%'), transparent);
 }
 
-.scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-}
+/* ------------------------------------------------------------------ */
+/* Scrollbar styling                                                      */
+/* ------------------------------------------------------------------ */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-surface-500/30 rounded; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { @apply bg-surface-500/50; }
 
-.scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-surface-500/30 rounded;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-surface-500/50;
-}
-
+/* ------------------------------------------------------------------ */
+/* Transitions                                                            */
+/* ------------------------------------------------------------------ */
 .sidebar-transition {
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                              */
+/* ------------------------------------------------------------------ */
 @keyframes c360-spin {
     to { transform: rotate(360deg); }
 }
+
+@keyframes aurora-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4); }
+    50%       { box-shadow: 0 4px 18px rgba(245, 158, 11, 0.65); }
+}
+
+@keyframes float-up {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+    from { background-position: -200% 0; }
+    to   { background-position: 200% 0; }
+}
+
+/* Skeleton loading shimmer */
+.c-skeleton {
+    @apply rounded-lg;
+    background: linear-gradient(
+        90deg,
+        theme('colors.surface.200') 25%,
+        theme('colors.surface.100') 50%,
+        theme('colors.surface.200') 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease infinite;
+}
+.dark .c-skeleton {
+    background: linear-gradient(
+        90deg,
+        theme('colors.surface.800') 25%,
+        theme('colors.surface.700') 50%,
+        theme('colors.surface.800') 75%
+    );
+    background-size: 200% 100%;
+}
+
+/* ------------------------------------------------------------------ */
+/* Loading overlay — enhanced ring                                        */
+/* ------------------------------------------------------------------ */
+#loading-overlay .c360-overlay__spinner {
+    animation: float-up 2s ease-in-out infinite;
+}
+

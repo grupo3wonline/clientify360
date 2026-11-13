@@ -7,6 +7,7 @@ import countdown from './components/countdown';
 import registerTheme from './theme';
 import { initLoadingOverlay } from './loading-overlay';
 import { initConsent } from './consent';
+import { initSearchDebounce, initFormGuard } from './debounce';
 
 // Static assets (fonts) go through the Vite manifest, so Blade can preload them.
 import.meta.glob(['../fonts/**']);
@@ -32,4 +33,17 @@ Alpine.data('countdown', countdown);
 
 initLoadingOverlay();
 initConsent();
+
+// Debounce search inputs and block duplicate form submissions.
+// Run after DOMContentLoaded so elements are available.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        initSearchDebounce(450);
+        initFormGuard();
+    });
+} else {
+    initSearchDebounce(450);
+    initFormGuard();
+}
+
 Alpine.start();

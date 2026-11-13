@@ -21,8 +21,10 @@
         </div>
         <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             @foreach($useCases as [$icon, $title, $text])
-                <article class="c-card p-6 text-center">
-                    <span class="c-icon-tile mx-auto bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400"><i class="fa-solid {{ $icon }}" aria-hidden="true"></i></span>
+                <article class="c-card p-6 text-center hover:shadow-lg hover:-translate-y-1 transition duration-300 group">
+                    <span class="c-icon-tile mx-auto bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400 c-clay group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
+                    </span>
                     <h3 class="mt-4 font-bold text-surface-900 dark:text-white">{{ $title }}</h3>
                     <p class="mt-2 text-sm text-surface-600 dark:text-surface-400">{{ $text }}</p>
                 </article>

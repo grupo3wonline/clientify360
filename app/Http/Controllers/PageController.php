@@ -40,15 +40,26 @@ final class PageController extends Controller
     public function home(): View
     {
         $plans = PlanData::catalog();
-        $faqs = $this->faqs($plans['professional']);
+        $faqs  = $this->faqs($plans['professional']);
+
+        $howToSteps = [
+            ['name' => 'Crie sua conta grátis', 'text' => 'Informe nome, nome de usuário, e-mail e senha e confirme o e-mail. Não pedimos cartão de crédito.'],
+            ['name' => 'Cadastre seus clientes', 'text' => 'Adicione os clientes um a um ou capte leads com um formulário público. Use tags para organizar.'],
+            ['name' => 'Acompanhe as vendas',   'text' => 'Crie oportunidades no funil, envie orçamentos e registre cada atendimento e próximo passo.'],
+            ['name' => 'Analise e evolua',       'text' => 'Veja relatórios e o fluxo de caixa. Quando precisar de mais, faça o upgrade para o Profissional.'],
+        ];
 
         return view('pages.home', [
             'plans' => $plans,
-            'faqs' => $faqs,
+            'faqs'  => $faqs,
             'schema' => [
                 StructuredData::organization(),
                 StructuredData::website(),
                 StructuredData::softwareApplication(...array_values($plans)),
+                StructuredData::localBusiness(),
+                StructuredData::howTo($howToSteps),
+                StructuredData::speakable(),
+                StructuredData::product($plans['professional']),
                 StructuredData::faqPage($faqs),
             ],
         ]);

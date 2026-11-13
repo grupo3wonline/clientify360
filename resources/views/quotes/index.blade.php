@@ -25,7 +25,7 @@
             <option value="">Todos os status</option>
             @foreach(\App\Models\Quote::STATUS_LABELS as $k => $label)<option value="{{ $k }}" @selected($status === $k)>{{ $label }}</option>@endforeach
         </select>
-        <input autocomplete="off" type="search" name="search" value="{{ $search }}" placeholder="Número, título ou cliente..." class="c-input w-full sm:w-72">
+        <input autocomplete="off" type="search" name="search" value="{{ $search }}" data-debounce-search placeholder="Número, título ou cliente..." class="c-input w-full sm:w-72">
     </form>
 
     <div class="c-card overflow-hidden">
